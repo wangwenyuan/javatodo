@@ -494,15 +494,22 @@ public class T {
 	}
 
 	// 获取配置文件中的内容
-	public static String getProperties(String PropertiesFile, String Key) throws IOException {
-		Properties properties = new Properties();
-		// 使用ClassLoader加载properties配置文件生成对应的输入流
-		InputStream in = new FileInputStream(PropertiesFile);
-		// 使用properties对象加载输入流
-		properties.load(in);
-		// 获取key对应的value值
-		String value = properties.getProperty(Key);
-		in.close();
-		return value;
+	public static String getProperties(String PropertiesFile, String Key) {
+		String value = "";
+		try {
+			Properties properties = new Properties();
+			InputStream in = new FileInputStream(PropertiesFile);
+			properties.load(in);
+			value = properties.getProperty(Key);
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return value.trim();
+	}
+
+	// 获取默认配置文件中的内容
+	public static String getDefaultProperties(String Key) {
+		return T.getProperties("config.properties", Key);
 	}
 }
