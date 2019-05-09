@@ -15,66 +15,75 @@
  */
 package com.javatodo.core.router;
 
-import java.awt.event.MouseAdapter;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RC {
-	private static Map<String, String> C= new HashMap<>();
-	
-	/*RC.C:
-	 * C["m"]="com.javatodo.app.index"
-	 * C["m!--javatodo--!c"]="Index"
+	private static Map<String, String> C = new HashMap<>();
+
+	/*
+	 * RC.C: C["m"]="com.javatodo.app.index" C["m!--javatodo--!c"]="Index"
 	 * C["m!--javatodo--!c!--javatodo--!a"]="index"
-	 * */
-	
-	public RC(String package_name,String module_name){
-		if(!("".equals(package_name.trim())||"".equals(module_name.trim()))){
+	 */
+
+	public RC(String package_name, String module_name) {
+		if (!("".equals(package_name.trim()) || "".equals(module_name.trim()))) {
 			RC.C.put(module_name, package_name);
 		}
 	}
-	public RC(String package_name,String module_name,String class_name,String controller_name){
-		if(!("".equals(package_name.trim())||"".equals(module_name.trim())||"".equals(class_name.trim())||"".equals(controller_name.trim()))){
+
+	public RC(String package_name, String module_name, String class_name, String controller_name) {
+		if (!("".equals(package_name.trim()) || "".equals(module_name.trim()) || "".equals(class_name.trim())
+				|| "".equals(controller_name.trim()))) {
 			RC.C.put(module_name, package_name);
-			RC.C.put(module_name+"!--javatodo--!"+controller_name, class_name);
+			RC.C.put(module_name + "!--javatodo--!" + controller_name, class_name);
 		}
 	}
-	public RC(String package_name,String module_name,String class_name,String controller_name,String function_name,String action_name){
-		if(!("".equals(package_name.trim())||"".equals(module_name.trim())||"".equals(class_name.trim())||"".equals(controller_name.trim())||"".equals(function_name.trim())||"".equals(action_name))){
+
+	public RC(String package_name, String module_name, String class_name, String controller_name, String function_name,
+			String action_name) {
+		if (!("".equals(package_name.trim()) || "".equals(module_name.trim()) || "".equals(class_name.trim())
+				|| "".equals(controller_name.trim()) || "".equals(function_name.trim()) || "".equals(action_name))) {
 			RC.C.put(module_name, package_name);
-			RC.C.put(module_name+"!--javatodo--!"+controller_name, class_name);
-			RC.C.put(module_name+"!--javatodo--!"+controller_name+"!--javatodo--!"+action_name, function_name);
+			RC.C.put(module_name + "!--javatodo--!" + controller_name, class_name);
+			RC.C.put(module_name + "!--javatodo--!" + controller_name + "!--javatodo--!" + action_name, function_name);
 		}
 	}
-	
-	/*RC.C:
-	 * C["m"]="com.javatodo.app.index"
-	 * C["m!--javatodo--!c"]="Index"
+
+	/*
+	 * RC.C: C["m"]="com.javatodo.app.index" C["m!--javatodo--!c"]="Index"
 	 * C["m!--javatodo--!c!--javatodo--!a"]="index"
-	 * */
-	
-	/*获得真实的包名、类名、函数名
-	 * */
-	public static String getRC(String module_name){
-		if(RC.C.containsKey(module_name)){
+	 */
+
+	/*
+	 * 获得真实的包名、类名、函数名
+	 */
+	public static String getRC(String module_name) {
+		if (RC.C.containsKey(module_name)) {
 			return RC.C.get(module_name);
-		}else{
+		} else {
 			return module_name;
 		}
 	}
+
 	public static String getRC(String module_name, String controller_name) {
-		if(RC.C.containsKey(module_name+"!--javatodo--!"+controller_name)){
-			return RC.C.get(module_name+"!--javatodo--!"+controller_name);
-		}else{
+		if (RC.C.containsKey(module_name + "!--javatodo--!" + controller_name)) {
+			return RC.C.get(module_name + "!--javatodo--!" + controller_name);
+		} else {
 			return controller_name;
 		}
-		
+
 	}
+
 	public static String getRC(String module_name, String controller_name, String action_name) {
-		if(RC.C.containsKey(module_name+"!--javatodo--!"+controller_name+"!--javatodo--!"+action_name)){
-			return RC.C.get(module_name+"!--javatodo--!"+controller_name+"!--javatodo--!"+action_name);
-		}else{
+		if (RC.C.containsKey(module_name + "!--javatodo--!" + controller_name + "!--javatodo--!" + action_name)) {
+			return RC.C.get(module_name + "!--javatodo--!" + controller_name + "!--javatodo--!" + action_name);
+		} else {
 			return action_name;
 		}
+	}
+
+	public static void clear() {
+		RC.C.clear();
 	}
 }

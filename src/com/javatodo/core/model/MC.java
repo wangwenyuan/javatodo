@@ -53,7 +53,13 @@ public class MC {
 					source.setInitialPoolSize(C.InitialPoolSize);
 					source.setMaxIdleTime(C.MaxIdleTime);
 					source.setAcquireIncrement(C.AcquireIncrement);
-					source.setJdbcUrl("jdbc:" + MC.db_type + "://" + MC.db_host.get(i) + ":" + MC.db_port.get(i) + "/"
+					String port = "";
+					if (MC.db_port.size() - 1 < i) {
+						port = "3306";
+					} else {
+						port = MC.db_port.get(i);
+					}
+					source.setJdbcUrl("jdbc:" + MC.db_type + "://" + MC.db_host.get(i) + ":" + port + "/"
 							+ MC.db_name.get(i) + "??useUnicode=true&characterEncoding=" + C.default_encoding
 							+ "&zeroDateTimeBehavior=convertToNull");
 					source.setUser(MC.db_username.get(i));
