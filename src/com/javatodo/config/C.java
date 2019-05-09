@@ -6,12 +6,13 @@ import com.javatodo.core.router.RC;
 public class C {
 	// 数据库配置项
 	public static String db_type = "mysql";// 数据库类型
-	public static String db_host = "";// 数据库地址
-	public static String db_port = "";// 数据库端口
-	public static String db_name = "";// 数据库名称
-	public static String db_username = "";// 数据库用户名
-	public static String db_password = "";// 数据库密码
-	public static String table_pre = "";// 数据表前缀
+	// 可以同时连接多个数据库。
+	public static String[] db_host = {};// 数据库地址
+	public static String[] db_port = {};// 数据库端口
+	public static String[] db_name = {};// 数据库名称
+	public static String[] db_username = {};// 数据库用户名
+	public static String[] db_password = {};// 数据库密码
+	public static String[] table_pre = {};// 数据表前缀
 
 	// 设置使用的模版引擎：velocity、jsp、freemaker
 	public static String template_engines = "jsp";

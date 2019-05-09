@@ -33,19 +33,30 @@ public class PgsqlDriver extends Driver {
 	private String add_str = "";
 	private String as_str = "";
 	private List<String> join_str = new ArrayList<String>();
-	private String group_str="";
-	public PgsqlDriver(){
-		this.table_pre=MC.table_pre;
+	private String group_str = "";
+
+	public PgsqlDriver() {
+		this.table_pre = MC.table_pre.get(0);
 	}
+
+	public PgsqlDriver(Integer dbIndex) {
+		this.table_pre = MC.table_pre.get(dbIndex);
+	}
+
 	// 初始化当前表
 	public PgsqlDriver(String table_name) {
-		this.table_pre = MC.table_pre;
+		this.table_pre = MC.table_pre.get(0);
 		this.table_name = table_name;
 	}
-	
-	//设置表名称
-	public void table(String table_name){
-		this.table_name=table_name;
+
+	public PgsqlDriver(String table_name, Integer dbIndex) {
+		this.table_pre = MC.table_pre.get(dbIndex);
+		this.table_name = table_name;
+	}
+
+	// 设置表名称
+	public void table(String table_name) {
+		this.table_name = table_name;
 	}
 
 	// where方法
@@ -186,11 +197,11 @@ public class PgsqlDriver extends Driver {
 
 	// limit方法
 	public PgsqlDriver limit(String limit_str) {
-		String[] limit_arr=new String[2];
-		if(limit_str.contains(",")){
-			limit_arr=limit_str.split(",");
+		String[] limit_arr = new String[2];
+		if (limit_str.contains(",")) {
+			limit_arr = limit_str.split(",");
 		}
-		this.limit_str = " limit " + limit_arr[1] + " offset "+limit_arr[0]+" ";
+		this.limit_str = " limit " + limit_arr[1] + " offset " + limit_arr[0] + " ";
 		return this;
 	}
 
@@ -288,8 +299,8 @@ public class PgsqlDriver extends Driver {
 			join_sql = join_sql + this.join_str.get(i);
 			i = i + 1;
 		}
-		this.sql = "select " + this.field_str + " from " + this.table_pre + this.table_name + this.as_str
-				+ join_sql + this.where_str+this.group_str + this.order_str + this.limit_str + ";";
+		this.sql = "select " + this.field_str + " from " + this.table_pre + this.table_name + this.as_str + join_sql
+				+ this.where_str + this.group_str + this.order_str + this.limit_str + ";";
 		return this;
 	}
 
@@ -301,8 +312,8 @@ public class PgsqlDriver extends Driver {
 			join_sql = join_sql + this.join_str.get(i);
 			i = i + 1;
 		}
-		this.sql = "select " + this.field_str + " from " + this.table_pre + this.table_name + this.as_str
-				+ join_sql + this.where_str+this.group_str + this.order_str + " limit 1;";
+		this.sql = "select " + this.field_str + " from " + this.table_pre + this.table_name + this.as_str + join_sql
+				+ this.where_str + this.group_str + this.order_str + " limit 1;";
 		return this;
 	}
 
@@ -325,15 +336,15 @@ public class PgsqlDriver extends Driver {
 	public List<Object> get_where_data() {
 		return this.where_value_list;
 	}
-	
-	//group方法
-	public void group(String fields){
-		this.group_str=" group by "+fields+" ";
+
+	// group方法
+	public void group(String fields) {
+		this.group_str = " group by " + fields + " ";
 	}
 
 	// 清理数据
 	public void clear() {
-		this.table_pre = MC.table_pre;
+		this.table_pre = "";
 		this.sql = "";
 		this.where_str = " where true ";
 		this.where_value_list = new ArrayList<>();
@@ -344,7 +355,7 @@ public class PgsqlDriver extends Driver {
 		this.limit_str = "";
 		this.add_str = "";
 		this.as_str = "";
-		this.group_str="";
+		this.group_str = "";
 		this.join_str = new ArrayList<String>();
 	}
 }

@@ -33,21 +33,32 @@ public class MysqlDriver extends Driver {
 	private String add_str = "";
 	private String as_str = "";
 	private List<String> join_str = new ArrayList<String>();
-	
-	private String group_str="";
 
-	public MysqlDriver(){
-		this.table_pre=MC.table_pre;
+	private String group_str = "";
+
+	public MysqlDriver() {
+		this.table_pre = MC.table_pre.get(0);
 	}
+
+	public MysqlDriver(Integer dbIndex) {
+		this.table_pre = MC.table_pre.get(dbIndex);
+	}
+
 	// 初始化当前表
 	public MysqlDriver(String table_name) {
-		this.table_pre = MC.table_pre;
+		this.table_pre = MC.table_pre.get(0);
 		this.table_name = table_name;
 	}
-	
-	//设置表名称
-	public void table(String table_name){
-		this.table_name=table_name;
+
+	// 初始化当前表
+	public MysqlDriver(String table_name, Integer dbIndex) {
+		this.table_pre = MC.table_pre.get(dbIndex);
+		this.table_name = table_name;
+	}
+
+	// 设置表名称
+	public void table(String table_name) {
+		this.table_name = table_name;
 	}
 
 	// where方法
@@ -287,7 +298,7 @@ public class MysqlDriver extends Driver {
 			i = i + 1;
 		}
 		this.sql = "select " + this.field_str + " from `" + this.table_pre + this.table_name + "`" + this.as_str
-				+ join_sql + this.where_str+this.group_str + this.order_str + this.limit_str + ";";
+				+ join_sql + this.where_str + this.group_str + this.order_str + this.limit_str + ";";
 		return this;
 	}
 
@@ -300,7 +311,7 @@ public class MysqlDriver extends Driver {
 			i = i + 1;
 		}
 		this.sql = "select " + this.field_str + " from `" + this.table_pre + this.table_name + "`" + this.as_str
-				+ join_sql + this.where_str+this.group_str + this.order_str + " limit 1;";
+				+ join_sql + this.where_str + this.group_str + this.order_str + " limit 1;";
 		return this;
 	}
 
@@ -323,15 +334,15 @@ public class MysqlDriver extends Driver {
 	public List<Object> get_where_data() {
 		return this.where_value_list;
 	}
-	
-	//group方法
-	public void group(String fields){
-		this.group_str=" group by "+fields+" ";
+
+	// group方法
+	public void group(String fields) {
+		this.group_str = " group by " + fields + " ";
 	}
 
 	// 清理数据
 	public void clear() {
-		this.table_pre = MC.table_pre;
+		this.table_pre = "";
 		this.sql = "";
 		this.where_str = " where 1 ";
 		this.where_value_list = new ArrayList<>();
@@ -342,7 +353,7 @@ public class MysqlDriver extends Driver {
 		this.limit_str = "";
 		this.add_str = "";
 		this.as_str = "";
-		this.group_str="";
+		this.group_str = "";
 		this.join_str = new ArrayList<String>();
 	}
 }
