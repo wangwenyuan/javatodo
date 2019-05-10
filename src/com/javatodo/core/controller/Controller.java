@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package com.javatodo.core.controller;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -50,393 +51,437 @@ import com.javatodo.core.view.View;
 import freemarker.template.TemplateException;
 
 public class Controller {
-	public boolean IS_POST=false;
+	public boolean IS_POST = false;
 	public HttpServletRequest request;
 	public HttpServletResponse response;
 	public HttpServlet servlet;
 	public View view;
-	public Map<String, String> routerMap=null;
-	public String MODULE_NAME="";//显示的模块名
-	public String CONTROLLER_NAME="";//显示的控制器名
-	public String ACTION_NAME="";//显示的方法名
-	public String PACKAGE_NAME="";//真正的模块名
-	public String CLASS_NAME="";//真正的控制器名
-	public String FUNCTION_NAME="";//真正的方法名
-	public boolean IS_AJAX=false;
-	public String templatePath=C.default_template_path;
-	public String ROOT="";
-	public String PUBLIC="";
-	private Map<String, Object>assignMap=new HashMap<>();
-	private String templateSuffix=".html";
+	public Map<String, String> routerMap = null;
+	public String MODULE_NAME = "";// 显示的模块名
+	public String CONTROLLER_NAME = "";// 显示的控制器名
+	public String ACTION_NAME = "";// 显示的方法名
+	public String PACKAGE_NAME = "";// 真正的模块名
+	public String CLASS_NAME = "";// 真正的控制器名
+	public String FUNCTION_NAME = "";// 真正的方法名
+	public boolean IS_AJAX = false;
+	public String templatePath = C.default_template_path;
+	public String ROOT = "";
+	public String PUBLIC = "";
+	private Map<String, Object> assignMap = new HashMap<>();
+	private String templateSuffix = ".html";
 	private String entrance = "";
-	
-	public void setRequestAndResponse(HttpServletRequest request,HttpServletResponse response,HttpServlet servlet){
+
+	public void setRequestAndResponse(HttpServletRequest request, HttpServletResponse response, HttpServlet servlet) {
 		this.setParam(request, response, servlet);
 		this.setRouter(request);
 		this.response.setHeader("X-Powered-By", "JavaToDo");
 	}
-	
-	private void setParam(HttpServletRequest request,HttpServletResponse response,HttpServlet servlet){
-		this.request=request;
-		this.response=response;
-		this.servlet=servlet;
-		if("POST".equals(request.getMethod())){
-			this.IS_POST=true;
+
+	private void setParam(HttpServletRequest request, HttpServletResponse response, HttpServlet servlet) {
+		this.request = request;
+		this.response = response;
+		this.servlet = servlet;
+		if ("POST".equals(request.getMethod())) {
+			this.IS_POST = true;
 		}
 		if (this.request.getHeader("X-Requested-With") == null) {
-			this.IS_AJAX=false;
+			this.IS_AJAX = false;
 		} else {
 			if (this.request.getHeader("X-Requested-With").toString().equals("XMLHttpRequest")) {
-				this.IS_AJAX=true;
+				this.IS_AJAX = true;
 			} else {
-				this.IS_AJAX=false;
+				this.IS_AJAX = false;
 			}
 		}
-		this.ROOT=request.getContextPath();
-		this.PUBLIC=ROOT+"/"+C.default_template_public;
-		//设置模版
-		if("velocity".equals(C.template_engines)){
-			view=new VelocityView();
-			this.templateSuffix=".html";
+		this.ROOT = request.getContextPath();
+		this.PUBLIC = ROOT + "/" + C.default_template_public;
+		// 设置模版
+		if ("velocity".equals(C.template_engines)) {
+			view = new VelocityView();
+			this.templateSuffix = ".html";
 		}
-		if("jsp".equals(C.template_engines)){
-			view=new JspView(request);
-			this.templateSuffix=".jsp";
+		if ("jsp".equals(C.template_engines)) {
+			view = new JspView(request);
+			this.templateSuffix = ".jsp";
 		}
-		if("freemaker".equals(C.template_engines)){
-			view=new FreeMakerView();
-			this.templateSuffix=".html";
+		if ("freemaker".equals(C.template_engines)) {
+			view = new FreeMakerView();
+			this.templateSuffix = ".html";
 		}
 		// 设置入口文件
 		String url = request.getRequestURI();
 		String[] urlArr = url.split("/");
-		if(url.contains(".jsp")){
+		if (url.contains(".jsp")) {
 			this.entrance = urlArr[urlArr.length - 1];
-		}else{
+		} else {
 			this.entrance = "index.jsp";
 		}
 	}
-	
-	private void setRouter(HttpServletRequest request){
-		//设置路由参数
-		Router router=new Router(request);
-		this.routerMap=router.parse();
-		this.MODULE_NAME=router.MODULE_NAME;
-		this.CONTROLLER_NAME=router.CONTROLLER_NAME;
-		this.ACTION_NAME=router.ACTION_NAME;
-		
-		this.PACKAGE_NAME=router.PACKAGE_NAME;
-		this.CLASS_NAME=router.CLASS_NAME;
-		this.FUNCTION_NAME=router.FUNCTION_NAME;
+
+	private void setRouter(HttpServletRequest request) {
+		// 设置路由参数
+		Router router = new Router(request);
+		this.routerMap = router.parse();
+		this.MODULE_NAME = router.MODULE_NAME;
+		this.CONTROLLER_NAME = router.CONTROLLER_NAME;
+		this.ACTION_NAME = router.ACTION_NAME;
+
+		this.PACKAGE_NAME = router.PACKAGE_NAME;
+		this.CLASS_NAME = router.CLASS_NAME;
+		this.FUNCTION_NAME = router.FUNCTION_NAME;
 	}
 
 	public Boolean init() {
 		return true;
 	}
-	
+
 	/**
 	 * 前置操作
+	 * 
 	 * @throws Exception
 	 */
-	public void _before() throws Exception{
-		
+	public void _before() throws Exception {
+
 	}
-	
+
 	/**
 	 * 后置操作
+	 * 
 	 * @throws Exception
 	 */
-	public void _after() throws Exception{
-		
+	public void _after() throws Exception {
+
 	}
-	
+
 	/**
 	 * 获取session的值
-	 * @param name String session的名称
+	 * 
+	 * @param name
+	 *            String session的名称
 	 * @return session中该名称对应的值
 	 */
-	public Object session(String name){
-		if(name==null){
+	public Object session(String name) {
+		if (name == null) {
 			Enumeration<String> sNames = request.getSession().getAttributeNames();
-			while(sNames.hasMoreElements()){
+			while (sNames.hasMoreElements()) {
 				request.getSession().removeAttribute(sNames.nextElement().toString());
 			}
 			return true;
-		}else{
-			HttpSession session=request.getSession();
-			Object value=session.getAttribute(name);
+		} else {
+			HttpSession session = request.getSession();
+			Object value = session.getAttribute(name);
 			return value;
 		}
 	}
-	
+
 	/**
 	 * 设置session的值
-	 * @param name String session的名称
-	 * @param value Object session的值
+	 * 
+	 * @param name
+	 *            String session的名称
+	 * @param value
+	 *            Object session的值
 	 * @return 没有返回值
 	 */
-	public void session(String name,Object value){
-		if(value==null){
-			HttpSession session=request.getSession();
+	public void session(String name, Object value) {
+		if (value == null) {
+			HttpSession session = request.getSession();
 			session.removeAttribute(name);
-		}else{
-			HttpSession session=request.getSession();
+		} else {
+			HttpSession session = request.getSession();
 			session.setAttribute(name, value);
 		}
 	}
-	
+
 	/**
 	 * 获取cookie的值
-	 * @param name String cookie的名称
+	 * 
+	 * @param name
+	 *            String cookie的名称
 	 * @return
 	 */
-	public String cookie(String name){
-		String value=null;
-		Cookie[] cookies=request.getCookies();
-		for(Cookie cookie:cookies){
-			if(cookie.getName().toString().equals(name)){
-				value=cookie.getValue();
+	public String cookie(String name) {
+		String value = null;
+		Cookie[] cookies = request.getCookies();
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().toString().equals(name)) {
+				value = cookie.getValue();
 				break;
 			}
 		}
 		return value;
 	}
-	
+
 	/**
 	 * 设置cookie的值
-	 * @param name String cookie的名称
-	 * @param value String cookie的值
+	 * 
+	 * @param name
+	 *            String cookie的名称
+	 * @param value
+	 *            String cookie的值
 	 */
-	public void cookie(String name,String value){
-		if(value==null){
-			Cookie cookie=new Cookie(name, value);
+	public void cookie(String name, String value) {
+		if (value == null) {
+			Cookie cookie = new Cookie(name, value);
 			cookie.setMaxAge(0);
 			response.addCookie(cookie);
-		}else{
-			Cookie cookie=new Cookie(name, value);
+		} else {
+			Cookie cookie = new Cookie(name, value);
 			cookie.setMaxAge(3600);
 			response.addCookie(cookie);
 		}
 	}
-	
+
 	/**
 	 * 设置cookie的值
-	 * @param name String cookie的名称
-	 * @param value String cookie的值
-	 * @param expiry int cookie的存活时间，单位(秒)
+	 * 
+	 * @param name
+	 *            String cookie的名称
+	 * @param value
+	 *            String cookie的值
+	 * @param expiry
+	 *            int cookie的存活时间，单位(秒)
 	 */
-	public void cookie(String name,String value,int expiry){
-		if(value==null){
-			Cookie cookie=new Cookie(name, value);
+	public void cookie(String name, String value, int expiry) {
+		if (value == null) {
+			Cookie cookie = new Cookie(name, value);
 			cookie.setMaxAge(0);
 			response.addCookie(cookie);
-		}else{
-			Cookie cookie=new Cookie(name, value);
+		} else {
+			Cookie cookie = new Cookie(name, value);
 			cookie.setMaxAge(expiry);
 			response.addCookie(cookie);
 		}
 	}
-	
+
 	/**
 	 * 设置cookie的值
-	 * @param name String cookie的名称
-	 * @param value String cookie的值
-	 * @param domain String cookie的作用域
+	 * 
+	 * @param name
+	 *            String cookie的名称
+	 * @param value
+	 *            String cookie的值
+	 * @param domain
+	 *            String cookie的作用域
 	 */
-	public void cookie(String name,String value,String domain){
-		if(value==null){
-			Cookie cookie=new Cookie(name, value);
+	public void cookie(String name, String value, String domain) {
+		if (value == null) {
+			Cookie cookie = new Cookie(name, value);
 			cookie.setMaxAge(0);
 			response.addCookie(cookie);
-		}else{
-			Cookie cookie=new Cookie(name, value);
+		} else {
+			Cookie cookie = new Cookie(name, value);
 			cookie.setDomain(domain);
 			cookie.setPath("/");
 			response.addCookie(cookie);
 		}
 	}
-	
+
 	/**
 	 * 设置cookie的值
-	 * @param name String cookie的名称
-	 * @param value String cookie的值
-	 * @param expiry int cookie的有效时间
-	 * @param domain String cookie的作用域
+	 * 
+	 * @param name
+	 *            String cookie的名称
+	 * @param value
+	 *            String cookie的值
+	 * @param expiry
+	 *            int cookie的有效时间
+	 * @param domain
+	 *            String cookie的作用域
 	 */
-	public void cookie(String name,String value,int expiry,String domain){
-		if(value==null){
-			Cookie cookie=new Cookie(name, value);
+	public void cookie(String name, String value, int expiry, String domain) {
+		if (value == null) {
+			Cookie cookie = new Cookie(name, value);
 			cookie.setMaxAge(0);
 			response.addCookie(cookie);
-		}else{
-			Cookie cookie=new Cookie(name, value);
+		} else {
+			Cookie cookie = new Cookie(name, value);
 			cookie.setMaxAge(expiry);
 			cookie.setDomain(domain);
 			cookie.setPath("/");
 			response.addCookie(cookie);
 		}
 	}
-	
+
 	/**
 	 * 获取系统变量或用户提交的数据
+	 * 
 	 * @return Map<String 变量名,String 变量值>
 	 */
-	public Map<String, String> I(){
-		Map<String, String> map=this.routerMap;
+	public Map<String, String> I() {
+		Map<String, String> map = this.routerMap;
 		Map<String, String> retMap = new HashMap<>();
 		for (Map.Entry<String, String> entry : map.entrySet()) {
-			if(entry.getKey().toString().equals("m")||entry.getKey().toString().equals("c")||entry.getKey().toString().equals("a")){
+			if (entry.getKey().toString().equals("m") || entry.getKey().toString().equals("c")
+					|| entry.getKey().toString().equals("a")) {
 				continue;
-			}else{
+			} else {
 				retMap.put(entry.getKey().toString(), T.htmlspecialchars(entry.getValue().toString()));
 			}
 		}
 		return retMap;
 	}
-	
+
 	/**
 	 * 获取系统变量或用户提交的数据
-	 * @param name String 变量名
+	 * 
+	 * @param name
+	 *            String 变量名
 	 * @return String 变量值
 	 */
-	public String I(String name){
-		String string="";
-		if(routerMap.containsKey(name)){
-			string=routerMap.get(name);
-		}else{
-			string="";
+	public String I(String name) {
+		String string = "";
+		if (routerMap.containsKey(name)) {
+			string = routerMap.get(name);
+		} else {
+			string = "";
 		}
-		string=T.htmlspecialchars(string);
+		string = T.htmlspecialchars(string);
 		return string;
 	}
-	
+
 	/**
 	 * 生成url地址
-	 * @param path [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * 
+	 * @param path
+	 *            [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
 	 * @return String 对应的url链接
 	 */
-	public String U(String path){
-		Map<String, String>map = this.routerMap;
-		String url="";
-		String[] paths=path.split("/");
-		String root_path=request.getRequestURI();
-		if(paths.length == 3) {
-			url = root_path+"?m="+paths[0]+"&c="+paths[1]+"&a="+paths[2];
+	public String U(String path) {
+		Map<String, String> map = this.routerMap;
+		String url = "";
+		String[] paths = path.split("/");
+		String root_path = request.getRequestURI();
+		if (paths.length == 3) {
+			url = root_path + "?m=" + paths[0] + "&c=" + paths[1] + "&a=" + paths[2];
 		}
-		if(paths.length == 2) {
-			url = root_path+"?m="+map.get("m")+"&c="+paths[0]+"&a="+paths[1];
+		if (paths.length == 2) {
+			url = root_path + "?m=" + map.get("m") + "&c=" + paths[0] + "&a=" + paths[1];
 		}
-		if(paths.length == 1) {
-			url = root_path+"?m="+map.get("m")+"&c="+map.get("c")+"&a="+paths[0];
-		}		
+		if (paths.length == 1) {
+			url = root_path + "?m=" + map.get("m") + "&c=" + map.get("c") + "&a=" + paths[0];
+		}
 		return url;
 	}
-	
+
 	/**
 	 * 生成url地址
-	 * @param map Map<String 参数名,String 参数值> url中的参数（m：标识模块名；c：表示控制器名；a：表示操作名）
+	 * 
+	 * @param map
+	 *            Map<String 参数名,String 参数值> url中的参数（m：标识模块名；c：表示控制器名；a：表示操作名）
 	 * @return String 对应的url链接
 	 */
-	public String U(Map<String, String>map){
-		String url=request.getRequestURI();
-		if(map.containsKey("m")&&map.containsKey("c")&&map.containsKey("a")){
+	public String U(Map<String, String> map) {
+		String url = request.getRequestURI();
+		if (map.containsKey("m") && map.containsKey("c") && map.containsKey("a")) {
 			String paramUrl = "";
-			Integer i=0;
-			for(Map.Entry<String, String>entry:map.entrySet()){
-				if(i==0) {
-					paramUrl = "?"+entry.getKey()+"="+entry.getValue();
-				}else {
-					paramUrl = paramUrl +"&"+ entry.getKey()+"="+entry.getValue();
+			Integer i = 0;
+			for (Map.Entry<String, String> entry : map.entrySet()) {
+				if (i == 0) {
+					paramUrl = "?" + entry.getKey() + "=" + entry.getValue();
+				} else {
+					paramUrl = paramUrl + "&" + entry.getKey() + "=" + entry.getValue();
 				}
-				i=i+1;
+				i = i + 1;
 			}
 			url = url + paramUrl;
 		}
 		return url;
 	}
-	
+
 	/**
 	 * 生成url地址
-	 * @param path String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
-	 * @param map Map<String 参数名,String 参数值> url中的参数
+	 * 
+	 * @param path
+	 *            String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param map
+	 *            Map<String 参数名,String 参数值> url中的参数
 	 * @return String 对应的url链接
 	 */
-	public String U(String path,Map<String, Object>map){
-		String url="";
-		String[] paths=path.split("/");
-		String root_path=request.getRequestURI();
-		if(paths.length == 3) {
-			url = root_path+"?m="+paths[0]+"&c="+paths[1]+"&a="+paths[2];
+	public String U(String path, Map<String, Object> map) {
+		String url = "";
+		String[] paths = path.split("/");
+		String root_path = request.getRequestURI();
+		if (paths.length == 3) {
+			url = root_path + "?m=" + paths[0] + "&c=" + paths[1] + "&a=" + paths[2];
 		}
-		if(paths.length == 2) {
-			url = root_path+"?m="+this.routerMap.get("m")+"&c="+paths[0]+"&a="+paths[1];
+		if (paths.length == 2) {
+			url = root_path + "?m=" + this.routerMap.get("m") + "&c=" + paths[0] + "&a=" + paths[1];
 		}
-		if(paths.length == 1) {
-			url = root_path+"?m="+this.routerMap.get("m")+"&c="+this.routerMap.get("c")+"&a="+paths[0];
+		if (paths.length == 1) {
+			url = root_path + "?m=" + this.routerMap.get("m") + "&c=" + this.routerMap.get("c") + "&a=" + paths[0];
 		}
-		for(Entry<String, Object> entry:map.entrySet()){
-			url = url +"&"+entry.getKey()+"="+entry.getValue().toString();
+		for (Entry<String, Object> entry : map.entrySet()) {
+			url = url + "&" + entry.getKey() + "=" + entry.getValue().toString();
 		}
 		return url;
 	}
-	
+
 	/**
 	 * 页面重定向
-	 * @param url String 页面重定向的链接
+	 * 
+	 * @param url
+	 *            String 页面重定向的链接
 	 * @throws IOException
 	 */
-	public void redirect(String url) throws IOException{
+	public void redirect(String url) throws IOException {
 		response.sendRedirect(url);
 	}
-	
+
 	/**
 	 * 生成验证码
+	 * 
 	 * @throws IOException
 	 */
-	public void Verify() throws IOException{
-		response.setContentType("image/jpeg");  
-		response.setHeader("Pragma", "no-cache");  
-		response.setHeader("Cache-Control", "no-cache");  
-		response.setDateHeader("Expires", 0);  
+	public void Verify() throws IOException {
+		response.setContentType("image/jpeg");
+		response.setHeader("Pragma", "no-cache");
+		response.setHeader("Cache-Control", "no-cache");
+		response.setDateHeader("Expires", 0);
 		Captcha captcha = new Captcha();
-		session("verify_code",captcha.getCode());
+		session("verify_code", captcha.getCode());
 		session("verify_time", System.currentTimeMillis());
 		captcha.write(response.getOutputStream());
 	}
-	
+
 	/**
 	 * 检测验证码是否正确
-	 * @param code 用户输入的验证码的值
+	 * 
+	 * @param code
+	 *            用户输入的验证码的值
 	 * @return boolean true:正确；false:错误
 	 */
-	public boolean check_verify(String code){
-		boolean b=false;
-		String verify_code=session("verify_code").toString();
-		long dtime=System.currentTimeMillis()-Long.parseLong(session("verify_time").toString());
-		if(code.toLowerCase().equals(verify_code.toLowerCase())&&dtime<1000*60*30){
-			b=true;
-		}else{
-			b=false;
-			session("verify_code",null);
-			session("verify_time",null);
+	public boolean check_verify(String code) {
+		boolean b = false;
+		String verify_code = session("verify_code").toString();
+		long dtime = System.currentTimeMillis() - Long.parseLong(session("verify_time").toString());
+		if (code.toLowerCase().equals(verify_code.toLowerCase()) && dtime < 1000 * 60 * 30) {
+			b = true;
+		} else {
+			b = false;
+			session("verify_code", null);
+			session("verify_time", null);
 		}
 		return b;
 	}
-	
+
 	/**
 	 * 给模版赋值
-	 * @param name String 模版中变量的名称
-	 * @param value Object 模版中变量的值
+	 * 
+	 * @param name
+	 *            String 模版中变量的名称
+	 * @param value
+	 *            Object 模版中变量的值
 	 */
-	public void assign(String name,Object value){
+	public void assign(String name, Object value) {
 		this.assignMap.put(name, value);
 		this.view.assign(name, value);
 	}
-	
+
 	/**
 	 * 定义模版常量
 	 */
-	private void tempConstant(){
+	private void tempConstant() {
 		this.view.assign("IS_POST", IS_POST);
 		this.view.assign("IS_AJAX", IS_AJAX);
 		this.view.assign("MODULE_NAME", MODULE_NAME);
@@ -447,211 +492,230 @@ public class Controller {
 		this.view.assign("controller", this);
 		this.view.assign("input", routerMap);
 	}
-	
-	private String parseJsp(String path) throws ServletException, IOException{
+
+	private String parseJsp(String path) throws ServletException, IOException {
 		ServletContext sc = this.servlet.getServletContext();
 		RequestDispatcher rd = sc.getRequestDispatcher(path);
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();   
-		final ServletOutputStream stream = new ServletOutputStream() {   
-			public void write(byte[] data, int offset, int length) {   
-				os.write(data, offset, length);   
-			}   
-			public void write(int b) throws IOException {   
-				os.write(b);   
+		final ByteArrayOutputStream os = new ByteArrayOutputStream();
+		final ServletOutputStream stream = new ServletOutputStream() {
+			public void write(byte[] data, int offset, int length) {
+				os.write(data, offset, length);
 			}
+
+			public void write(int b) throws IOException {
+				os.write(b);
+			}
+
 			@Override
 			public boolean isReady() {
 				// TODO Auto-generated method stub
 				return false;
 			}
+
 			@Override
 			public void setWriteListener(WriteListener arg0) {
 				// TODO Auto-generated method stub
 
-			}   
-		};   
+			}
+		};
 		final PrintWriter pw = new PrintWriter(new OutputStreamWriter(os));
-		HttpServletResponse rep = new HttpServletResponseWrapper(response) {   
-			public ServletOutputStream getOutputStream() {   
-				return stream;   
-			}   
-			public PrintWriter getWriter() {   
-				return pw;   
-			}   
-		};   
-		rd.include(request, rep);   
+		HttpServletResponse rep = new HttpServletResponseWrapper(response) {
+			public ServletOutputStream getOutputStream() {
+				return stream;
+			}
+
+			public PrintWriter getWriter() {
+				return pw;
+			}
+		};
+		rd.include(request, rep);
 		pw.flush();
 		return os.toString();
 	}
-	
+
 	/**
 	 * 获取当前模版解析后的内容
+	 * 
 	 * @return 模版解析后的内容
 	 * @throws ServletException
 	 * @throws IOException
 	 * @throws TemplateException
 	 */
-	public String parse() throws ServletException, IOException, TemplateException{
-		String path="";
+	public String parse() throws ServletException, IOException, TemplateException {
+		String path = "";
 		this.tempConstant();
-		if(this.templateSuffix.equals(".jsp")){
-			path="/"+this.templatePath;
-			path=path+"/"+routerMap.get("m").toString()+"/"+routerMap.get("c").toString()+"/"+routerMap.get("a").toString()+this.templateSuffix;
+		if (this.templateSuffix.equals(".jsp")) {
+			path = "/" + this.templatePath;
+			path = path + "/" + routerMap.get("m").toString() + "/" + routerMap.get("c").toString() + "/"
+					+ routerMap.get("a").toString() + this.templateSuffix;
 			return this.parseJsp(path);
-		}else{
-			path=servlet.getServletContext().getRealPath("/")+this.templatePath;
-			path=path+"\\"+routerMap.get("m").toString()+"\\"+routerMap.get("c").toString()+"\\"+routerMap.get("a").toString()+this.templateSuffix;
-			return this.view.parseString(path, routerMap.get("m").toString()+"."+routerMap.get("c").toString()+"."+routerMap.get("a").toString()+".log");
+		} else {
+			path = servlet.getServletContext().getRealPath("/") + this.templatePath;
+			path = path + "\\" + routerMap.get("m").toString() + "\\" + routerMap.get("c").toString() + "\\"
+					+ routerMap.get("a").toString() + this.templateSuffix;
+			return this.view.parseString(path, routerMap.get("m").toString() + "." + routerMap.get("c").toString() + "."
+					+ routerMap.get("a").toString() + ".log");
 		}
 	}
-	
+
 	/**
 	 * 获取对应的模版解析以后的内容
-	 * @param path 
+	 * 
+	 * @param path
 	 * @return String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
 	 * @throws ServletException
 	 * @throws IOException
 	 * @throws TemplateException
 	 */
-	public String parse(String path) throws ServletException, IOException, TemplateException{
-		String root_path="";
-		if(this.templateSuffix.equals(".jsp")){
-			root_path="/"+this.templatePath;
-		}else{
-			root_path=servlet.getServletContext().getRealPath("/")+this.templatePath;
+	public String parse(String path) throws ServletException, IOException, TemplateException {
+		String root_path = "";
+		if (this.templateSuffix.equals(".jsp")) {
+			root_path = "/" + this.templatePath;
+		} else {
+			root_path = servlet.getServletContext().getRealPath("/") + this.templatePath;
 		}
-		String[] paths=path.split("/");
-		Map<String, String>map=new HashMap<>();
-		
-		if(paths.length==3){
+		String[] paths = path.split("/");
+		Map<String, String> map = new HashMap<>();
+
+		if (paths.length == 3) {
 			map.put("m", RC.getRC(paths[0]));
-			map.put("c", RC.getRC(paths[0]+"!--javatodo--!"+paths[1]));
-			map.put("a", RC.getRC(paths[0]+"!--javatodo--!"+paths[1]+"!--javatodo--!"+paths[2]));
+			map.put("c", RC.getRC(paths[0] + "!--javatodo--!" + paths[1]));
+			map.put("a", RC.getRC(paths[0] + "!--javatodo--!" + paths[1] + "!--javatodo--!" + paths[2]));
 		}
-		if (paths.length==2) {
+		if (paths.length == 2) {
 			map.put("m", MODULE_NAME);
-			map.put("c", RC.getRC(MODULE_NAME+"!--javatodo--!"+ paths[0]));
-			map.put("a", RC.getRC(MODULE_NAME+"!--javatodo--!"+ paths[0]+"!--javatodo--!"+paths[1]));
+			map.put("c", RC.getRC(MODULE_NAME + "!--javatodo--!" + paths[0]));
+			map.put("a", RC.getRC(MODULE_NAME + "!--javatodo--!" + paths[0] + "!--javatodo--!" + paths[1]));
 		}
-		if(paths.length==1){
-			map.put("m",MODULE_NAME);
-			map.put("m",CONTROLLER_NAME);
-			map.put("a",RC.getRC(MODULE_NAME+"!--javatodo--!"+CONTROLLER_NAME+"!--javatodo--!"+paths[0]));
+		if (paths.length == 1) {
+			map.put("m", MODULE_NAME);
+			map.put("m", CONTROLLER_NAME);
+			map.put("a", RC.getRC(MODULE_NAME + "!--javatodo--!" + CONTROLLER_NAME + "!--javatodo--!" + paths[0]));
 		}
-		
-		path=root_path+"\\"+map.get("m").toString()+"\\"+map.get("c").toString()+"\\"+map.get("a").toString()+this.templateSuffix;
+
+		path = root_path + "\\" + map.get("m").toString() + "\\" + map.get("c").toString() + "\\"
+				+ map.get("a").toString() + this.templateSuffix;
 		this.tempConstant();
-		
-		if(this.templateSuffix.equals(".jsp")){
+
+		if (this.templateSuffix.equals(".jsp")) {
 			return this.parseJsp(path);
-		}else{
-			return this.view.parseString(path, routerMap.get("m").toString()+"."+routerMap.get("c").toString()+"."+routerMap.get("a").toString()+".log");
+		} else {
+			return this.view.parseString(path, routerMap.get("m").toString() + "." + routerMap.get("c").toString() + "."
+					+ routerMap.get("a").toString() + ".log");
 		}
 	}
-	
+
 	/**
 	 * 渲染模版
+	 * 
 	 * @throws IOException
 	 * @throws ServletException
 	 * @throws TemplateException
 	 */
-	public void display() throws IOException, ServletException, TemplateException{
-		String path="";
-		if(this.templateSuffix.equals(".jsp")){
-			path="/"+this.templatePath;
-		}else{
-			path=servlet.getServletContext().getRealPath("/")+this.templatePath;
+	public void display() throws IOException, ServletException, TemplateException {
+		String path = "";
+		if (this.templateSuffix.equals(".jsp")) {
+			path = "/" + this.templatePath;
+		} else {
+			path = servlet.getServletContext().getRealPath("/") + this.templatePath;
 		}
-		path=path+"\\"+PACKAGE_NAME+"\\"+CLASS_NAME+"\\"+FUNCTION_NAME+this.templateSuffix;
+		path = path + "\\" + PACKAGE_NAME + "\\" + CLASS_NAME + "\\" + FUNCTION_NAME + this.templateSuffix;
 		this.tempConstant();
-		this.view.flush(request, response, servlet,path);
+		this.view.flush(request, response, servlet, path);
 	}
-	
+
 	/**
 	 * 渲染模版
-	 * @param path String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * 
+	 * @param path
+	 *            String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
 	 * @throws IOException
 	 * @throws ServletException
 	 * @throws TemplateException
 	 */
-	public void display(String path) throws IOException, ServletException, TemplateException{
-		String root_path="";
-		if(this.templateSuffix.equals(".jsp")){
-			root_path="/"+this.templatePath;
-		}else{
-			root_path=servlet.getServletContext().getRealPath("/")+this.templatePath;
+	public void display(String path) throws IOException, ServletException, TemplateException {
+		String root_path = "";
+		if (this.templateSuffix.equals(".jsp")) {
+			root_path = "/" + this.templatePath;
+		} else {
+			root_path = servlet.getServletContext().getRealPath("/") + this.templatePath;
 		}
-		String[] paths=path.split("/");
-		Map<String, String>map=new HashMap<>();
-		if(paths.length==3){
+		String[] paths = path.split("/");
+		Map<String, String> map = new HashMap<>();
+		if (paths.length == 3) {
 			map.put("m", RC.getRC(paths[0]));
 			map.put("c", RC.getRC(paths[0], paths[1]));
 			map.put("a", RC.getRC(paths[0], paths[1], paths[2]));
 		}
-		if (paths.length==2) {
+		if (paths.length == 2) {
 			map.put("m", PACKAGE_NAME);
 			map.put("c", RC.getRC(MODULE_NAME, paths[0]));
 			map.put("a", RC.getRC(MODULE_NAME, paths[0], paths[1]));
 		}
-		if(paths.length==1){
-			map.put("m",PACKAGE_NAME);
-			map.put("c",CLASS_NAME);
-			map.put("a",RC.getRC(MODULE_NAME, CONTROLLER_NAME, paths[0]));
+		if (paths.length == 1) {
+			map.put("m", PACKAGE_NAME);
+			map.put("c", CLASS_NAME);
+			map.put("a", RC.getRC(MODULE_NAME, CONTROLLER_NAME, paths[0]));
 		}
-		path=root_path+"\\"+map.get("m").toString()+"\\"+map.get("c").toString()+"\\"+map.get("a").toString()+this.templateSuffix;
+		path = root_path + "\\" + map.get("m").toString() + "\\" + map.get("c").toString() + "\\"
+				+ map.get("a").toString() + this.templateSuffix;
 		this.tempConstant();
 		this.view.flush(request, response, servlet, path);
 	}
-	
-	//以json方式输出内容
-	public void jsonDisplay(){
-		String json=JSON.toJSONString(this.assignMap);
-		PrintWriter writer=null;
+
+	// 以json方式输出内容
+	public void jsonDisplay() {
+		String json = JSON.toJSONString(this.assignMap);
+		PrintWriter writer = null;
 		try {
 			this.response.setHeader("Pragma", "no-cache");
 			this.response.setHeader("Cache-Control", "no-cache");
 			this.response.setDateHeader("Expires", 0);
-			this.response.setContentType("application/json; charset="+C.default_encoding);
-			writer=response.getWriter();
+			this.response.setContentType("application/json; charset=" + C.default_encoding);
+			writer = response.getWriter();
 			writer.write(json);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		finally{
-			if(writer!=null){
+		} finally {
+			if (writer != null) {
 				writer.close();
 			}
 		}
 	}
-	
+
 	/**
 	 * 生成分页类
-	 * @param total int 内容总数
-	 * @param num int 每页条数
+	 * 
+	 * @param total
+	 *            int 内容总数
+	 * @param num
+	 *            int 每页条数
 	 * @return Pagination 分页类
 	 */
-	public Page page(int total,int num){
+	public Page page(int total, int num) {
 		return new Page(total, num, this.entrance, this.routerMap);
 	}
-	
+
 	/**
 	 * 带有错误信息的跳转页面，例如“操作错误”，并且自动跳转到另外一个目标页面
-	 * @param errMsg String 要提示给用户的错误信息
+	 * 
+	 * @param errMsg
+	 *            String 要提示给用户的错误信息
 	 * @throws IOException
 	 */
-	public void error(String errMsg) throws IOException{
-		if(!IS_AJAX){
-			session("javatodo_jump_type","error");
+	public void error(String errMsg) throws IOException {
+		if (!IS_AJAX) {
+			session("javatodo_jump_type", "error");
 			session("javatodo_jump_msg", errMsg);
 			session("javatodo_jump_seconds", 3);
 			session("javatodo_jump_url", "javascript:history.go(-1)");
-			Map<String,String>map=new HashMap<>();
+			Map<String, String> map = new HashMap<>();
 			map.put("m", "com.javatodo.core.controller");
 			map.put("c", "Controller");
 			map.put("a", "jump");
 			this.redirect(this.U(map));
-		}else{
+		} else {
 			this.assignMap.clear();
 			this.assignMap.put("status", 0);
 			this.assignMap.put("info", errMsg);
@@ -659,25 +723,28 @@ public class Controller {
 			this.jsonDisplay();
 		}
 	}
-	
+
 	/**
 	 * 带有错误信息的跳转页面，例如“操作错误”，并且自动跳转到另外一个目标页面
-	 * @param errMsg String 要提示给用户的错误信息
-	 * @param url String 要跳转的目标链接
+	 * 
+	 * @param errMsg
+	 *            String 要提示给用户的错误信息
+	 * @param url
+	 *            String 要跳转的目标链接
 	 * @throws IOException
 	 */
-	public void error(String errMsg,String url) throws IOException{
-		if(!IS_AJAX){
-			session("javatodo_jump_type","error");
+	public void error(String errMsg, String url) throws IOException {
+		if (!IS_AJAX) {
+			session("javatodo_jump_type", "error");
 			session("javatodo_jump_msg", errMsg);
 			session("javatodo_jump_seconds", 3);
 			session("javatodo_jump_url", url);
-			Map<String,String>map=new HashMap<>();
+			Map<String, String> map = new HashMap<>();
 			map.put("m", "com.javatodo.core.controller");
 			map.put("c", "Controller");
 			map.put("a", "jump");
 			this.redirect(this.U(map));
-		}else{
+		} else {
 			this.assignMap.clear();
 			this.assignMap.put("status", 0);
 			this.assignMap.put("info", errMsg);
@@ -685,26 +752,30 @@ public class Controller {
 			this.jsonDisplay();
 		}
 	}
-	
+
 	/**
 	 * 带有错误信息的跳转页面，例如“操作错误”，并且自动跳转到另外一个目标页面
-	 * @param errMsg String 要提示给用户的错误信息
-	 * @param url String 要跳转的目标链接
-	 * @param seconds Integer 在提示信息页面的停留时间
+	 * 
+	 * @param errMsg
+	 *            String 要提示给用户的错误信息
+	 * @param url
+	 *            String 要跳转的目标链接
+	 * @param seconds
+	 *            Integer 在提示信息页面的停留时间
 	 * @throws IOException
 	 */
-	public void error(String errMsg,String url,Integer seconds) throws IOException{
-		if(!IS_AJAX){
-			session("javatodo_jump_type","error");
+	public void error(String errMsg, String url, Integer seconds) throws IOException {
+		if (!IS_AJAX) {
+			session("javatodo_jump_type", "error");
 			session("javatodo_jump_msg", errMsg);
 			session("javatodo_jump_seconds", seconds);
 			session("javatodo_jump_url", url);
-			Map<String,String>map=new HashMap<>();
+			Map<String, String> map = new HashMap<>();
 			map.put("m", this.MODULE_NAME);
 			map.put("c", this.CONTROLLER_NAME);
 			map.put("a", "jump");
 			this.redirect(this.U(map));
-		}else{
+		} else {
 			this.assignMap.clear();
 			this.assignMap.put("status", 0);
 			this.assignMap.put("info", errMsg);
@@ -712,24 +783,26 @@ public class Controller {
 			this.jsonDisplay();
 		}
 	}
-	
+
 	/**
 	 * 带有成功信息的跳转页面，例如“操作成功”，并且自动跳转到另外一个目标页面
-	 * @param sucMsg String 提示给用户的成功信息
+	 * 
+	 * @param sucMsg
+	 *            String 提示给用户的成功信息
 	 * @throws IOException
 	 */
-	public void success(String sucMsg) throws IOException{
-		if(!IS_AJAX){
-			session("javatodo_jump_type","success");
+	public void success(String sucMsg) throws IOException {
+		if (!IS_AJAX) {
+			session("javatodo_jump_type", "success");
 			session("javatodo_jump_msg", sucMsg);
 			session("javatodo_jump_seconds", 3);
 			session("javatodo_jump_url", request.getHeader("Referer"));
-			Map<String,String>map=new HashMap<>();
+			Map<String, String> map = new HashMap<>();
 			map.put("m", this.MODULE_NAME);
 			map.put("c", this.CONTROLLER_NAME);
 			map.put("a", "jump");
 			this.redirect(this.U(map));
-		}else{
+		} else {
 			this.assignMap.clear();
 			this.assignMap.put("status", 1);
 			this.assignMap.put("info", sucMsg);
@@ -737,25 +810,28 @@ public class Controller {
 			this.jsonDisplay();
 		}
 	}
-	
+
 	/**
 	 * 带有成功信息的跳转页面，例如“操作成功”，并且自动跳转到另外一个目标页面
-	 * @param sucMsg String 提示给用户的成功信息
-	 * @param url String 要跳转的目标链接
+	 * 
+	 * @param sucMsg
+	 *            String 提示给用户的成功信息
+	 * @param url
+	 *            String 要跳转的目标链接
 	 * @throws IOException
 	 */
-	public void success(String sucMsg,String url) throws IOException{
-		if(!IS_AJAX){
-			session("javatodo_jump_type","success");
+	public void success(String sucMsg, String url) throws IOException {
+		if (!IS_AJAX) {
+			session("javatodo_jump_type", "success");
 			session("javatodo_jump_msg", sucMsg);
 			session("javatodo_jump_seconds", 3);
 			session("javatodo_jump_url", url);
-			Map<String,String>map=new HashMap<>();
+			Map<String, String> map = new HashMap<>();
 			map.put("m", this.MODULE_NAME);
 			map.put("c", this.CONTROLLER_NAME);
 			map.put("a", "jump");
 			this.redirect(this.U(map));
-		}else{
+		} else {
 			this.assignMap.clear();
 			this.assignMap.put("status", 1);
 			this.assignMap.put("info", sucMsg);
@@ -763,26 +839,30 @@ public class Controller {
 			this.jsonDisplay();
 		}
 	}
-	
+
 	/**
 	 * 带有成功信息的跳转页面，例如“操作成功”，并且自动跳转到另外一个目标页面
-	 * @param sucMsg String 提示给用户的成功信息
-	 * @param url String 要跳转的目标链接
-	 * @param seconds Integer 在提示信息页面的停留时间
+	 * 
+	 * @param sucMsg
+	 *            String 提示给用户的成功信息
+	 * @param url
+	 *            String 要跳转的目标链接
+	 * @param seconds
+	 *            Integer 在提示信息页面的停留时间
 	 * @throws IOException
 	 */
-	public void success(String sucMsg,String url, Integer seconds) throws IOException{
-		if(!IS_AJAX){
-			session("javatodo_jump_type","success");
+	public void success(String sucMsg, String url, Integer seconds) throws IOException {
+		if (!IS_AJAX) {
+			session("javatodo_jump_type", "success");
 			session("javatodo_jump_msg", sucMsg);
 			session("javatodo_jump_seconds", seconds);
 			session("javatodo_jump_url", url);
-			Map<String, String>map=new HashMap<>();
+			Map<String, String> map = new HashMap<>();
 			map.put("m", this.MODULE_NAME);
 			map.put("c", this.CONTROLLER_NAME);
 			map.put("a", "jump");
 			this.redirect(this.U(map));
-		}else{
+		} else {
 			this.assignMap.clear();
 			this.assignMap.put("status", 1);
 			this.assignMap.put("info", sucMsg);
@@ -790,21 +870,22 @@ public class Controller {
 			this.jsonDisplay();
 		}
 	}
-	
+
 	/**
 	 * 跳转到信息提示页面
+	 * 
 	 * @throws IOException
 	 * @throws ServletException
 	 * @throws TemplateException
 	 */
-	public void jump() throws IOException, ServletException, TemplateException{
-		String root_path="";
-		if(this.templateSuffix.equals(".jsp")){
-			root_path="/"+this.templatePath;
-		}else{
-			root_path=servlet.getServletContext().getRealPath("/")+this.templatePath;
+	public void jump() throws IOException, ServletException, TemplateException {
+		String root_path = "";
+		if (this.templateSuffix.equals(".jsp")) {
+			root_path = "/" + this.templatePath;
+		} else {
+			root_path = servlet.getServletContext().getRealPath("/") + this.templatePath;
 		}
-		String path=root_path+"\\system\\jump"+this.templateSuffix;
+		String path = root_path + "\\system\\jump" + this.templateSuffix;
 		this.assign("type", session("javatodo_jump_type"));
 		this.assign("msg", session("javatodo_jump_msg"));
 		this.assign("seconds", session("javatodo_jump_seconds"));
