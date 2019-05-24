@@ -146,10 +146,14 @@ public class M {
 	 * @throws SQLException
 	 */
 	public void commit() throws SQLException {
-		this.is_transaction = false;
-		if (this.connection != null) {
-			this.connection.commit();
-			this.close();
+		if (is_transaction == false) {
+			return;
+		} else {
+			this.is_transaction = false;
+			if (this.connection != null) {
+				this.connection.commit();
+				this.close();
+			}
 		}
 	}
 
@@ -157,14 +161,18 @@ public class M {
 	 * 回滚（确保已开启事务）
 	 */
 	public void rollback() {
-		this.is_transaction = false;
-		if (this.connection != null) {
-			try {
-				this.connection.rollback();
-				this.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if (is_transaction == false) {
+			return;
+		} else {
+			this.is_transaction = false;
+			if (this.connection != null) {
+				try {
+					this.connection.rollback();
+					this.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}
