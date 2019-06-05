@@ -398,13 +398,41 @@ public class T {
 		}
 	}
 
-	// 写入文件
-	public static void writeFile(String file_path, String content) {
+	// 覆盖文件内容
+	public static void coverFile(String file_path, String content) {
 		FileOutputStream fop = null;
 		File file;
 		try {
 			file = new File(file_path);
 			fop = new FileOutputStream(file);
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			byte[] contentInBytes = content.getBytes();
+			fop.write(contentInBytes);
+			fop.flush();
+			fop.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (fop != null) {
+					fop.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	// 向文件追加内容
+	public static void writeFile(String file_path, String content) {
+		FileOutputStream fop = null;
+		File file;
+		try {
+			file = new File(file_path);
+			fop = new FileOutputStream(file, true);
 			if (!file.exists()) {
 				file.createNewFile();
 			}
