@@ -7,4 +7,6 @@ request.setCharacterEncoding(C.default_encoding);
 response.setCharacterEncoding(C.default_encoding);
 response.setHeader("Content-type", "text/html;charset="+C.default_encoding);
 javaTodo.setRequestAndResponse(request, response,this);
+out.clear();
+out = pageContext.pushBody();
 %>
