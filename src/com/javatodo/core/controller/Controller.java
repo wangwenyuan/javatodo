@@ -312,8 +312,7 @@ public class Controller {
 		Map<String, String> map = this.routerMap;
 		Map<String, String> retMap = new HashMap<>();
 		for (Map.Entry<String, String> entry : map.entrySet()) {
-			if (entry.getKey().toString().equals("m") || entry.getKey().toString().equals("c")
-					|| entry.getKey().toString().equals("a")) {
+			if (entry.getKey().toString().equals("m") || entry.getKey().toString().equals("c") || entry.getKey().toString().equals("a")) {
 				continue;
 			} else {
 				retMap.put(entry.getKey().toString(), T.htmlspecialchars(entry.getValue().toString()));
@@ -546,15 +545,12 @@ public class Controller {
 		this.tempConstant();
 		if (this.templateSuffix.equals(".jsp")) {
 			path = "/" + this.templatePath;
-			path = path + "/" + routerMap.get("m").toString() + "/" + routerMap.get("c").toString() + "/"
-					+ routerMap.get("a").toString() + this.templateSuffix;
+			path = path + "/" + routerMap.get("m").toString() + "/" + routerMap.get("c").toString() + "/" + routerMap.get("a").toString() + this.templateSuffix;
 			return this.parseJsp(path);
 		} else {
 			path = servlet.getServletContext().getRealPath("/") + this.templatePath;
-			path = path + "\\" + routerMap.get("m").toString() + "\\" + routerMap.get("c").toString() + "\\"
-					+ routerMap.get("a").toString() + this.templateSuffix;
-			return this.view.parseString(path, routerMap.get("m").toString() + "." + routerMap.get("c").toString() + "."
-					+ routerMap.get("a").toString() + ".log");
+			path = path + "\\" + routerMap.get("m").toString() + "\\" + routerMap.get("c").toString() + "\\" + routerMap.get("a").toString() + this.templateSuffix;
+			return this.view.parseString(path, routerMap.get("m").toString() + "." + routerMap.get("c").toString() + "." + routerMap.get("a").toString() + ".log");
 		}
 	}
 
@@ -593,15 +589,13 @@ public class Controller {
 			map.put("a", RC.getRC(MODULE_NAME + "!--javatodo--!" + CONTROLLER_NAME + "!--javatodo--!" + paths[0]));
 		}
 
-		path = root_path + "\\" + map.get("m").toString() + "\\" + map.get("c").toString() + "\\"
-				+ map.get("a").toString() + this.templateSuffix;
+		path = root_path + "\\" + map.get("m").toString() + "\\" + map.get("c").toString() + "\\" + map.get("a").toString() + this.templateSuffix;
 		this.tempConstant();
 
 		if (this.templateSuffix.equals(".jsp")) {
 			return this.parseJsp(path);
 		} else {
-			return this.view.parseString(path, routerMap.get("m").toString() + "." + routerMap.get("c").toString() + "."
-					+ routerMap.get("a").toString() + ".log");
+			return this.view.parseString(path, routerMap.get("m").toString() + "." + routerMap.get("c").toString() + "." + routerMap.get("a").toString() + ".log");
 		}
 	}
 
@@ -657,8 +651,7 @@ public class Controller {
 			map.put("c", CLASS_NAME);
 			map.put("a", RC.getRC(MODULE_NAME, CONTROLLER_NAME, paths[0]));
 		}
-		path = root_path + "\\" + map.get("m").toString() + "\\" + map.get("c").toString() + "\\"
-				+ map.get("a").toString() + this.templateSuffix;
+		path = root_path + "\\" + map.get("m").toString() + "\\" + map.get("c").toString() + "\\" + map.get("a").toString() + this.templateSuffix;
 		this.tempConstant();
 		this.view.flush(request, response, servlet, path);
 	}
@@ -666,6 +659,27 @@ public class Controller {
 	// 以json方式输出内容
 	public void jsonDisplay() {
 		String json = JSON.toJSONString(this.assignMap);
+		PrintWriter writer = null;
+		try {
+			this.response.setHeader("Pragma", "no-cache");
+			this.response.setHeader("Cache-Control", "no-cache");
+			this.response.setDateHeader("Expires", 0);
+			this.response.setContentType("application/json; charset=" + C.default_encoding);
+			writer = response.getWriter();
+			writer.write(json);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+
+	// 以json方式输出内容
+	public void jsonDisplay(String text) {
+		String json = text;
 		PrintWriter writer = null;
 		try {
 			this.response.setHeader("Pragma", "no-cache");
