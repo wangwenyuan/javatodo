@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 public class T {
 	/**
@@ -471,8 +472,7 @@ public class T {
 
 	// 生成主键
 	public static String getPriKey() {
-		String[] arr = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f",
-				"g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
+		String[] arr = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 		BigDecimal seed = new BigDecimal(System.currentTimeMillis());
 		BigDecimal hexadecimal = new BigDecimal(36);
 		List<String> retList = new ArrayList<>();
@@ -491,8 +491,7 @@ public class T {
 
 	// 数字转36进制
 	public static String int36Hash(Integer n) {
-		String[] arr = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f",
-				"g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
+		String[] arr = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 		BigDecimal seed = new BigDecimal(n);
 		BigDecimal hexadecimal = new BigDecimal(36);
 		List<String> retList = new ArrayList<>();
@@ -516,6 +515,18 @@ public class T {
 		}
 		if (info.containsKey(key)) {
 			return info.get(key).toString();
+		} else {
+			return "";
+		}
+	}
+
+	// 获取jsonObject中的内容
+	public static String getString(String key, JSONObject info) {
+		if (info == null) {
+			return "";
+		}
+		if (info.containsKey(key)) {
+			return info.getString(key);
 		} else {
 			return "";
 		}
