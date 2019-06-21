@@ -37,12 +37,12 @@ public class Http {
 			HttpURLConnection conn = (HttpURLConnection) httpurl.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setReadTimeout(5000);
-			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 			// conn.setRequestProperty("APPTOKEN", "");
 			String data = param;
 			conn.setRequestProperty("Content-Length", String.valueOf(data.length()));
 			conn.setDoOutput(true);
-			conn.getOutputStream().write(data.getBytes());
+			conn.getOutputStream().write(data.getBytes("UTF-8"));
 			this.code = conn.getResponseCode();
 			if (code == 200) {
 				InputStream inputStream = conn.getInputStream();
