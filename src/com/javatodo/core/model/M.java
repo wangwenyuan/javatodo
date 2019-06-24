@@ -405,23 +405,6 @@ public class M {
 	}
 
 	/**
-	 * 获取数据表中的最后一个id
-	 * 
-	 * @param table_name
-	 *            表名称
-	 * @return 最后一条数据的主键
-	 * @throws SQLException
-	 */
-	public Object getLastId(String table_name) throws SQLException {
-		List<Map<String, Object>> list = new M().query("SELECT LAST_INSERT_ID()");
-		if (list.size() > 0) {
-			return list.get(0).get("LAST_INSERT_ID()");
-		} else {
-			return null;
-		}
-	}
-
-	/**
 	 * 修改数据库中的某条记录
 	 * 
 	 * @param data
