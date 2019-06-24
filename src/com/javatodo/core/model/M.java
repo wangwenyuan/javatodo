@@ -376,10 +376,11 @@ public class M {
 	 *             d.put("author","wangwenyuan");<br>
 	 *             m.data(d).add();<br>
 	 */
-	public void add() throws SQLException {
+	public Object add() throws SQLException {
 		if (this.connection == null) {
 			this.connection = MC.get_connection();
 		}
+		Object lastId = null;
 		if (this.connection != null) {
 			this.db.add();
 			String sql = this.db.get_sql();
@@ -389,6 +390,10 @@ public class M {
 				params[integer] = add_data_list.get(integer);
 			}
 			this.queryRunner.update(this.connection, sql, params);
+			List<Map<String, Object>> list = this.query("SELECT LAST_INSERT_ID()");
+			if (list.size() > 0) {
+				lastId = list.get(0).get("LAST_INSERT_ID()");
+			}
 			this.db.clear();
 			this.lastSql = sql;
 			this.sql_params = params;
@@ -396,6 +401,7 @@ public class M {
 				this.close();
 			}
 		}
+		return lastId;
 	}
 
 	/**
@@ -406,8 +412,13 @@ public class M {
 	 * @return 最后一条数据的主键
 	 * @throws SQLException
 	 */
-	public static Object getLastId(String table_name) throws SQLException {
-		return new M(table_name).order("id desc").getField("id");
+	public Object getLastId(String table_name) throws SQLException {
+		List<Map<String, Object>> list = new M().query("SELECT LAST_INSERT_ID()");
+		if (list.size() > 0) {
+			return list.get(0).get("LAST_INSERT_ID()");
+		} else {
+			return null;
+		}
 	}
 
 	/**
