@@ -38,8 +38,7 @@ public class JavaTodo {
 		}
 	}
 
-	public synchronized void setRequestAndResponse(HttpServletRequest request, HttpServletResponse response,
-			HttpServlet servlet) {
+	public void setRequestAndResponse(HttpServletRequest request, HttpServletResponse response, HttpServlet servlet) {
 		Router router = new Router(request);
 		Map<String, String> routerMap = router.parse();
 		String package_name = RC.getRC(routerMap.get("m"));
