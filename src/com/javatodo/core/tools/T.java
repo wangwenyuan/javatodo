@@ -220,7 +220,7 @@ public class T {
 	public static String md5(String string) {
 		char hexDigits[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 		try {
-			byte[] strTemp = string.getBytes();
+			byte[] strTemp = string.getBytes("utf-8");
 			// 使用MD5创建MessageDigest对象
 			MessageDigest mdTemp = MessageDigest.getInstance("MD5");
 			mdTemp.update(strTemp);
@@ -230,8 +230,6 @@ public class T {
 			int k = 0;
 			for (int i = 0; i < j; i++) {
 				byte b = md[i];
-				// System.out.println((int)b);
-				// 将没个数(int)b进行双字节加密
 				str[k++] = hexDigits[b >> 4 & 0xf];
 				str[k++] = hexDigits[b & 0xf];
 			}
@@ -474,8 +472,7 @@ public class T {
 
 	// 生成主键
 	public static String getPriKey() {
-		String[] arr = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f",
-				"g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
+		String[] arr = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 		BigDecimal seed = new BigDecimal(System.currentTimeMillis());
 		BigDecimal hexadecimal = new BigDecimal(36);
 		List<String> retList = new ArrayList<>();
@@ -494,8 +491,7 @@ public class T {
 
 	// 数字转36进制
 	public static String int36Hash(Integer n) {
-		String[] arr = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f",
-				"g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
+		String[] arr = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 		BigDecimal seed = new BigDecimal(n);
 		BigDecimal hexadecimal = new BigDecimal(36);
 		List<String> retList = new ArrayList<>();
