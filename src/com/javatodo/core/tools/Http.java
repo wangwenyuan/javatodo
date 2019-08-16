@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 
 public class Http {
 	public Integer code = null;
@@ -16,7 +17,29 @@ public class Http {
 			HttpURLConnection conn = (HttpURLConnection) httpurl.openConnection();
 			conn.setRequestMethod("GET");
 			conn.setConnectTimeout(10 * 1000);
-			// conn.setRequestProperty("APPTOKEN", "");
+			this.code = conn.getResponseCode();
+			if (code == 200) {
+				InputStream inputStream = conn.getInputStream();
+				this.html = this.stremToString(inputStream, "utf-8");
+				return html;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			return null;
+		}
+	}
+
+	public String get(String url, Map<String, String> header) {
+		try {
+			URL httpurl = new URL(url);
+			HttpURLConnection conn = (HttpURLConnection) httpurl.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setConnectTimeout(10 * 1000);
+			for (String key : header.keySet()) {
+				conn.setRequestProperty(key, header.get(key));
+			}
 			this.code = conn.getResponseCode();
 			if (code == 200) {
 				InputStream inputStream = conn.getInputStream();
@@ -38,7 +61,34 @@ public class Http {
 			conn.setRequestMethod("POST");
 			conn.setReadTimeout(5000);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-			// conn.setRequestProperty("APPTOKEN", "");
+			String data = param;
+			conn.setRequestProperty("Content-Length", String.valueOf(data.length()));
+			conn.setDoOutput(true);
+			conn.getOutputStream().write(data.getBytes("UTF-8"));
+			this.code = conn.getResponseCode();
+			if (code == 200) {
+				InputStream inputStream = conn.getInputStream();
+				this.html = this.stremToString(inputStream, "utf-8");
+				return this.html;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public String post(String url, Map<String, String> header, String param) {
+		try {
+			URL httpurl = new URL(url);
+			HttpURLConnection conn = (HttpURLConnection) httpurl.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setReadTimeout(5000);
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+			for (String key : header.keySet()) {
+				conn.setRequestProperty(key, header.get(key));
+			}
 			String data = param;
 			conn.setRequestProperty("Content-Length", String.valueOf(data.length()));
 			conn.setDoOutput(true);
