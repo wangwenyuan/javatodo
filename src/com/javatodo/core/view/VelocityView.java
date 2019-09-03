@@ -32,41 +32,46 @@ import com.javatodo.config.C;
 import com.javatodo.core.tools.T;
 
 public class VelocityView extends View {
-	public VelocityContext context=new VelocityContext();
+	public VelocityContext context = new VelocityContext();
 	private static final Properties properties = new Properties();
-	private static boolean is_init=false;
-	private static void init(){
+	private static boolean is_init = false;
+
+	private static void init() {
 		properties.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, "");
-		properties.setProperty(Velocity.ENCODING_DEFAULT, C.default_encoding); 
-		properties.setProperty(Velocity.INPUT_ENCODING, C.default_encoding); 
+		properties.setProperty(Velocity.ENCODING_DEFAULT, C.default_encoding);
+		properties.setProperty(Velocity.INPUT_ENCODING, C.default_encoding);
 		properties.setProperty(Velocity.OUTPUT_ENCODING, C.default_encoding);
-		VelocityView.is_init=true;
+		VelocityView.is_init = true;
 	}
+
 	public VelocityView() {
 		// TODO Auto-generated constructor stub
-		if(!VelocityView.is_init){
+		if (!VelocityView.is_init) {
 			VelocityView.init();
 			Velocity.init(properties);
 		}
 	}
+
 	@Override
 	public void assign(String name, Object value) {
 		// TODO Auto-generated method stub
 		this.context.put(name, value);
 	}
+
 	@Override
-	public void flush(HttpServletRequest request,HttpServletResponse response,HttpServlet servlet,String view_path) throws IOException{
-		Template template=Velocity.getTemplate(view_path);
+	public void flush(HttpServletRequest request, HttpServletResponse response, HttpServlet servlet, String view_path) throws IOException {
+		Template template = Velocity.getTemplate(view_path);
 		response.setContentType(request.getContentType());
-		PrintWriter writer=response.getWriter();
+		PrintWriter writer = response.getWriter();
 		template.merge(context, writer);
 		writer.flush();
 	}
+
 	@Override
-	public String parseString(String view_path,String logName) throws IOException{
+	public String parseString(String view_path, String logName) throws IOException {
 		StringWriter stringWriter = new StringWriter();
-		String content=T.getFileContent(view_path);
-        Velocity.evaluate(context, stringWriter, logName, content);
-        return stringWriter.getBuffer().toString();
+		String content = T.readFile(view_path, C.default_encoding);
+		Velocity.evaluate(context, stringWriter, logName, content);
+		return stringWriter.getBuffer().toString();
 	}
 }

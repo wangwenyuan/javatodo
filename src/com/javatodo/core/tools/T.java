@@ -19,7 +19,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -144,25 +143,6 @@ public class T {
 		string = string.replaceAll("&quot;", "\"");
 		string = string.replaceAll("&apos;", "'");
 		return string;
-	}
-
-	/**
-	 * 获取文件内容
-	 * 
-	 * @param filePath
-	 *            String 文件路径
-	 * @return 具体的文件内容
-	 * @throws IOException
-	 */
-	public static String getFileContent(String filePath) throws IOException {
-		StringBuilder result = new StringBuilder();
-		BufferedReader br = new BufferedReader(new FileReader(filePath));
-		String s = null;
-		while ((s = br.readLine()) != null) {
-			result.append(System.lineSeparator() + s);
-		}
-		br.close();
-		return result.toString();
 	}
 
 	/**
@@ -381,30 +361,43 @@ public class T {
 	}
 
 	// 读取文件
-	@SuppressWarnings("resource")
-	public static void readFile(String filePath, String charset) {
+	public static String readFile(String filePath, String charset) {
 		try {
 			String pathname = filePath; // 绝对路径或相对路径都可以，这里是绝对路径，写入文件时演示相对路径
 			File filename = new File(pathname); // 要读取以上路径的input。txt文件
 			InputStreamReader reader = new InputStreamReader(new FileInputStream(filename), charset); // 建立一个输入流对象reader
 			BufferedReader br = new BufferedReader(reader); // 建立一个对象，它把文件内容转成计算机能读懂的语言
+			String content = "";
 			String line = "";
 			line = br.readLine();
+			if (line != null) {
+				content = content + line;
+			}
 			while (line != null) {
 				line = br.readLine(); // 一次读入一行数据
+				if (line != null) {
+					content = content + line;
+				}
 			}
+			return content;
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
+		return "";
 	}
 
 	// 覆盖文件内容
 	public static void coverFile(String file_path, String content) {
 		FileOutputStream fop = null;
-		File file;
 		try {
-			file = new File(file_path);
+			File file = new File(file_path);
+			if (!file.getParentFile().isDirectory()) {
+				new File(file.getParent()).mkdirs();
+			}
+			if (!file.exists()) {
+				file.createNewFile();
+			}
 			fop = new FileOutputStream(file);
 			if (!file.exists()) {
 				file.createNewFile();
@@ -430,9 +423,14 @@ public class T {
 	// 向文件追加内容
 	public static void writeFile(String file_path, String content) {
 		FileOutputStream fop = null;
-		File file;
 		try {
-			file = new File(file_path);
+			File file = new File(file_path);
+			if (!file.getParentFile().isDirectory()) {
+				new File(file.getParent()).mkdirs();
+			}
+			if (!file.exists()) {
+				file.createNewFile();
+			}
 			fop = new FileOutputStream(file, true);
 			if (!file.exists()) {
 				file.createNewFile();
@@ -472,8 +470,7 @@ public class T {
 
 	// 生成主键
 	public static String getPriKey() {
-		String[] arr = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f",
-				"g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
+		String[] arr = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 		BigDecimal seed = new BigDecimal(System.currentTimeMillis());
 		BigDecimal hexadecimal = new BigDecimal(36);
 		List<String> retList = new ArrayList<>();
@@ -492,8 +489,7 @@ public class T {
 
 	// 数字转36进制
 	public static String int36Hash(Integer n) {
-		String[] arr = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f",
-				"g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
+		String[] arr = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 		BigDecimal seed = new BigDecimal(n);
 		BigDecimal hexadecimal = new BigDecimal(36);
 		List<String> retList = new ArrayList<>();
