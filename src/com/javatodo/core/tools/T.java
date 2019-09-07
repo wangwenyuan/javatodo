@@ -453,6 +453,34 @@ public class T {
 		}
 	}
 
+	// 删除目录（遍历删除目录内的文件以及子目录）
+	public static void deleteDir(String dirPath) {
+		File file = new File(dirPath);
+		if (file.isFile()) {
+			file.delete();
+		} else {
+			File[] files = file.listFiles();
+			if (files == null) {
+				file.delete();
+			} else {
+				for (int i = 0; i < files.length; i++) {
+					deleteDir(files[i].getAbsolutePath());
+				}
+				file.delete();
+			}
+		}
+	}
+
+	// 删除文件
+	public static void deleteFile(String filePath) {
+		File file = new File(filePath);
+		if (file.isFile()) {
+			file.delete();
+		} else {
+			deleteDir(filePath);
+		}
+	}
+
 	// 获取ip地址
 	public static String getClientIp(HttpServletRequest request) {
 		String ip = request.getHeader("x-forwarded-for");

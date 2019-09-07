@@ -32,175 +32,180 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import com.javatodo.config.C;
 
 public class Upload {
-	public class FileInfo{
-		public String key=null;//附件上传的表单名称
-		public String savePath=null;//上传文件的保存路径
-		public String name=null;//上传文件的原始名称
-		public String savename=null;//上传文件的保存名称
-		public long size=0;//上传文件的大小
-		public String type=null;//上传文件的MIME类型
-		public String ext=null;//上传文件的后缀类型
-		public String toString(){
-			String string="";
-			string=string+"key:"+this.key+"\n";
-			string=string+"savePath:"+this.savePath+"\n";
-			string=string+"name:"+this.name+"\n";
-			string=string+"savename:"+this.savename+"\n";
-			string=string+"size:"+this.size+"\n";
-			string=string+"type:"+this.type+"\n";
-			string=string+"ext:"+this.ext+"\n";
+	public class FileInfo {
+		public String key = null;// 附件上传的表单名称
+		public String savePath = null;// 上传文件的保存路径
+		public String name = null;// 上传文件的原始名称
+		public String savename = null;// 上传文件的保存名称
+		public long size = 0;// 上传文件的大小
+		public String type = null;// 上传文件的MIME类型
+		public String ext = null;// 上传文件的后缀类型
+
+		public String toString() {
+			String string = "";
+			string = string + "key:" + this.key + "\n";
+			string = string + "savePath:" + this.savePath + "\n";
+			string = string + "name:" + this.name + "\n";
+			string = string + "savename:" + this.savename + "\n";
+			string = string + "size:" + this.size + "\n";
+			string = string + "type:" + this.type + "\n";
+			string = string + "ext:" + this.ext + "\n";
 			return string;
 		}
 	}
 
-	public String err_msg="";
-	public long maxSize=C.UploadMaxSize;
-	public List<String>extList=new ArrayList<>();
-	public String savePath="uploads";
-	public String cachePath="uploadFiles";
-	
+	public String err_msg = "";
+	public long maxSize = C.UploadMaxSize;
+	public List<String> extList = new ArrayList<>();
+	public String savePath = "uploads";
+	public String cachePath = "uploadFiles";
+
 	private HttpServlet servlet;
 	private HttpServletRequest request;
-	
+
 	/**
 	 * 实例化上传类
+	 * 
 	 * @param servlet
 	 * @param request
 	 */
-	public Upload(HttpServlet servlet,HttpServletRequest request){
-		this.servlet=servlet;
-		this.request=request;
+	public Upload(HttpServlet servlet, HttpServletRequest request) {
+		this.servlet = servlet;
+		this.request = request;
 	}
-	
+
 	/**
 	 * 上传单个文件
-	 * @param fieldName 表单中的上传字段名
+	 * 
+	 * @param fieldName
+	 *            表单中的上传字段名
 	 * @return FileInfo对象，其中存储着上传以后的信息
 	 * @throws Exception
 	 */
-	public FileInfo uploadOne(String fieldName) throws Exception{
-		FileInfo fileInfo=null;
-		DiskFileItemFactory factory=new DiskFileItemFactory();
+	public FileInfo uploadOne(String fieldName) throws Exception {
+		FileInfo fileInfo = null;
+		DiskFileItemFactory factory = new DiskFileItemFactory();
 		factory.setSizeThreshold(4096);
-		factory.setRepository(new File(servlet.getServletContext().getRealPath("/")+cachePath));
-		ServletFileUpload upload=new ServletFileUpload(factory);
+		factory.setRepository(new File(servlet.getServletContext().getRealPath("/") + cachePath));
+		ServletFileUpload upload = new ServletFileUpload(factory);
 		upload.setSizeMax(this.maxSize);
-		List<FileItem> file_list=upload.parseRequest(request);
-		if(file_list!=null){
-			Iterator<FileItem> iterator=file_list.iterator();
-			while(iterator.hasNext()){
-				FileItem file_item=null;
-				String path=null;
-				long size=0;
-				file_item=(FileItem)iterator.next();
-				if(file_item==null||file_item.isFormField()){
+		List<FileItem> file_list = upload.parseRequest(request);
+		if (file_list != null) {
+			Iterator<FileItem> iterator = file_list.iterator();
+			while (iterator.hasNext()) {
+				FileItem file_item = null;
+				String path = null;
+				long size = 0;
+				file_item = (FileItem) iterator.next();
+				if (file_item == null || file_item.isFormField()) {
 					continue;
 				}
-				if(!(file_item.getFieldName().equals(fieldName))){
+				if (!(file_item.getFieldName().equals(fieldName))) {
 					continue;
 				}
-				path=file_item.getName();
-				size=file_item.getSize();
-				if("".equals(path)||size==0){
-					this.err_msg="上传的文件为空";
-				}else{
-					String t_name=path.substring(path.lastIndexOf("\\")+1);
-					String t_ext=t_name.substring(t_name.lastIndexOf(".")+1);
-					int allowFlag=0;
-					int allowExtCount=extList.size();
-					for(;allowFlag<allowExtCount;allowFlag++){
-						if(extList.get(allowFlag).equals(t_ext)){
+				path = file_item.getName();
+				size = file_item.getSize();
+				if ("".equals(path) || size == 0) {
+					this.err_msg = "上传的文件为空";
+				} else {
+					String t_name = path.substring(path.lastIndexOf("\\") + 1);
+					String t_ext = t_name.substring(t_name.lastIndexOf(".") + 1);
+					int allowFlag = 0;
+					int allowExtCount = extList.size();
+					for (; allowFlag < allowExtCount; allowFlag++) {
+						if (extList.get(allowFlag).equals(t_ext)) {
 							break;
 						}
 					}
-					if(allowFlag==allowExtCount){
-						this.err_msg="该类型文件不允许上传";
-					}else{
+					if (allowFlag == allowExtCount) {
+						this.err_msg = "该类型文件不允许上传";
+					} else {
 						long now = System.currentTimeMillis();
-						String prefix=String.valueOf(now);
-						String file_name=prefix+"."+t_ext;
-						String saveDir = servlet.getServletContext().getRealPath("/")+savePath+"/"+T.now("yyyy/MM/dd")+"/";
+						String prefix = String.valueOf(now);
+						String file_name = prefix + "." + t_ext;
+						String saveDir = servlet.getServletContext().getRealPath("/") + savePath + "/" + T.now("yyyy/MM/dd") + "/";
 						File dir = new File(saveDir);
-						if(!dir.exists()) {
+						if (!dir.exists()) {
 							dir.mkdirs();
 						}
-						file_item.write(new File(saveDir+file_name));
-						//设置文件信息
-						fileInfo=new FileInfo();
-						fileInfo.key=file_item.getFieldName();
-						fileInfo.ext=t_ext;
-						fileInfo.name=file_item.getName();
-						fileInfo.savename=file_name;
-						fileInfo.savePath=savePath+"/"+T.now("yyyy/MM/dd")+"/";
-						fileInfo.size=file_item.getSize();
-						fileInfo.type=file_item.getContentType();
+						file_item.write(new File(saveDir + file_name));
+						// 设置文件信息
+						fileInfo = new FileInfo();
+						fileInfo.key = file_item.getFieldName();
+						fileInfo.ext = t_ext;
+						fileInfo.name = file_item.getName();
+						fileInfo.savename = file_name;
+						fileInfo.savePath = savePath + "/" + T.now("yyyy/MM/dd") + "/";
+						fileInfo.size = file_item.getSize();
+						fileInfo.type = file_item.getContentType();
 					}
 				}
 			}
 		}
 		return fileInfo;
 	}
-	
+
 	/**
 	 * 上传多个文件
+	 * 
 	 * @return Map<String 表单中的上传字段名, FileInfo FileInfo对象，其中存储着上传以后的信息>
 	 * @throws Exception
 	 */
-	public Map<String, FileInfo> upload() throws Exception{
-		Map<String, FileInfo>fileInfoMap=null;
-		DiskFileItemFactory factory=new DiskFileItemFactory();
+	public Map<String, FileInfo> upload() throws Exception {
+		Map<String, FileInfo> fileInfoMap = null;
+		DiskFileItemFactory factory = new DiskFileItemFactory();
 		factory.setSizeThreshold(4096);
-		factory.setRepository(new File(servlet.getServletContext().getRealPath("/")+cachePath));
-		ServletFileUpload upload=new ServletFileUpload(factory);
+		factory.setRepository(new File(servlet.getServletContext().getRealPath("/") + cachePath));
+		ServletFileUpload upload = new ServletFileUpload(factory);
 		upload.setSizeMax(this.maxSize);
-		List<FileItem> file_list=upload.parseRequest(request);
-		if(file_list!=null){
-			Iterator<FileItem> iterator=file_list.iterator();
-			while(iterator.hasNext()){
-				FileItem file_item=null;
-				String path=null;
-				long size=0;
-				file_item=(FileItem)iterator.next();
-				if(file_item==null||file_item.isFormField()){
+		List<FileItem> file_list = upload.parseRequest(request);
+		if (file_list != null) {
+			Iterator<FileItem> iterator = file_list.iterator();
+			while (iterator.hasNext()) {
+				FileItem file_item = null;
+				String path = null;
+				long size = 0;
+				file_item = (FileItem) iterator.next();
+				if (file_item == null || file_item.isFormField()) {
 					continue;
 				}
-				path=file_item.getName();
-				size=file_item.getSize();
-				if("".equals(path)||size==0){
+				path = file_item.getName();
+				size = file_item.getSize();
+				if ("".equals(path) || size == 0) {
 					continue;
 				}
-				String t_name=path.substring(path.lastIndexOf("\\")+1);
-				String t_ext=t_name.substring(t_name.lastIndexOf(".")+1);
-				int allowFlag=0;
-				int allowExtCount=extList.size();
-				for(;allowFlag<allowExtCount;allowFlag++){
-					if(extList.get(allowFlag).equals(t_ext)){
+				String t_name = path.substring(path.lastIndexOf("\\") + 1);
+				String t_ext = t_name.substring(t_name.lastIndexOf(".") + 1);
+				int allowFlag = 0;
+				int allowExtCount = extList.size();
+				for (; allowFlag < allowExtCount; allowFlag++) {
+					if (extList.get(allowFlag).equals(t_ext)) {
 						break;
 					}
 				}
-				if(allowFlag==allowExtCount){
+				if (allowFlag == allowExtCount) {
 					continue;
-				}else{
+				} else {
 					long now = System.currentTimeMillis();
-					String prefix=String.valueOf(now);
-					String file_name=prefix+"."+t_ext;
-					String saveDir = servlet.getServletContext().getRealPath("/")+savePath+"/"+T.now("yyyy/MM/dd")+"/";
+					String prefix = String.valueOf(now);
+					String file_name = prefix + "." + t_ext;
+					String saveDir = servlet.getServletContext().getRealPath("/") + savePath + "/" + T.now("yyyy/MM/dd") + "/";
 					File dir = new File(saveDir);
-					if(!dir.exists()) {
+					if (!dir.exists()) {
 						dir.mkdirs();
 					}
-					file_item.write(new File(saveDir+file_name));
-					if(fileInfoMap==null){
-						fileInfoMap=new HashMap<>();
+					file_item.write(new File(saveDir + file_name));
+					if (fileInfoMap == null) {
+						fileInfoMap = new HashMap<>();
 					}
-					FileInfo fileInfo=new FileInfo();
-					fileInfo.key=file_item.getFieldName();
-					fileInfo.ext=t_ext;
-					fileInfo.name=file_item.getName();
-					fileInfo.savename=file_name;
-					fileInfo.savePath=savePath+"/"+T.now("yyyy/MM/dd")+"/";
-					fileInfo.size=file_item.getSize();
-					fileInfo.type=file_item.getContentType();
+					FileInfo fileInfo = new FileInfo();
+					fileInfo.key = file_item.getFieldName();
+					fileInfo.ext = t_ext;
+					fileInfo.name = file_item.getName();
+					fileInfo.savename = file_name;
+					fileInfo.savePath = savePath + "/" + T.now("yyyy/MM/dd") + "/";
+					fileInfo.size = file_item.getSize();
+					fileInfo.type = file_item.getContentType();
 					fileInfoMap.put(fileInfo.key, fileInfo);
 				}
 			}
