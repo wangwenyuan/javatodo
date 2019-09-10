@@ -53,7 +53,7 @@ public class Page {
 	public String show() {
 		double zhi = (double) total / (double) listRows;
 		allPageNum = (int) Math.ceil(zhi);
-		String page_str = "<span>共" + allPageNum + "页，每页" + listRows + "条，</span>";
+		String page_str = "<span>共" + allPageNum + "页，每页" + listRows + "条，当前第" + this.current + "页</span>";
 		if (current == 1) {
 			map.put("p", (this.current + 1) + "");
 			page_str = page_str + "<span>首页</span><span>上一页</span><a href='" + T.U(map, entrance) + "' >下一页</a>";
@@ -78,10 +78,22 @@ public class Page {
 			map.put("p", allPageNum + "");
 			page_str = page_str + "<a href='" + T.U(map, entrance) + "' >尾页</a>";
 		}
+		String gotopage = "<span>&nbsp;&nbsp;&nbsp;&nbsp;转到：<select onchange=\"self.location.href=this.options[this.selectedIndex].value\">";
+		for (Integer i = 0; i < allPageNum; i = i + 1) {
+			map.put("p", (i + 1) + "");
+			String selected = "";
+			if (this.current == i + 1) {
+				selected = "selected=\"selected\"";
+			} else {
+				selected = "";
+			}
+			gotopage = gotopage + "<option " + selected + " value=\"" + T.U(map, entrance) + "\">第 " + (i + 1) + " 页</option>";
+		}
+		gotopage = gotopage + "</select></span>";
 		if (zhi < 1) {
 			return "";
 		} else {
-			return "<div>" + page_str + "</div>";
+			return "<div>" + page_str + gotopage + "</div>";
 		}
 	}
 }

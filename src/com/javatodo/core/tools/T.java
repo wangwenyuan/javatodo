@@ -103,6 +103,21 @@ public class T {
 	}
 
 	/**
+	 * 时间转日期
+	 * 
+	 * @param format
+	 *            String 时间格式
+	 * @param time
+	 *            Integer 时间戳
+	 * @return 时间字符串
+	 */
+	public static String date(String format, Long time) {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+		Date date = new Date(time);
+		return simpleDateFormat.format(date);
+	}
+
+	/**
 	 * 获取当前时间戳
 	 * 
 	 * @return 当前时间戳
