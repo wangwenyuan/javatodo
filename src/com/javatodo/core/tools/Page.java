@@ -78,7 +78,7 @@ public class Page {
 			map.put("p", allPageNum + "");
 			page_str = page_str + "<a href='" + T.U(map, entrance) + "' >尾页</a>";
 		}
-		String gotopage = "<span>&nbsp;&nbsp;&nbsp;&nbsp;转到：<select onchange=\"self.location.href=this.options[this.selectedIndex].value\">";
+		String gotopage = "<span>转到：<select onchange=\"self.location.href=this.options[this.selectedIndex].value\">";
 		for (Integer i = 0; i < allPageNum; i = i + 1) {
 			map.put("p", (i + 1) + "");
 			String selected = "";
