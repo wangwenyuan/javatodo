@@ -20,25 +20,54 @@ import java.util.Map;
 
 public abstract class Driver {
 	public abstract void table(String table_name);
+
 	public abstract Driver where(Map<String, W> where);
+
 	public abstract Driver where(String where_str);
+
 	public abstract Driver where(String where_str, Object... params);
+
 	public abstract Driver order(String order_str);
+
 	public abstract Driver limit(String limit_str);
+
 	public abstract Driver data(Map<String, Object> data);
+
 	public abstract Driver alias(String as_str);
+
 	public abstract Driver join(String table_name, String on_sql);
+
 	public abstract Driver join(String table_name, String on_sql, String type);
+
 	public abstract Driver field(String field_str);
+
 	public abstract void group(String field_str);
+
 	public abstract Driver add();
+
 	public abstract Driver save(Map<String, Object> data);
+
 	public abstract Driver delete();
+
 	public abstract Driver select();
+
 	public abstract Driver find();
+
 	public abstract String get_sql();
+
 	public abstract List<Object> get_add_data();
+
 	public abstract List<Object> get_update_data();
+
 	public abstract List<Object> get_where_data();
+
+	public abstract Driver setInc(String field, Integer value);
+
+	public abstract Driver setDec(String field, Integer value);
+
+	public abstract Driver setInc(String field);
+
+	public abstract Driver setDec(String field);
+
 	public abstract void clear();
 }

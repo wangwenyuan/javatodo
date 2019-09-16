@@ -299,8 +299,7 @@ public class PgsqlDriver extends Driver {
 			join_sql = join_sql + this.join_str.get(i);
 			i = i + 1;
 		}
-		this.sql = "select " + this.field_str + " from " + this.table_pre + this.table_name + this.as_str + join_sql
-				+ this.where_str + this.group_str + this.order_str + this.limit_str + ";";
+		this.sql = "select " + this.field_str + " from " + this.table_pre + this.table_name + this.as_str + join_sql + this.where_str + this.group_str + this.order_str + this.limit_str + ";";
 		return this;
 	}
 
@@ -312,8 +311,7 @@ public class PgsqlDriver extends Driver {
 			join_sql = join_sql + this.join_str.get(i);
 			i = i + 1;
 		}
-		this.sql = "select " + this.field_str + " from " + this.table_pre + this.table_name + this.as_str + join_sql
-				+ this.where_str + this.group_str + this.order_str + " limit 1;";
+		this.sql = "select " + this.field_str + " from " + this.table_pre + this.table_name + this.as_str + join_sql + this.where_str + this.group_str + this.order_str + " limit 1;";
 		return this;
 	}
 
@@ -340,6 +338,34 @@ public class PgsqlDriver extends Driver {
 	// group方法
 	public void group(String fields) {
 		this.group_str = " group by " + fields + " ";
+	}
+
+	public PgsqlDriver setInc(String field, Integer value) {
+		String str = "";
+		str = " set " + field + "=" + field + "+" + value;
+		this.sql = "update `" + this.table_pre + this.table_name + "`" + str + this.where_str + ";";
+		return this;
+	}
+
+	public PgsqlDriver setDec(String field, Integer value) {
+		String str = "";
+		str = " set " + field + "=" + field + "-" + value;
+		this.sql = "update `" + this.table_pre + this.table_name + "`" + str + this.where_str + ";";
+		return this;
+	}
+
+	public PgsqlDriver setInc(String field) {
+		String str = "";
+		str = " set " + field + "=" + field + "+1";
+		this.sql = "update `" + this.table_pre + this.table_name + "`" + str + this.where_str + ";";
+		return this;
+	}
+
+	public PgsqlDriver setDec(String field) {
+		String str = "";
+		str = " set " + field + "=" + field + "-1";
+		this.sql = "update `" + this.table_pre + this.table_name + "`" + str + this.where_str + ";";
+		return this;
 	}
 
 	// 清理数据
