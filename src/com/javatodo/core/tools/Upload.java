@@ -40,6 +40,7 @@ public class Upload {
 		public long size = 0;// 上传文件的大小
 		public String type = null;// 上传文件的MIME类型
 		public String ext = null;// 上传文件的后缀类型
+		public String local_file_path = null;// 文件上传后本地的存储路径
 
 		public String toString() {
 			String string = "";
@@ -138,6 +139,7 @@ public class Upload {
 						fileInfo.savePath = savePath + "/" + T.now("yyyy/MM/dd") + "/";
 						fileInfo.size = file_item.getSize();
 						fileInfo.type = file_item.getContentType();
+						fileInfo.local_file_path = saveDir + file_name;
 					}
 				}
 			}
@@ -206,6 +208,7 @@ public class Upload {
 					fileInfo.savePath = savePath + "/" + T.now("yyyy/MM/dd") + "/";
 					fileInfo.size = file_item.getSize();
 					fileInfo.type = file_item.getContentType();
+					fileInfo.local_file_path = saveDir + file_name;
 					fileInfoMap.put(fileInfo.key, fileInfo);
 				}
 			}
