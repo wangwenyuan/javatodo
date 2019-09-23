@@ -76,7 +76,7 @@ public class Controller {
 		this.setRouter(request);
 		this.response.setHeader("X-Powered-By", "JavaToDo");
 		if (C.is_debug && C.log_file_path.equals("")) {
-			C.log_file_path = servlet.getServletContext().getRealPath("/") + "WEB-INF\\log\\";
+			C.log_file_path = servlet.getServletContext().getRealPath("/") + "WEB-INF/log/";
 		}
 	}
 
