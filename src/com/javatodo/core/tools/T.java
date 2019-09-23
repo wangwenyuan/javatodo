@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.javatodo.config.C;
 
 public class T {
 	/**
@@ -466,6 +467,11 @@ public class T {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	// 记录日志
+	public static void create_log(String log_file, String content) {
+		writeFile(C.log_file_path + log_file + ".txt", content + "--------" + T.now() + "\n\r");
 	}
 
 	// 删除目录（遍历删除目录内的文件以及子目录）

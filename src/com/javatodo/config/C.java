@@ -14,6 +14,11 @@ public class C {
 	public static String[] db_password = {};// 数据库密码
 	public static String[] table_pre = {};// 数据表前缀
 
+	// 是否调试模式
+	public static boolean is_debug = true;
+	// 日志文件夹
+	public static String log_file_path = "";
+
 	// 设置使用的模版引擎：velocity、jsp、freemaker
 	public static String template_engines = "jsp";
 	// 设置编码
