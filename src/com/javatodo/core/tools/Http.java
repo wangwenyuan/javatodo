@@ -62,7 +62,7 @@ public class Http {
 			conn.setReadTimeout(5000);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 			String data = param;
-			conn.setRequestProperty("Content-Length", String.valueOf(data.length()));
+			conn.setRequestProperty("Content-Length", String.valueOf(data.getBytes().length));
 			conn.setDoOutput(true);
 			conn.getOutputStream().write(data.getBytes("UTF-8"));
 			this.code = conn.getResponseCode();
@@ -90,7 +90,7 @@ public class Http {
 				conn.setRequestProperty(key, header.get(key));
 			}
 			String data = param;
-			conn.setRequestProperty("Content-Length", String.valueOf(data.length()));
+			conn.setRequestProperty("Content-Length", String.valueOf(data.getBytes().length));
 			conn.setDoOutput(true);
 			conn.getOutputStream().write(data.getBytes("UTF-8"));
 			this.code = conn.getResponseCode();
