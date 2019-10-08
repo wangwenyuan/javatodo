@@ -68,7 +68,7 @@ public class Http {
 			this.code = conn.getResponseCode();
 			if (code == 200) {
 				InputStream inputStream = conn.getInputStream();
-				this.html = this.stremToString(inputStream, "utf-8");
+				this.html = this.stremToString(inputStream, "UTF-8");
 				return this.html;
 			} else {
 				return null;
@@ -96,7 +96,7 @@ public class Http {
 			this.code = conn.getResponseCode();
 			if (code == 200) {
 				InputStream inputStream = conn.getInputStream();
-				this.html = this.stremToString(inputStream, "utf-8");
+				this.html = this.stremToString(inputStream, "UTF-8");
 				return this.html;
 			} else {
 				return null;
