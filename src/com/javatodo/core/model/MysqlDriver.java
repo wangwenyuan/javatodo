@@ -37,27 +37,34 @@ public class MysqlDriver extends Driver {
 	private String group_str = "";
 
 	public MysqlDriver() {
+		this.clear();
 		this.table_pre = MC.table_pre.get(0);
 	}
 
 	public MysqlDriver(Integer dbIndex) {
+		this.clear();
 		this.table_pre = MC.table_pre.get(dbIndex);
 	}
 
 	// 初始化当前表
 	public MysqlDriver(String table_name) {
+		this.clear();
 		this.table_pre = MC.table_pre.get(0);
 		this.table_name = table_name;
 	}
 
 	// 初始化当前表
 	public MysqlDriver(String table_name, Integer dbIndex) {
+		this.clear();
 		this.table_pre = MC.table_pre.get(dbIndex);
 		this.table_name = table_name;
 	}
 
 	// 设置表名称
 	public void table(String table_name) {
+		String pre = this.table_pre;
+		this.clear();
+		this.table_pre = pre;
 		this.table_name = table_name;
 	}
 
@@ -367,7 +374,7 @@ public class MysqlDriver extends Driver {
 	}
 
 	// 清理数据
-	public void clear() {
+	private void clear() {
 		this.table_pre = "";
 		this.sql = "";
 		this.where_str = " where 1 ";

@@ -68,6 +68,4 @@ public abstract class Driver {
 	public abstract Driver setInc(String field);
 
 	public abstract Driver setDec(String field);
-
-	public abstract void clear();
 }
