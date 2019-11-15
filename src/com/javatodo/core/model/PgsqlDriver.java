@@ -36,33 +36,26 @@ public class PgsqlDriver extends Driver {
 	private String group_str = "";
 
 	public PgsqlDriver() {
-		this.clear();
 		this.table_pre = MC.table_pre.get(0);
 	}
 
 	public PgsqlDriver(Integer dbIndex) {
-		this.clear();
 		this.table_pre = MC.table_pre.get(dbIndex);
 	}
 
 	// 初始化当前表
 	public PgsqlDriver(String table_name) {
-		this.clear();
 		this.table_pre = MC.table_pre.get(0);
 		this.table_name = table_name;
 	}
 
 	public PgsqlDriver(String table_name, Integer dbIndex) {
-		this.clear();
 		this.table_pre = MC.table_pre.get(dbIndex);
 		this.table_name = table_name;
 	}
 
 	// 设置表名称
 	public void table(String table_name) {
-		String pre = this.table_pre;
-		this.clear();
-		this.table_pre = pre;
 		this.table_name = table_name;
 	}
 
@@ -376,8 +369,8 @@ public class PgsqlDriver extends Driver {
 	}
 
 	// 清理数据
-	private void clear() {
-		this.table_pre = "";
+	public void clear() {
+		// this.table_pre = "";
 		this.sql = "";
 		this.where_str = " where true ";
 		this.where_value_list = new ArrayList<>();

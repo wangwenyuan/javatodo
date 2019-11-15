@@ -394,6 +394,7 @@ public class M {
 			if (list.size() > 0) {
 				lastId = list.get(0).get("LAST_INSERT_ID()");
 			}
+			this.db.clear();
 			this.lastSql = sql;
 			this.sql_params = params;
 			if (!this.is_transaction) {
@@ -435,6 +436,7 @@ public class M {
 				params[integer] = where_data_list.get(integer - update_data_list.size());
 			}
 			this.queryRunner.update(this.connection, sql, params);
+			this.db.clear();
 			this.lastSql = sql;
 			this.sql_params = params;
 			if (!this.is_transaction) {
@@ -465,6 +467,7 @@ public class M {
 				params[integer] = where_data_list.get(integer);
 			}
 			this.queryRunner.update(this.connection, sql, params);
+			this.db.clear();
 			this.lastSql = sql;
 			this.sql_params = params;
 			if (!this.is_transaction) {
@@ -494,6 +497,7 @@ public class M {
 			}
 
 			list = queryRunner.query(this.connection, sql, new MapListHandler(), params);
+			this.db.clear();
 			this.lastSql = sql;
 			this.sql_params = params;
 			if (!this.is_transaction) {
@@ -526,6 +530,7 @@ public class M {
 				params[integer] = where_data_list.get(integer);
 			}
 			map = this.queryRunner.query(this.connection, sql, new MapHandler(), params);
+			this.db.clear();
 			this.lastSql = sql;
 			this.sql_params = params;
 			if (!this.is_transaction) {
