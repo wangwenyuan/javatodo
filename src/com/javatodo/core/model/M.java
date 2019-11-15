@@ -446,6 +446,118 @@ public class M {
 	}
 
 	/**
+	 * 对于统计字段（通常指的是数字类型）的更新（增加）
+	 * 
+	 * @param data
+	 *            Map<String, Object> 数据参数
+	 * @throws SQLException<br>
+	 *             示例<br>
+	 *             <br>
+	 *             M m=new M("web");//实例化M对象;<br>
+	 *             m.where("id=1").setInc("num", 1);
+	 */
+	public void setInc(String field, Integer value) throws SQLException {
+		if (this.connection == null) {
+			this.connection = MC.get_connection();
+		}
+		if (this.connection != null) {
+			this.db.setInc(field, value);
+			String sql = this.db.get_sql();
+			this.queryRunner.update(this.connection, sql);
+			this.db.clear();
+			this.lastSql = sql;
+			this.sql_params = "";
+			if (!this.is_transaction) {
+				this.close();
+			}
+		}
+	}
+
+	/**
+	 * 对于统计字段（通常指的是数字类型）加1
+	 * 
+	 * @param data
+	 *            Map<String, Object> 数据参数
+	 * @throws SQLException<br>
+	 *             示例<br>
+	 *             <br>
+	 *             M m=new M("web");//实例化M对象;<br>
+	 *             m.where("id=1").setInc("num");
+	 */
+	public void setInc(String field) throws SQLException {
+		if (this.connection == null) {
+			this.connection = MC.get_connection();
+		}
+		if (this.connection != null) {
+			this.db.setInc(field);
+			String sql = this.db.get_sql();
+			this.queryRunner.update(this.connection, sql);
+			this.db.clear();
+			this.lastSql = sql;
+			this.sql_params = "";
+			if (!this.is_transaction) {
+				this.close();
+			}
+		}
+	}
+
+	/**
+	 * 对于统计字段（通常指的是数字类型）的更新（减少）
+	 * 
+	 * @param data
+	 *            Map<String, Object> 数据参数
+	 * @throws SQLException<br>
+	 *             示例<br>
+	 *             <br>
+	 *             M m=new M("web");//实例化M对象;<br>
+	 *             m.where("id=1").setDec("num", 1);
+	 */
+	public void setDec(String field, Integer value) throws SQLException {
+		if (this.connection == null) {
+			this.connection = MC.get_connection();
+		}
+		if (this.connection != null) {
+			this.db.setDec(field, value);
+			String sql = this.db.get_sql();
+			this.queryRunner.update(this.connection, sql);
+			this.db.clear();
+			this.lastSql = sql;
+			this.sql_params = "";
+			if (!this.is_transaction) {
+				this.close();
+			}
+		}
+	}
+
+	/**
+	 * 对于统计字段（通常指的是数字类型）减1
+	 * 
+	 * @param data
+	 *            Map<String, Object> 数据参数
+	 * @throws SQLException<br>
+	 *             示例<br>
+	 *             <br>
+	 *             M m=new M("web");//实例化M对象;<br>
+	 *             m.where("id=1").setDec("num");
+	 */
+	public void setDec(String field) throws SQLException {
+		if (this.connection == null) {
+			this.connection = MC.get_connection();
+		}
+		if (this.connection != null) {
+			this.db.setDec(field);
+			String sql = this.db.get_sql();
+			this.queryRunner.update(this.connection, sql);
+			this.db.clear();
+			this.lastSql = sql;
+			this.sql_params = "";
+			if (!this.is_transaction) {
+				this.close();
+			}
+		}
+	}
+
+	/**
 	 * 删除数据库中的某条记录
 	 * 
 	 * @throws SQLException<br>
