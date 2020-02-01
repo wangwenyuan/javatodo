@@ -35,11 +35,14 @@ public class M {
 	private Object sql_params;
 	private boolean is_transaction = false;
 
+	private Integer dbIndex = 0;
+
 	/**
 	 * 实例化M对象
 	 */
 	public M() {
-		this.connection = MC.get_connection();
+		this.dbIndex = 0;
+		this.connection = MC.get_connection(this.dbIndex);
 		if (this.connection == null) {
 			System.out.println("找不到数据源");
 		} else {
@@ -56,6 +59,7 @@ public class M {
 	 * 实例化M对象
 	 */
 	public M(Integer dbIndex) {
+		this.dbIndex = dbIndex;
 		this.connection = MC.get_connection(dbIndex);
 		if (this.connection == null) {
 			System.out.println("找不到数据源");
@@ -77,7 +81,7 @@ public class M {
 	 * @throws Exception
 	 */
 	public M(String table_name) {
-		this.connection = MC.get_connection();
+		this.connection = MC.get_connection(this.dbIndex);
 		if (this.connection == null) {
 			System.out.println("找不到数据源");
 		} else {
@@ -133,7 +137,7 @@ public class M {
 		if (this.connection != null) {
 			this.connection.setAutoCommit(false);
 		} else {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 			if (this.connection != null) {
 				this.connection.setAutoCommit(false);
 			}
@@ -186,7 +190,8 @@ public class M {
 	 *         <br>
 	 *         示例：<br>
 	 *         M m=new M("javatodo");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
-	 *         Map&lt;String, W&gt; w=new HashMap&lt;String, W&gt;();//实例化查询条件<br>
+	 *         Map&lt;String, W&gt; w=new HashMap&lt;String, W&gt;();//实例化查询条件
+	 *         <br>
 	 *         w.put("id",new W("=",1));//设置查询条件<br>
 	 *         w.put("is_del",new W("=",0));//设置查询条件<br>
 	 *         List&lt;Map&lt;String, Object&gt;&gt;
@@ -245,7 +250,8 @@ public class M {
 	 *         示例：<br>
 	 *         M m=new M("javatodo");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
 	 *         List&lt;Map&lt;String, Object&gt;&gt;
-	 *         list=m.where("is_del=0").order("id desc").select();//将查询条件传入查询方法<br>
+	 *         list=m.where("is_del=0").order("id desc").select();//将查询条件传入查询方法
+	 *         <br>
 	 *         所生成的sql语句是：select * from javatodo where `is_del`=0 order by id
 	 *         desc<br>
 	 */
@@ -310,7 +316,8 @@ public class M {
 	 *         List&lt;Map&lt;String,Object&gt;&gt; list=
 	 *         m.alias("j").join("user","as u on
 	 *         j.uid=u.id").where("u.id=1").select();<br>
-	 *         生成的sql:select * from javatodo as j inner join user as u on j.uid=u.id
+	 *         生成的sql:select * from javatodo as j inner join user as u on
+	 *         j.uid=u.id
 	 */
 	public M join(String table_name, String on_sql) {
 		this.db.join(table_name, on_sql);
@@ -333,7 +340,8 @@ public class M {
 	 *         List&lt;Map&lt;String,Object&gt;&gt; list=
 	 *         m.alias("j").join("user","as u on
 	 *         j.uid=u.id","left").where("u.id=1").select();<br>
-	 *         生成的sql:select * from javatodo as j left join user as u on j.uid=u.id
+	 *         生成的sql:select * from javatodo as j left join user as u on
+	 *         j.uid=u.id
 	 */
 	public M join(String table_name, String on_sql, String type) {
 		this.db.join(table_name, on_sql, type);
@@ -371,14 +379,15 @@ public class M {
 	 *             <br>
 	 *             示例：<br>
 	 *             M m=new M("javatodo");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
-	 *             Map&lt;String,Object&gt;d=new HashMap&lt;String,Object&gt;();<br>
+	 *             Map&lt;String,Object&gt;d=new HashMap&lt;String,Object&gt;();
+	 *             <br>
 	 *             d.put("name","javatodo");<br>
 	 *             d.put("author","wangwenyuan");<br>
 	 *             m.data(d).add();<br>
 	 */
 	public Object add() throws SQLException {
 		if (this.connection == null) {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 		}
 		Object lastId = null;
 		if (this.connection != null) {
@@ -413,14 +422,15 @@ public class M {
 	 *             示例<br>
 	 *             <br>
 	 *             M m=new M("web");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
-	 *             Map&lt;String,Object&gt;d=new HashMap&lt;String,Object&gt;();<br>
+	 *             Map&lt;String,Object&gt;d=new HashMap&lt;String,Object&gt;();
+	 *             <br>
 	 *             d.put("name","javatodo");<br>
 	 *             d.put("url","javatodo.com");<br>
 	 *             m.where("id=1").save(d);
 	 */
 	public void save(Map<String, Object> data) throws SQLException {
 		if (this.connection == null) {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			this.db.save(data);
@@ -458,7 +468,7 @@ public class M {
 	 */
 	public void setInc(String field, Integer value) throws SQLException {
 		if (this.connection == null) {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			this.db.setInc(field, value);
@@ -486,7 +496,7 @@ public class M {
 	 */
 	public void setInc(String field) throws SQLException {
 		if (this.connection == null) {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			this.db.setInc(field);
@@ -514,7 +524,7 @@ public class M {
 	 */
 	public void setDec(String field, Integer value) throws SQLException {
 		if (this.connection == null) {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			this.db.setDec(field, value);
@@ -542,7 +552,7 @@ public class M {
 	 */
 	public void setDec(String field) throws SQLException {
 		if (this.connection == null) {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			this.db.setDec(field);
@@ -568,7 +578,7 @@ public class M {
 	 */
 	public void delete() throws SQLException {
 		if (this.connection == null) {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			this.db.delete();
@@ -597,7 +607,7 @@ public class M {
 	public List<Map<String, Object>> select() throws SQLException {
 		List<Map<String, Object>> list = new ArrayList<>();
 		if (this.connection == null) {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			this.db.select();
@@ -630,7 +640,7 @@ public class M {
 	public Map<String, Object> find() throws SQLException {
 		Map<String, Object> map = null;
 		if (this.connection == null) {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			map = new HashMap<>();
@@ -664,7 +674,7 @@ public class M {
 	public Object getField(String field_name) throws SQLException {
 		Object object = null;
 		if (this.connection == null) {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			object = new Object();
@@ -698,7 +708,7 @@ public class M {
 	public List<Map<String, Object>> query(String sql) throws SQLException {
 		List<Map<String, Object>> list = new ArrayList<>();
 		if (this.connection == null) {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			list = queryRunner.query(this.connection, sql, new MapListHandler());
@@ -726,7 +736,7 @@ public class M {
 	public List<Map<String, Object>> query(String sql, Object... params) throws SQLException {
 		List<Map<String, Object>> list = new ArrayList<>();
 		if (this.connection == null) {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			list = queryRunner.query(this.connection, sql, new MapListHandler(), params);
@@ -749,7 +759,7 @@ public class M {
 	 */
 	public Integer count() throws SQLException {
 		if (this.connection == null) {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			Object count = this.getField("count(*)");
@@ -775,7 +785,7 @@ public class M {
 	 */
 	public void execute(String sql) throws SQLException {
 		if (this.connection == null) {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			this.queryRunner.update(this.connection, sql);
@@ -798,7 +808,7 @@ public class M {
 	 */
 	public void execute(String sql, Object... params) throws SQLException {
 		if (this.connection == null) {
-			this.connection = MC.get_connection();
+			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			this.queryRunner.update(this.connection, sql, params);
