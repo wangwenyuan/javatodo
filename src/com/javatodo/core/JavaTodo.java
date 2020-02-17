@@ -15,6 +15,8 @@
  */
 package com.javatodo.core;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.javatodo.config.C;
 import com.javatodo.core.router.RC;
 import com.javatodo.core.router.Router;
+import com.javatodo.core.tools.T;
 
 public class JavaTodo {
 	static boolean is_init = false;
@@ -66,10 +69,15 @@ public class JavaTodo {
 				javatodo_method.invoke(javatodo_object);
 			}
 			javatodo_after.invoke(javatodo_object);
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException
-				| SecurityException | IllegalArgumentException | InvocationTargetException e) {
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			C.log_file_path = servlet.getServletContext().getRealPath("/") + "WEB-INF/log/";
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw, true));
+			String str = sw.toString();
+			str = "\n==========================" + T.date("yyyy-MM-dd", T.time()) + "============================\n" + str;
+			T.create_log("javatodo_error_" + T.date("yyyy-MM-dd", T.time()) + ".log", str);
 		}
 	}
 }
