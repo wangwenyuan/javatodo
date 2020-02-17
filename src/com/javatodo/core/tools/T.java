@@ -626,7 +626,7 @@ public class T {
 	public static void javatodo_sql_log(Connection connection, String sql) {
 		String string = "\n" + "connect_id：" + connection.hashCode() + "\n";
 		string = string + "sql语句：" + sql + "\n";
-		T.create_log("javatodo_error_" + T.date("yyyy-MM-dd", T.time()) + ".log", string);
+		T.create_log("javatodo_sql_" + T.date("yyyy-MM-dd", T.time()) + ".log", string);
 	}
 
 	// 判断是否是微信浏览器
