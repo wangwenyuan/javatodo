@@ -15,8 +15,6 @@
  */
 package com.javatodo.core;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -73,11 +71,7 @@ public class JavaTodo {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			C.log_file_path = servlet.getServletContext().getRealPath("/") + "WEB-INF/log/";
-			StringWriter sw = new StringWriter();
-			e.printStackTrace(new PrintWriter(sw, true));
-			String str = sw.toString();
-			str = "\n==========================" + T.date("yyyy-MM-dd", T.time()) + "============================\n" + str;
-			T.create_log("javatodo_error_" + T.date("yyyy-MM-dd", T.time()) + ".log", str);
+			T.javatodo_error_log(e);
 		}
 	}
 }

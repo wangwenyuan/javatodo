@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.javatodo.config.C;
+import com.javatodo.core.tools.T;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 public class MC {
@@ -59,9 +60,7 @@ public class MC {
 					} else {
 						port = MC.db_port.get(i);
 					}
-					source.setJdbcUrl("jdbc:" + MC.db_type + "://" + MC.db_host.get(i) + ":" + port + "/"
-							+ MC.db_name.get(i) + "??useUnicode=true&characterEncoding=" + C.default_encoding
-							+ "&zeroDateTimeBehavior=convertToNull");
+					source.setJdbcUrl("jdbc:" + MC.db_type + "://" + MC.db_host.get(i) + ":" + port + "/" + MC.db_name.get(i) + "??useUnicode=true&characterEncoding=" + C.default_encoding + "&zeroDateTimeBehavior=convertToNull");
 					source.setUser(MC.db_username.get(i));
 					source.setPassword(MC.db_password.get(i));
 					MC.dataSource.add(source);
@@ -70,6 +69,7 @@ public class MC {
 			} catch (PropertyVetoException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				T.javatodo_error_log(e);
 			}
 		}
 	}
@@ -82,6 +82,7 @@ public class MC {
 			try {
 				connection = MC.dataSource.get(0).getConnection();
 			} catch (SQLException e) {
+				T.javatodo_error_log(e);
 			}
 		}
 		return connection;
@@ -99,6 +100,7 @@ public class MC {
 					connection = MC.dataSource.get(dbIndex).getConnection();
 				}
 			} catch (SQLException e) {
+				T.javatodo_error_log(e);
 			}
 		}
 		return connection;

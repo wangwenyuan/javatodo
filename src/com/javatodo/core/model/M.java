@@ -26,6 +26,8 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 
+import com.javatodo.core.tools.T;
+
 public class M {
 	private Connection connection = null;
 	private QueryRunner queryRunner = new QueryRunner();
@@ -850,6 +852,7 @@ public class M {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				T.javatodo_error_log(e);
 			}
 		}
 	}

@@ -22,6 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.text.ParseException;
@@ -610,6 +612,14 @@ public class T {
 			}
 		}
 		return false;
+	}
+
+	public static void javatodo_error_log(Exception e) {
+		StringWriter sw = new StringWriter();
+		e.printStackTrace(new PrintWriter(sw, true));
+		String str = sw.toString();
+		str = "\n==========================" + T.date("yyyy-MM-dd HH:mm:ss", T.time()) + "============================\n" + str;
+		T.create_log("javatodo_error_" + T.date("yyyy-MM-dd", T.time()) + ".log", str);
 	}
 
 	// 判断是否是微信浏览器
