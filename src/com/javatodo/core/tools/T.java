@@ -26,6 +26,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
+import java.sql.Connection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -620,6 +621,12 @@ public class T {
 		String str = sw.toString();
 		str = "\n==========================" + T.date("yyyy-MM-dd HH:mm:ss", T.time()) + "============================\n" + str;
 		T.create_log("javatodo_error_" + T.date("yyyy-MM-dd", T.time()) + ".log", str);
+	}
+
+	public static void javatodo_sql_log(Connection connection, String sql) {
+		String string = "\n" + "connect_id：" + connection.hashCode() + "\n";
+		string = string + "sql语句：" + sql + "\n";
+		T.create_log("javatodo_error_" + T.date("yyyy-MM-dd", T.time()) + ".log", string);
 	}
 
 	// 判断是否是微信浏览器

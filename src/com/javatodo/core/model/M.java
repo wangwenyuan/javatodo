@@ -144,6 +144,7 @@ public class M {
 				this.connection.setAutoCommit(false);
 			}
 		}
+		T.javatodo_sql_log(connection, "开启transaction");
 	}
 
 	/**
@@ -158,6 +159,7 @@ public class M {
 			this.is_transaction = false;
 			if (this.connection != null) {
 				this.connection.commit();
+				T.javatodo_sql_log(connection, "执行commit");
 				this.close();
 			}
 		}
@@ -174,10 +176,12 @@ public class M {
 			if (this.connection != null) {
 				try {
 					this.connection.rollback();
+					T.javatodo_sql_log(connection, "执行rollback");
 					this.close();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					T.javatodo_error_log(e);
 				}
 			}
 		}
@@ -401,7 +405,9 @@ public class M {
 				params[integer] = add_data_list.get(integer);
 			}
 			this.queryRunner.update(this.connection, sql, params);
+			T.javatodo_sql_log(connection, sql + "--------参数：" + add_data_list.toString());
 			List<Map<String, Object>> list = this.query("SELECT LAST_INSERT_ID()");
+			T.javatodo_sql_log(connection, "SELECT LAST_INSERT_ID()");
 			if (list.size() > 0) {
 				lastId = list.get(0).get("LAST_INSERT_ID()");
 			}
@@ -448,6 +454,7 @@ public class M {
 				params[integer] = where_data_list.get(integer - update_data_list.size());
 			}
 			this.queryRunner.update(this.connection, sql, params);
+			T.javatodo_sql_log(connection, sql + "--------update参数：" + update_data_list.toString() + "--------where参数：" + where_data_list);
 			this.db.clear();
 			this.lastSql = sql;
 			this.sql_params = params;
@@ -476,6 +483,7 @@ public class M {
 			this.db.setInc(field, value);
 			String sql = this.db.get_sql();
 			this.queryRunner.update(this.connection, sql);
+			T.javatodo_sql_log(connection, sql);
 			this.db.clear();
 			this.lastSql = sql;
 			this.sql_params = "";
@@ -504,6 +512,7 @@ public class M {
 			this.db.setInc(field);
 			String sql = this.db.get_sql();
 			this.queryRunner.update(this.connection, sql);
+			T.javatodo_sql_log(connection, sql);
 			this.db.clear();
 			this.lastSql = sql;
 			this.sql_params = "";
@@ -532,6 +541,7 @@ public class M {
 			this.db.setDec(field, value);
 			String sql = this.db.get_sql();
 			this.queryRunner.update(this.connection, sql);
+			T.javatodo_sql_log(connection, sql);
 			this.db.clear();
 			this.lastSql = sql;
 			this.sql_params = "";
@@ -560,6 +570,7 @@ public class M {
 			this.db.setDec(field);
 			String sql = this.db.get_sql();
 			this.queryRunner.update(this.connection, sql);
+			T.javatodo_sql_log(connection, sql);
 			this.db.clear();
 			this.lastSql = sql;
 			this.sql_params = "";
@@ -591,6 +602,7 @@ public class M {
 				params[integer] = where_data_list.get(integer);
 			}
 			this.queryRunner.update(this.connection, sql, params);
+			T.javatodo_sql_log(connection, sql + "---------------where参数：" + where_data_list.toString());
 			this.db.clear();
 			this.lastSql = sql;
 			this.sql_params = params;
@@ -621,6 +633,7 @@ public class M {
 			}
 
 			list = queryRunner.query(this.connection, sql, new MapListHandler(), params);
+			T.javatodo_sql_log(connection, sql + "--------where参数：" + where_data_list.toString());
 			this.db.clear();
 			this.lastSql = sql;
 			this.sql_params = params;
@@ -654,6 +667,7 @@ public class M {
 				params[integer] = where_data_list.get(integer);
 			}
 			map = this.queryRunner.query(this.connection, sql, new MapHandler(), params);
+			T.javatodo_sql_log(connection, sql + "-----------where参数：" + where_data_list.toString());
 			this.db.clear();
 			this.lastSql = sql;
 			this.sql_params = params;
@@ -714,6 +728,7 @@ public class M {
 		}
 		if (this.connection != null) {
 			list = queryRunner.query(this.connection, sql, new MapListHandler());
+			T.javatodo_sql_log(connection, sql);
 			this.lastSql = sql;
 			this.sql_params = "";
 			if (!this.is_transaction) {
@@ -742,6 +757,7 @@ public class M {
 		}
 		if (this.connection != null) {
 			list = queryRunner.query(this.connection, sql, new MapListHandler(), params);
+			T.javatodo_sql_log(connection, sql + "------------参数：" + params.toString());
 			this.lastSql = sql;
 			this.sql_params = params;
 			if (!this.is_transaction) {
@@ -791,6 +807,7 @@ public class M {
 		}
 		if (this.connection != null) {
 			this.queryRunner.update(this.connection, sql);
+			T.javatodo_sql_log(connection, sql);
 			this.lastSql = sql;
 			this.sql_params = "";
 			if (!this.is_transaction) {
@@ -814,6 +831,7 @@ public class M {
 		}
 		if (this.connection != null) {
 			this.queryRunner.update(this.connection, sql, params);
+			T.javatodo_sql_log(connection, sql + "----------参数：" + params.toString());
 			this.lastSql = sql;
 			this.sql_params = params;
 			if (!this.is_transaction) {
@@ -848,6 +866,7 @@ public class M {
 		if (this.connection != null) {
 			try {
 				this.connection.close();
+				T.javatodo_sql_log(connection, "connect关闭了");
 				this.connection = null;
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block

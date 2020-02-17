@@ -81,6 +81,7 @@ public class MC {
 		} else {
 			try {
 				connection = MC.dataSource.get(0).getConnection();
+				T.javatodo_sql_log(connection, "connect创建");
 			} catch (SQLException e) {
 				T.javatodo_error_log(e);
 			}
@@ -98,6 +99,7 @@ public class MC {
 					System.out.println("不存在该数据库链接");
 				} else {
 					connection = MC.dataSource.get(dbIndex).getConnection();
+					T.javatodo_sql_log(connection, "connect创建");
 				}
 			} catch (SQLException e) {
 				T.javatodo_error_log(e);
