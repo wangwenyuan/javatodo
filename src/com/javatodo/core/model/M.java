@@ -407,7 +407,7 @@ public class M {
 			this.queryRunner.update(this.connection, sql, params);
 			T.javatodo_sql_log(connection, sql + "--------参数：" + add_data_list.toString());
 			List<Map<String, Object>> list = this.query("SELECT LAST_INSERT_ID()");
-			T.javatodo_sql_log(connection, "SELECT LAST_INSERT_ID()");
+			// T.javatodo_sql_log(connection, "SELECT LAST_INSERT_ID()");
 			if (list.size() > 0) {
 				lastId = list.get(0).get("LAST_INSERT_ID()");
 			}

@@ -173,6 +173,9 @@ public class Controller {
 		} else {
 			HttpSession session = request.getSession();
 			Object value = session.getAttribute(name);
+			if (value == null) {
+				value = "";
+			}
 			return value;
 		}
 	}
