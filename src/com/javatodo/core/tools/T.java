@@ -475,7 +475,9 @@ public class T {
 
 	// 记录日志
 	public static void create_log(String log_file, String content) {
-		writeFile(C.log_file_path + log_file, content + "--------" + T.now() + "\n\r");
+		if (!C.log_file_path.equals("")) {
+			writeFile(C.log_file_path + log_file, content + "--------" + T.now() + "\n\r");
+		}
 	}
 
 	// 删除目录（遍历删除目录内的文件以及子目录）
@@ -605,7 +607,8 @@ public class T {
 
 	// 判断是否是手机浏览器
 	public static boolean isMobile(HttpServletRequest request) {
-		List<String> mobile_agents = Arrays.asList("240x320", "acer", "acoon", "acs-", "abacho", "ahong", "airness", "alcatel", "amoi", "android", "anywhereyougo.com", "applewebkit/525", "applewebkit/532", "asus", "audio", "au-mic", "avantogo", "becker", "benq", "bilbo", "bird", "blackberry", "blazer", "bleu", "cdm-", "compal", "coolpad", "danger", "dbtel", "dopod", "elaine", "eric", "etouch", "fly ", "fly_", "fly-", "go.web", "goodaccess", "gradiente", "grundig", "haier", "hedy", "hitachi", "htc", "huawei", "hutchison", "inno", "ipad", "ipaq", "iphone", "ipod", "jbrowser", "kddi", "kgt", "kwc", "lenovo", "lg ", "lg2", "lg3", "lg4", "lg5", "lg7", "lg8", "lg9", "lg-", "lge-", "lge9", "longcos", "maemo", "mercator", "meridian", "micromax", "midp", "mini", "mitsu", "mmm", "mmp", "mobi", "mot-", "moto", "nec-", "netfront", "newgen", "nexian", "nf-browser", "nintendo", "nitro", "nokia", "nook", "novarra", "obigo", "palm", "panasonic", "pantech", "philips", "phone", "pg-", "playstation", "pocket", "pt-", "qc-", "qtek", "rover", "sagem", "sama", "samu", "sanyo", "samsung", "sch-", "scooter", "sec-", "sendo", "sgh-", "sharp", "siemens", "sie-", "softbank", "sony", "spice", "sprint", "spv", "symbian", "tablet", "talkabout", "tcl-", "teleca", "telit", "tianyu", "tim-", "toshiba", "tsm", "up.browser", "utec", "utstar", "verykool", "virgin", "vk-", "voda", "voxtel", "vx", "wap", "wellco", "wig browser", "wii", "windows ce", "wireless", "xda", "xde", "zte");
+		List<String> mobile_agents = Arrays.asList("240x320", "acer", "acoon", "acs-", "abacho", "ahong", "airness", "alcatel", "amoi", "android", "anywhereyougo.com", "applewebkit/525", "applewebkit/532", "asus", "audio", "au-mic", "avantogo", "becker", "benq", "bilbo", "bird", "blackberry", "blazer", "bleu", "cdm-", "compal", "coolpad", "danger", "dbtel", "dopod", "elaine", "eric", "etouch", "fly ", "fly_", "fly-", "go.web", "goodaccess", "gradiente", "grundig", "haier", "hedy", "hitachi", "htc", "huawei", "hutchison", "inno", "ipad", "ipaq", "iphone", "ipod", "jbrowser", "kddi", "kgt", "kwc", "lenovo", "lg ", "lg2", "lg3", "lg4", "lg5", "lg7", "lg8", "lg9", "lg-", "lge-", "lge9", "longcos", "maemo", "mercator", "meridian", "micromax", "midp", "mini", "mitsu", "mmm", "mmp", "mobi", "mot-", "moto", "nec-", "netfront", "newgen", "nexian", "nf-browser", "nintendo", "nitro", "nokia", "nook", "novarra", "obigo", "palm", "panasonic", "pantech", "philips", "phone", "pg-", "playstation",
+				"pocket", "pt-", "qc-", "qtek", "rover", "sagem", "sama", "samu", "sanyo", "samsung", "sch-", "scooter", "sec-", "sendo", "sgh-", "sharp", "siemens", "sie-", "softbank", "sony", "spice", "sprint", "spv", "symbian", "tablet", "talkabout", "tcl-", "teleca", "telit", "tianyu", "tim-", "toshiba", "tsm", "up.browser", "utec", "utstar", "verykool", "virgin", "vk-", "voda", "voxtel", "vx", "wap", "wellco", "wig browser", "wii", "windows ce", "wireless", "xda", "xde", "zte");
 		String user_agent = request.getHeader("User-Agent").toLowerCase();
 		for (Integer i = 0; i < mobile_agents.size(); i = i + 1) {
 			if (user_agent.contains(mobile_agents.get(i))) {
@@ -620,13 +623,13 @@ public class T {
 		e.printStackTrace(new PrintWriter(sw, true));
 		String str = sw.toString();
 		str = "\n==========================" + T.date("yyyy-MM-dd HH:mm:ss", T.time()) + "============================\n" + str;
-		T.create_log("javatodo_error_" + T.date("yyyy-MM-dd", T.time()) + ".log", str);
+		T.create_log("javatodo_error_log/" + T.date("yyyy-MM-dd", T.time()) + ".log", str);
 	}
 
 	public static void javatodo_sql_log(Connection connection, String sql) {
 		String string = "\n" + "connect_id：" + connection.hashCode() + "\n";
 		string = string + "sql语句：" + sql + "\n";
-		T.create_log("javatodo_sql_" + T.date("yyyy-MM-dd", T.time()) + ".log", string);
+		T.create_log("javatodo_sql_log/" + T.date("yyyy-MM-dd", T.time()) + ".log", string);
 	}
 
 	// 判断是否是微信浏览器
