@@ -31,8 +31,17 @@ import com.javatodo.core.tools.T;
 
 public class JavaTodo {
 	static boolean is_init = false;
+	private String app = "";
 
 	public JavaTodo() {
+		if (!JavaTodo.is_init) {
+			C.set_router();
+			JavaTodo.is_init = true;
+		}
+	}
+
+	public JavaTodo(String appName) {
+		this.app = appName + ".";
 		if (!JavaTodo.is_init) {
 			C.set_router();
 			JavaTodo.is_init = true;
@@ -46,7 +55,7 @@ public class JavaTodo {
 		String class_name = RC.getRC(routerMap.get("m"), routerMap.get("c"));
 		String function_name = RC.getRC(routerMap.get("m"), routerMap.get("c"), routerMap.get("a"));
 		try {
-			Class<?> javatodo_class = Class.forName(package_name + "." + class_name);
+			Class<?> javatodo_class = Class.forName(this.app + package_name + "." + class_name);
 			Object javatodo_object = javatodo_class.newInstance();
 			Class<?>[] javatodo_args_class = { HttpServletRequest.class, HttpServletResponse.class, HttpServlet.class };
 			Object[] javatodo_args = { request, response, servlet };
