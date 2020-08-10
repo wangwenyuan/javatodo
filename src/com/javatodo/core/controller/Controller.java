@@ -912,4 +912,11 @@ public class Controller {
 		this.assign("url", session("javatodo_jump_url"));
 		this.view.flush(request, response, servlet, path);
 	}
+
+	/**
+	 * 判断是否是javatodo的控制器
+	 */
+	public boolean check_if_it_is_a_javatodo_controller() {
+		return true;
+	}
 }

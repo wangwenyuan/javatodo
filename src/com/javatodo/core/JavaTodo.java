@@ -49,6 +49,7 @@ public class JavaTodo {
 	}
 
 	public void setRequestAndResponse(HttpServletRequest request, HttpServletResponse response, HttpServlet servlet) {
+		Boolean ControllerCheck = false;
 		Router router = new Router(request);
 		Map<String, String> routerMap = router.parse();
 		String package_name = RC.getRC(routerMap.get("m"));
@@ -56,7 +57,20 @@ public class JavaTodo {
 		String function_name = RC.getRC(routerMap.get("m"), routerMap.get("c"), routerMap.get("a"));
 		try {
 			Class<?> javatodo_class = Class.forName(this.app + package_name + "." + class_name);
+			if (null == javatodo_class) {
+				return;
+			}
 			Object javatodo_object = javatodo_class.newInstance();
+			Method[] methods = javatodo_class.getMethods();
+			for (Integer i = 0; i < methods.length; i = i + 1) {
+				if (methods[i].getName().equals("check_if_it_is_a_javatodo_controller")) {
+					Method check_if_it_is_a_javatodo_controller = javatodo_class.getMethod("check_if_it_is_a_javatodo_controller");
+					ControllerCheck = (Boolean) check_if_it_is_a_javatodo_controller.invoke(javatodo_object);
+				}
+			}
+			if (!ControllerCheck) {
+				return;
+			}
 			Class<?>[] javatodo_args_class = { HttpServletRequest.class, HttpServletResponse.class, HttpServlet.class };
 			Object[] javatodo_args = { request, response, servlet };
 			Method javatodo_set_parameter = javatodo_class.getMethod("setRequestAndResponse", javatodo_args_class);
