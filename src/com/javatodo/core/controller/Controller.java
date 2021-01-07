@@ -898,7 +898,7 @@ public class Controller {
 	 * @throws ServletException
 	 * @throws TemplateException
 	 */
-	public void jump() throws IOException, ServletException, TemplateException {
+	public void jumpPage() throws IOException, ServletException, TemplateException {
 		String root_path = "";
 		if (this.templateSuffix.equals(".jsp")) {
 			root_path = "/" + this.templatePath;

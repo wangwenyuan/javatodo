@@ -54,7 +54,9 @@ public class JavaTodo {
 		Map<String, String> routerMap = router.parse();
 		String package_name = RC.getRC(routerMap.get("m"));
 		String class_name = RC.getRC(routerMap.get("m"), routerMap.get("c"));
+		class_name = class_name + "Controller";
 		String function_name = RC.getRC(routerMap.get("m"), routerMap.get("c"), routerMap.get("a"));
+		function_name = function_name + "Page";
 		try {
 			Class<?> javatodo_class = Class.forName(this.app + package_name + "." + class_name);
 			if (null == javatodo_class) {
