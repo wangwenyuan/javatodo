@@ -23,12 +23,10 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import org.apache.commons.codec.binary.Base64;
 
 public class RSATools {
 	private static Cipher cipher;
-
 	static {
 		try {
 			cipher = Cipher.getInstance("RSA");
@@ -73,8 +71,7 @@ public class RSATools {
 	/**
 	 * 生成密钥对
 	 * 
-	 * @param filePath
-	 *            生成密钥的路径
+	 * @param filePath 生成密钥的路径
 	 * @return
 	 */
 	public static Map<String, String> createGenerateKeyPair(String filePath) {
@@ -119,13 +116,12 @@ public class RSATools {
 	/**
 	 * 得到公钥
 	 * 
-	 * @param key
-	 *            密钥字符串（经过base64编码）
+	 * @param key 密钥字符串（经过base64编码）
 	 * @throws Exception
 	 */
 	private static PublicKey getPublicKey(String key) throws Exception {
 		byte[] keyBytes;
-		keyBytes = (new BASE64Decoder()).decodeBuffer(key);
+		keyBytes = (new Base64()).decode(key);
 		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
 		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 		PublicKey publicKey = keyFactory.generatePublic(keySpec);
@@ -135,13 +131,12 @@ public class RSATools {
 	/**
 	 * 得到私钥
 	 * 
-	 * @param key
-	 *            密钥字符串（经过base64编码）
+	 * @param key 密钥字符串（经过base64编码）
 	 * @throws Exception
 	 */
 	private static PrivateKey getPrivateKey(String key) throws Exception {
 		byte[] keyBytes;
-		keyBytes = (new BASE64Decoder()).decodeBuffer(key);
+		keyBytes = (new Base64()).decode(key);
 		PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
 		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 		PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
@@ -155,24 +150,22 @@ public class RSATools {
 	 */
 	private static String getKeyString(Key key) throws Exception {
 		byte[] keyBytes = key.getEncoded();
-		String s = (new BASE64Encoder()).encode(keyBytes);
+		String s = (new Base64()).encodeToString(keyBytes);
 		return s;
 	}
 
 	/**
 	 * 使用公钥对明文进行加密，返回BASE64编码的字符串
 	 * 
-	 * @param publicKey
-	 *            公钥
-	 * @param plainText
-	 *            明文
+	 * @param publicKey 公钥
+	 * @param plainText 明文
 	 * @return
 	 */
 	public static String encrypt(PublicKey publicKey, String plainText) {
 		try {
 			cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 			byte[] enBytes = cipher.doFinal(plainText.getBytes());
-			return (new BASE64Encoder()).encode(enBytes);
+			return (new Base64()).encodeToString(enBytes);
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
@@ -186,10 +179,8 @@ public class RSATools {
 	/**
 	 * 使用keystore对明文进行加密
 	 * 
-	 * @param publicKeyFilePath
-	 *            公钥文件路径
-	 * @param plainText
-	 *            明文
+	 * @param publicKeyFilePath 公钥文件路径
+	 * @param plainText         明文
 	 * @return
 	 */
 	public static String publicKeyFileEncrypt(String publicKeyFilePath, String plainText) {
@@ -205,7 +196,7 @@ public class RSATools {
 			fr.close();
 			cipher.init(Cipher.ENCRYPT_MODE, getPublicKey(publicKeyString));
 			byte[] enBytes = cipher.doFinal(plainText.getBytes());
-			return (new BASE64Encoder()).encode(enBytes);
+			return (new Base64()).encodeToString(enBytes);
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
@@ -221,17 +212,15 @@ public class RSATools {
 	/**
 	 * 使用公钥对明文进行加密
 	 * 
-	 * @param publicKey
-	 *            公钥
-	 * @param plainText
-	 *            明文
+	 * @param publicKey 公钥
+	 * @param plainText 明文
 	 * @return
 	 */
 	public static String encrypt(String publicKey, String plainText) {
 		try {
 			cipher.init(Cipher.ENCRYPT_MODE, getPublicKey(publicKey));
 			byte[] enBytes = cipher.doFinal(plainText.getBytes());
-			return (new BASE64Encoder()).encode(enBytes);
+			return (new Base64()).encodeToString(enBytes);
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
@@ -254,15 +243,13 @@ public class RSATools {
 	public static String decrypt(PrivateKey privateKey, String enStr) {
 		try {
 			cipher.init(Cipher.DECRYPT_MODE, privateKey);
-			byte[] deBytes = cipher.doFinal((new BASE64Decoder()).decodeBuffer(enStr));
+			byte[] deBytes = cipher.doFinal((new Base64()).decode(enStr));
 			return new String(deBytes);
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
 			e.printStackTrace();
 		} catch (BadPaddingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -271,16 +258,14 @@ public class RSATools {
 	/**
 	 * 使用私钥对密文进行解密
 	 * 
-	 * @param privateKey
-	 *            私钥
-	 * @param enStr
-	 *            密文
+	 * @param privateKey 私钥
+	 * @param enStr      密文
 	 * @return
 	 */
 	public static String decrypt(String privateKey, String enStr) {
 		try {
 			cipher.init(Cipher.DECRYPT_MODE, getPrivateKey(privateKey));
-			byte[] deBytes = cipher.doFinal((new BASE64Decoder()).decodeBuffer(enStr));
+			byte[] deBytes = cipher.doFinal((new Base64()).decode(enStr));
 			return new String(deBytes);
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
@@ -299,10 +284,8 @@ public class RSATools {
 	/**
 	 * 使用keystore对密文进行解密
 	 * 
-	 * @param privateKeystore
-	 *            私钥路径
-	 * @param enStr
-	 *            密文
+	 * @param privateKeystore 私钥路径
+	 * @param enStr           密文
 	 * @return
 	 */
 	public static String privateKeyFileDecrypt(String privateKeyFilePath, String enStr) {
@@ -317,7 +300,7 @@ public class RSATools {
 			br.close();
 			fr.close();
 			cipher.init(Cipher.DECRYPT_MODE, getPrivateKey(privateKeyString));
-			byte[] deBytes = cipher.doFinal((new BASE64Decoder()).decodeBuffer(enStr));
+			byte[] deBytes = cipher.doFinal((new Base64()).decode(enStr));
 			return new String(deBytes);
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
