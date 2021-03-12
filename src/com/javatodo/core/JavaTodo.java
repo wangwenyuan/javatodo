@@ -18,14 +18,12 @@ package com.javatodo.core;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.javatodo.config.C;
-import com.javatodo.core.router.RC;
 import com.javatodo.core.router.Router;
 import com.javatodo.core.tools.T;
 
@@ -41,7 +39,7 @@ public class JavaTodo {
 	}
 
 	public JavaTodo(String appName) {
-		this.app = appName + ".";
+		this.app = appName;
 		if (!JavaTodo.is_init) {
 			C.set_router();
 			JavaTodo.is_init = true;
@@ -50,15 +48,12 @@ public class JavaTodo {
 
 	public void setRequestAndResponse(HttpServletRequest request, HttpServletResponse response, HttpServlet servlet) {
 		Boolean ControllerCheck = false;
-		Router router = new Router(request);
-		Map<String, String> routerMap = router.parse();
-		String package_name = RC.getRC(routerMap.get("m"));
-		String class_name = RC.getRC(routerMap.get("m"), routerMap.get("c"));
-		class_name = class_name + "Controller";
-		String function_name = RC.getRC(routerMap.get("m"), routerMap.get("c"), routerMap.get("a"));
-		function_name = function_name + "Page";
+		Router router = new Router(request, app);
+		String package_name = router.PACKAGE_NAME;
+		String class_name = router.CLASS_NAME;
+		String function_name = router.FUNCTION_NAME;
 		try {
-			Class<?> javatodo_class = Class.forName(this.app + package_name + "." + class_name);
+			Class<?> javatodo_class = Class.forName(package_name + "." + class_name);
 			if (null == javatodo_class) {
 				return;
 			}
@@ -73,8 +68,8 @@ public class JavaTodo {
 			if (!ControllerCheck) {
 				return;
 			}
-			Class<?>[] javatodo_args_class = { HttpServletRequest.class, HttpServletResponse.class, HttpServlet.class };
-			Object[] javatodo_args = { request, response, servlet };
+			Class<?>[] javatodo_args_class = { HttpServletRequest.class, HttpServletResponse.class, HttpServlet.class, String.class };
+			Object[] javatodo_args = { request, response, servlet, app };
 			Method javatodo_set_parameter = javatodo_class.getMethod("setRequestAndResponse", javatodo_args_class);
 			javatodo_set_parameter.invoke(javatodo_object, javatodo_args);
 			Method javatodo_init = javatodo_class.getMethod("init");

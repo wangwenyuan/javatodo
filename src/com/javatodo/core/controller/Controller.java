@@ -57,6 +57,7 @@ public class Controller {
 	public HttpServlet servlet;
 	public View view;
 	public Map<String, String> routerMap = null;
+	public String APP_NAME = "";// app名称
 	public String MODULE_NAME = "";// 显示的模块名
 	public String CONTROLLER_NAME = "";// 显示的控制器名
 	public String ACTION_NAME = "";// 显示的方法名
@@ -71,7 +72,8 @@ public class Controller {
 	private String templateSuffix = ".html";
 	private String entrance = "";
 
-	public void setRequestAndResponse(HttpServletRequest request, HttpServletResponse response, HttpServlet servlet) {
+	public void setRequestAndResponse(HttpServletRequest request, HttpServletResponse response, HttpServlet servlet, String app) {
+		this.APP_NAME = app;
 		this.setParam(request, response, servlet);
 		this.setRouter(request);
 		this.response.setHeader("X-Powered-By", "JavaToDo");
@@ -123,8 +125,7 @@ public class Controller {
 
 	private void setRouter(HttpServletRequest request) {
 		// 设置路由参数
-		Router router = new Router(request);
-		this.routerMap = router.parse();
+		Router router = new Router(request, this.APP_NAME);
 		this.MODULE_NAME = router.MODULE_NAME;
 		this.CONTROLLER_NAME = router.CONTROLLER_NAME;
 		this.ACTION_NAME = router.ACTION_NAME;
@@ -643,21 +644,21 @@ public class Controller {
 		String[] paths = path.split("/");
 		Map<String, String> map = new HashMap<>();
 		if (paths.length == 3) {
-			map.put("m", RC.getRC(paths[0]));
-			map.put("c", RC.getRC(paths[0], paths[1]));
-			map.put("a", RC.getRC(paths[0], paths[1], paths[2]));
+			map.put("package_name", RC.getRC(paths[0]));
+			map.put("class_name", RC.getRC(paths[0], paths[1]));
+			map.put("function_name", RC.getRC(paths[0], paths[1], paths[2]));
 		}
 		if (paths.length == 2) {
-			map.put("m", PACKAGE_NAME);
-			map.put("c", RC.getRC(MODULE_NAME, paths[0]));
-			map.put("a", RC.getRC(MODULE_NAME, paths[0], paths[1]));
+			map.put("package_name", PACKAGE_NAME);
+			map.put("class_name", RC.getRC(MODULE_NAME, paths[0]));
+			map.put("function_name", RC.getRC(MODULE_NAME, paths[0], paths[1]));
 		}
 		if (paths.length == 1) {
-			map.put("m", PACKAGE_NAME);
-			map.put("c", CLASS_NAME);
-			map.put("a", RC.getRC(MODULE_NAME, CONTROLLER_NAME, paths[0]));
+			map.put("package_name", PACKAGE_NAME);
+			map.put("class_name", CLASS_NAME);
+			map.put("function_name", RC.getRC(MODULE_NAME, CONTROLLER_NAME, paths[0]));
 		}
-		path = root_path + "\\" + map.get("m").toString() + "\\" + map.get("c").toString() + "\\" + map.get("a").toString() + this.templateSuffix;
+		path = root_path + "\\" + map.get("package_name").toString() + "\\" + map.get("class_name").toString() + "\\" + map.get("function_name").toString() + this.templateSuffix;
 		this.tempConstant();
 		this.view.flush(request, response, servlet, path);
 	}
