@@ -54,6 +54,19 @@ public class Router {
 			}
 			map.put(entry.getKey(), value_arr[0]);
 		}
+
+		if (map.containsKey("m") && map.containsKey("c") && map.containsKey("a")) {
+			if (map.get("m").equals("com.javatodo.core.controller") && map.get("c").equals("Controller") && map.get("a").equals("jump")) {
+				this.PACKAGE_NAME = "com.javatodo.core.controller";
+				this.CLASS_NAME = "Controller";
+				this.FUNCTION_NAME = "jumpPage";
+				this.MODULE_NAME = "com.javatodo.core.controller";
+				this.CONTROLLER_NAME = "Controller";
+				this.ACTION_NAME = "jump";
+				return;
+			}
+		}
+
 		if (!map.containsKey("m")) {
 			map.put("m", this.MODULE_NAME);
 		} else {
@@ -77,6 +90,5 @@ public class Router {
 			this.ACTION_NAME = map.get("a");
 			this.FUNCTION_NAME = RC.getRC(map.get("m"), map.get("c"), map.get("a")) + "Page";
 		}
-
 	}
 }
