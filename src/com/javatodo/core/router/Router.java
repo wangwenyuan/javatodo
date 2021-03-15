@@ -32,6 +32,8 @@ public class Router {
 	public String CLASS_NAME = RC.getRC(C.default_module, C.default_controller) + "Controller";
 	public String FUNCTION_NAME = RC.getRC(C.default_module, C.default_controller, C.default_action) + "Page";
 
+	public Map<String, String> map = new HashMap<>();
+
 	public Router(HttpServletRequest request, String appName) {
 		this.request = request;
 		this.APP_NAME = appName;
@@ -40,8 +42,6 @@ public class Router {
 		} else {
 			this.PACKAGE_NAME = RC.getRC(C.default_module);
 		}
-
-		Map<String, String> map = new HashMap<>();
 		Map<String, String[]> queryMap = request.getParameterMap();
 		for (Map.Entry<String, String[]> entry : queryMap.entrySet()) {
 			String[] value_arr = entry.getValue();

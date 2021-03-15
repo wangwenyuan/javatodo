@@ -133,6 +133,8 @@ public class Controller {
 		this.PACKAGE_NAME = router.PACKAGE_NAME;
 		this.CLASS_NAME = router.CLASS_NAME;
 		this.FUNCTION_NAME = router.FUNCTION_NAME;
+
+		this.routerMap = router.map;
 	}
 
 	public Boolean init() {
@@ -552,11 +554,11 @@ public class Controller {
 		this.tempConstant();
 		if (this.templateSuffix.equals(".jsp")) {
 			path = "/" + this.templatePath;
-			path = path + "/" + routerMap.get("m").toString() + "/" + routerMap.get("c").toString() + "/" + routerMap.get("a").toString() + this.templateSuffix;
+			path = path + "/" + PACKAGE_NAME + "/" + CLASS_NAME + "/" + FUNCTION_NAME + this.templateSuffix;
 			return this.parseJsp(path);
 		} else {
 			path = servlet.getServletContext().getRealPath("/") + this.templatePath;
-			path = path + "\\" + routerMap.get("m").toString() + "\\" + routerMap.get("c").toString() + "\\" + routerMap.get("a").toString() + this.templateSuffix;
+			path = path + "\\" + PACKAGE_NAME + "\\" + CLASS_NAME + "\\" + FUNCTION_NAME + this.templateSuffix;
 			return this.view.parseString(path, routerMap.get("m").toString() + "." + routerMap.get("c").toString() + "." + routerMap.get("a").toString() + ".log");
 		}
 	}
