@@ -60,7 +60,7 @@ public class MC {
 					} else {
 						port = MC.db_port.get(i);
 					}
-					source.setJdbcUrl("jdbc:" + MC.db_type + "://" + MC.db_host.get(i) + ":" + port + "/" + MC.db_name.get(i));
+					source.setJdbcUrl("jdbc:" + MC.db_type + "://" + MC.db_host.get(i) + ":" + port + "/" + MC.db_name.get(i) + "?zeroDateTimeBehavior=convertToNull");
 					source.setUser(MC.db_username.get(i));
 					source.setPassword(MC.db_password.get(i));
 					MC.dataSource.add(source);
