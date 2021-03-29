@@ -80,31 +80,14 @@ public class T {
 	 * @throws ParseException
 	 * 
 	 */
-	public static Integer strtotime(String date, String format) throws ParseException {
+	public static long strtotime(String date, String format) throws ParseException {
 		if (format.trim().equals("")) {
 			format = "yyyy-MM-dd HH:mm:ss";
 		}
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
 		Date dateFormat = simpleDateFormat.parse(date);
 		long ts = dateFormat.getTime();
-		Integer timestamp = (int) (ts / 1000);
-		return timestamp;
-	}
-
-	/**
-	 * 时间转日期
-	 * 
-	 * @param format
-	 *            String 时间格式
-	 * @param time
-	 *            Integer 时间戳
-	 * @return 时间字符串
-	 */
-	public static String date(String format, Integer time) {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
-		String timestamp = time.toString() + "000";
-		Date date = new Date(Long.valueOf(timestamp));
-		return simpleDateFormat.format(date);
+		return ts;
 	}
 
 	/**
@@ -127,10 +110,9 @@ public class T {
 	 * 
 	 * @return 当前时间戳
 	 */
-	public static Integer time() {
+	public static long time() {
 		long ts = System.currentTimeMillis();
-		Integer timestamp = (int) (ts / 1000);
-		return timestamp;
+		return ts;
 	}
 
 	/**
