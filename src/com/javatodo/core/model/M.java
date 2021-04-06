@@ -785,12 +785,12 @@ public class M {
 				this.close();
 			}
 			if (count == null) {
-				return null;
+				return 0;
 			} else {
 				return Integer.parseInt(count.toString());
 			}
 		} else {
-			return null;
+			return 0;
 		}
 	}
 
