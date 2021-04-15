@@ -196,8 +196,7 @@ public class M {
 	 *         <br>
 	 *         示例：<br>
 	 *         M m=new M("javatodo");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
-	 *         Map&lt;String, W&gt; w=new HashMap&lt;String, W&gt;();//实例化查询条件
-	 *         <br>
+	 *         Map&lt;String, W&gt; w=new HashMap&lt;String, W&gt;();//实例化查询条件 <br>
 	 *         w.put("id",new W("=",1));//设置查询条件<br>
 	 *         w.put("is_del",new W("=",0));//设置查询条件<br>
 	 *         List&lt;Map&lt;String, Object&gt;&gt;
@@ -256,8 +255,7 @@ public class M {
 	 *         示例：<br>
 	 *         M m=new M("javatodo");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
 	 *         List&lt;Map&lt;String, Object&gt;&gt;
-	 *         list=m.where("is_del=0").order("id desc").select();//将查询条件传入查询方法
-	 *         <br>
+	 *         list=m.where("is_del=0").order("id desc").select();//将查询条件传入查询方法 <br>
 	 *         所生成的sql语句是：select * from javatodo where `is_del`=0 order by id
 	 *         desc<br>
 	 */
@@ -322,8 +320,7 @@ public class M {
 	 *         List&lt;Map&lt;String,Object&gt;&gt; list=
 	 *         m.alias("j").join("user","as u on
 	 *         j.uid=u.id").where("u.id=1").select();<br>
-	 *         生成的sql:select * from javatodo as j inner join user as u on
-	 *         j.uid=u.id
+	 *         生成的sql:select * from javatodo as j inner join user as u on j.uid=u.id
 	 */
 	public M join(String table_name, String on_sql) {
 		this.db.join(table_name, on_sql);
@@ -346,8 +343,7 @@ public class M {
 	 *         List&lt;Map&lt;String,Object&gt;&gt; list=
 	 *         m.alias("j").join("user","as u on
 	 *         j.uid=u.id","left").where("u.id=1").select();<br>
-	 *         生成的sql:select * from javatodo as j left join user as u on
-	 *         j.uid=u.id
+	 *         生成的sql:select * from javatodo as j left join user as u on j.uid=u.id
 	 */
 	public M join(String table_name, String on_sql, String type) {
 		this.db.join(table_name, on_sql, type);
@@ -436,7 +432,8 @@ public class M {
 	 *             d.put("url","javatodo.com");<br>
 	 *             m.where("id=1").save(d);
 	 */
-	public void save(Map<String, Object> data) throws SQLException {
+	public Integer save(Map<String, Object> data) throws SQLException {
+		Integer ret = 0;
 		if (this.connection == null) {
 			this.connection = MC.get_connection(this.dbIndex);
 		}
@@ -453,7 +450,7 @@ public class M {
 			for (Integer integer = update_data_list.size(); integer < all_total; integer = integer + 1) {
 				params[integer] = where_data_list.get(integer - update_data_list.size());
 			}
-			this.queryRunner.update(this.connection, sql, params);
+			ret = this.queryRunner.update(this.connection, sql, params);
 			T.javatodo_sql_log(connection, sql + "--------update参数：" + update_data_list.toString() + "--------where参数：" + where_data_list);
 			this.db.clear();
 			this.lastSql = sql;
@@ -462,6 +459,7 @@ public class M {
 				this.close();
 			}
 		}
+		return ret;
 	}
 
 	/**
@@ -475,14 +473,15 @@ public class M {
 	 *             M m=new M("web");//实例化M对象;<br>
 	 *             m.where("id=1").setInc("num", 1);
 	 */
-	public void setInc(String field, Integer value) throws SQLException {
+	public Integer setInc(String field, Integer value) throws SQLException {
+		Integer ret = 0;
 		if (this.connection == null) {
 			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			this.db.setInc(field, value);
 			String sql = this.db.get_sql();
-			this.queryRunner.update(this.connection, sql);
+			ret = this.queryRunner.update(this.connection, sql);
 			T.javatodo_sql_log(connection, sql);
 			this.db.clear();
 			this.lastSql = sql;
@@ -491,6 +490,7 @@ public class M {
 				this.close();
 			}
 		}
+		return ret;
 	}
 
 	/**
@@ -504,14 +504,15 @@ public class M {
 	 *             M m=new M("web");//实例化M对象;<br>
 	 *             m.where("id=1").setInc("num");
 	 */
-	public void setInc(String field) throws SQLException {
+	public Integer setInc(String field) throws SQLException {
+		Integer ret = 0;
 		if (this.connection == null) {
 			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			this.db.setInc(field);
 			String sql = this.db.get_sql();
-			this.queryRunner.update(this.connection, sql);
+			ret = this.queryRunner.update(this.connection, sql);
 			T.javatodo_sql_log(connection, sql);
 			this.db.clear();
 			this.lastSql = sql;
@@ -520,6 +521,7 @@ public class M {
 				this.close();
 			}
 		}
+		return ret;
 	}
 
 	/**
@@ -533,14 +535,15 @@ public class M {
 	 *             M m=new M("web");//实例化M对象;<br>
 	 *             m.where("id=1").setDec("num", 1);
 	 */
-	public void setDec(String field, Integer value) throws SQLException {
+	public Integer setDec(String field, Integer value) throws SQLException {
+		Integer ret = 0;
 		if (this.connection == null) {
 			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			this.db.setDec(field, value);
 			String sql = this.db.get_sql();
-			this.queryRunner.update(this.connection, sql);
+			ret = this.queryRunner.update(this.connection, sql);
 			T.javatodo_sql_log(connection, sql);
 			this.db.clear();
 			this.lastSql = sql;
@@ -549,6 +552,7 @@ public class M {
 				this.close();
 			}
 		}
+		return ret;
 	}
 
 	/**
@@ -562,14 +566,15 @@ public class M {
 	 *             M m=new M("web");//实例化M对象;<br>
 	 *             m.where("id=1").setDec("num");
 	 */
-	public void setDec(String field) throws SQLException {
+	public Integer setDec(String field) throws SQLException {
+		Integer ret = 0;
 		if (this.connection == null) {
 			this.connection = MC.get_connection(this.dbIndex);
 		}
 		if (this.connection != null) {
 			this.db.setDec(field);
 			String sql = this.db.get_sql();
-			this.queryRunner.update(this.connection, sql);
+			ret = this.queryRunner.update(this.connection, sql);
 			T.javatodo_sql_log(connection, sql);
 			this.db.clear();
 			this.lastSql = sql;
@@ -578,6 +583,7 @@ public class M {
 				this.close();
 			}
 		}
+		return ret;
 	}
 
 	/**
@@ -589,7 +595,8 @@ public class M {
 	 *             M m=new M("web");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
 	 *             m.where("id=15").delete();
 	 */
-	public void delete() throws SQLException {
+	public Integer delete() throws SQLException {
+		Integer ret = 0;
 		if (this.connection == null) {
 			this.connection = MC.get_connection(this.dbIndex);
 		}
@@ -601,7 +608,7 @@ public class M {
 			for (Integer integer = 0; integer < where_data_list.size(); integer = integer + 1) {
 				params[integer] = where_data_list.get(integer);
 			}
-			this.queryRunner.update(this.connection, sql, params);
+			ret = this.queryRunner.update(this.connection, sql, params);
 			T.javatodo_sql_log(connection, sql + "---------------where参数：" + where_data_list.toString());
 			this.db.clear();
 			this.lastSql = sql;
@@ -610,6 +617,7 @@ public class M {
 				this.close();
 			}
 		}
+		return ret;
 	}
 
 	/**
