@@ -107,6 +107,30 @@ public class Http {
 		}
 	}
 
+	public String post(String url, Map<String, String> header, Map<String, String> param) {
+		String paramString = "";
+		for (String key : param.keySet()) {
+			if (paramString.equals("")) {
+				paramString = key + "=" + param.get(key);
+			} else {
+				paramString = paramString + "&" + key + "=" + param.get(key);
+			}
+		}
+		return post(url, header, paramString);
+	}
+
+	public String post(String url, Map<String, String> param) {
+		String paramString = "";
+		for (String key : param.keySet()) {
+			if (paramString.equals("")) {
+				paramString = key + "=" + param.get(key);
+			} else {
+				paramString = paramString + "&" + key + "=" + param.get(key);
+			}
+		}
+		return post(url, paramString);
+	}
+
 	private String stremToString(InputStream is, String encoding) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int i = -1;
