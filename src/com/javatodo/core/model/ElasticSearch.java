@@ -34,17 +34,16 @@ public class ElasticSearch {
 	 * 新增或修改数据
 	 * 
 	 * @param _index
-	 *            String ElasticSearch中的索引相当于数据库
-	 * @param _type
-	 *            String ElasticSearch中的类型相当于数据表
+	 *            String
+	 *            ElasticSearch中的索引相当于数据表（版本6之前相当于数据库，版本6之后相当于数据表）版本6之后一个索引只能有一个类型，因此去除类型参数，默认类型与索引名称相同
 	 * @param _id
 	 *            String 标识某个数据库、某个数据表中的唯一数据ID
 	 * @param jsonString
 	 *            String 提交的json数据
 	 */
-	public Boolean save(String _index, String _type, String _id, String jsonString) {
+	public Boolean save(String _index, String _id, String jsonString) {
 		try {
-			URL httpurl = new URL(ip + ":" + port + "/" + _index + "/" + _type + "/" + _id);
+			URL httpurl = new URL(ip + ":" + port + "/" + _index + "/" + _index + "/" + _id);
 			HttpURLConnection conn = (HttpURLConnection) httpurl.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setReadTimeout(5000);
@@ -70,32 +69,30 @@ public class ElasticSearch {
 	 * 新增或修改数据
 	 * 
 	 * @param _index
-	 *            String ElasticSearch中的索引相当于数据库
-	 * @param _type
-	 *            String ElasticSearch中的类型相当于数据表
+	 *            String
+	 *            ElasticSearch中的索引相当于数据表（版本6之前相当于数据库，版本6之后相当于数据表）版本6之后一个索引只能有一个类型，因此去除类型参数，默认类型与索引名称相同
 	 * @param _id
 	 *            String 标识某个数据库、某个数据表中的唯一数据ID
 	 * @param map
 	 *            Map<String, Object> 提交的数据
 	 */
-	public Boolean save(String _index, String _type, String _id, Map<String, Object> map) {
+	public Boolean save(String _index, String _id, Map<String, Object> map) {
 		String jsonString = JSON.toJSONString(map);
-		return save(_index, _type, _id, jsonString);
+		return save(_index, _id, jsonString);
 	}
 
 	/**
-	 * 新增或修改数据
+	 * 删除数据
 	 * 
 	 * @param _index
-	 *            String ElasticSearch中的索引相当于数据库
-	 * @param _type
-	 *            String ElasticSearch中的类型相当于数据表
+	 *            String
+	 *            ElasticSearch中的索引相当于数据表（版本6之前相当于数据库，版本6之后相当于数据表）版本6之后一个索引只能有一个类型，因此去除类型参数，默认类型与索引名称相同
 	 * @param _id
 	 *            String 标识某个数据库、某个数据表中的唯一数据ID
 	 */
-	public Boolean delete(String _index, String _type, String _id) {
+	public Boolean delete(String _index, String _id) {
 		try {
-			URL httpurl = new URL(ip + ":" + port + "/" + _index + "/" + _type + "/" + _id);
+			URL httpurl = new URL(ip + ":" + port + "/" + _index + "/" + _index + "/" + _id);
 			HttpURLConnection conn = (HttpURLConnection) httpurl.openConnection();
 			conn.setRequestMethod("DELETE");
 			conn.setReadTimeout(5000);
@@ -141,9 +138,9 @@ public class ElasticSearch {
 		}
 	}
 
-	public String query(String _index, String _type, String jsonString) {
+	public String query(String _index, String jsonString) {
 		try {
-			URL httpurl = new URL(ip + ":" + port + "/" + _index + "/" + _type + "/_search");
+			URL httpurl = new URL(ip + ":" + port + "/" + _index + "/" + _index + "/_search");
 			HttpURLConnection conn = (HttpURLConnection) httpurl.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setReadTimeout(5000);
@@ -165,9 +162,9 @@ public class ElasticSearch {
 		}
 	}
 
-	public JSONObject find(String _index, String _type, String _id) {
+	public JSONObject find(String _index, String _id) {
 		Http http = new Http();
-		String ret = http.get(ip + ":" + port + "/" + _index + "/" + _type + "/" + _id);
+		String ret = http.get(ip + ":" + port + "/" + _index + "/" + _index + "/" + _id);
 		if (ret == null) {
 			return null;
 		} else {
