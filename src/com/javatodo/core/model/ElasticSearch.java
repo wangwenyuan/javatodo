@@ -180,4 +180,266 @@ public class ElasticSearch {
 		}
 		return baos.toString(encoding);
 	}
+
+	// sql链式表查询
+	private String sql = "";
+	private String table_name = "";
+	private String where_str = "";
+	private String order_str = "";
+	private String field_str = " * ";
+	private String limit_str = "";
+	private String group_str = "";
+
+	public ElasticSearch table(String table_name) {
+		this.table_name = table_name;
+		return this;
+	}
+
+	// where方法
+	public ElasticSearch where(Map<String, W> where) {
+		for (String key : where.keySet()) {
+			String temp_where_string = this.where_str;
+			if (this.where_str.trim().equals("")) {
+				this.where_str = " where ";
+			} else {
+				this.where_str = this.where_str + " and ";
+			}
+			String string1 = "";
+			String string2 = "";
+			switch (where.get(key).get_relation().toLowerCase().trim()) {
+			case "eq":
+				if (where.get(key).get_value() instanceof String) {
+					this.where_str = this.where_str + key + " = '" + where.get(key).get_value() + "'";
+				} else {
+					this.where_str = this.where_str + key + " = " + where.get(key).get_value();
+				}
+				break;
+			case "=":
+				if (where.get(key).get_value() instanceof String) {
+					this.where_str = this.where_str + key + " = '" + where.get(key).get_value() + "'";
+				} else {
+					this.where_str = this.where_str + key + " = " + where.get(key).get_value();
+				}
+				break;
+			case "!=":
+				if (where.get(key).get_value() instanceof String) {
+					this.where_str = this.where_str + key + " != '" + where.get(key).get_value() + "'";
+				} else {
+					this.where_str = this.where_str + key + " != " + where.get(key).get_value();
+				}
+				break;
+			case "<>":
+				if (where.get(key).get_value() instanceof String) {
+					this.where_str = this.where_str + key + " != '" + where.get(key).get_value() + "'";
+				} else {
+					this.where_str = this.where_str + key + " != " + where.get(key).get_value();
+				}
+				break;
+			case "neq":
+				if (where.get(key).get_value() instanceof String) {
+					this.where_str = this.where_str + key + " != '" + where.get(key).get_value() + "'";
+				} else {
+					this.where_str = this.where_str + key + " != " + where.get(key).get_value();
+				}
+				break;
+			case ">":
+				if (where.get(key).get_value() instanceof String) {
+					this.where_str = this.where_str + key + " > '" + where.get(key).get_value() + "'";
+				} else {
+					this.where_str = this.where_str + key + " > " + where.get(key).get_value();
+				}
+				break;
+			case "gt":
+				if (where.get(key).get_value() instanceof String) {
+					this.where_str = this.where_str + key + " > '" + where.get(key).get_value() + "'";
+				} else {
+					this.where_str = this.where_str + key + " > " + where.get(key).get_value();
+				}
+				break;
+			case ">=":
+				if (where.get(key).get_value() instanceof String) {
+					this.where_str = this.where_str + key + " >= '" + where.get(key).get_value() + "'";
+				} else {
+					this.where_str = this.where_str + key + " >= " + where.get(key).get_value();
+				}
+				break;
+			case "egt":
+				if (where.get(key).get_value() instanceof String) {
+					this.where_str = this.where_str + key + " >= '" + where.get(key).get_value() + "'";
+				} else {
+					this.where_str = this.where_str + key + " >= " + where.get(key).get_value();
+				}
+				break;
+			case "lt":
+				if (where.get(key).get_value() instanceof String) {
+					this.where_str = this.where_str + key + " < '" + where.get(key).get_value() + "'";
+				} else {
+					this.where_str = this.where_str + key + " < " + where.get(key).get_value();
+				}
+				break;
+			case "elt":
+				if (where.get(key).get_value() instanceof String) {
+					this.where_str = this.where_str + key + " <= '" + where.get(key).get_value() + "'";
+				} else {
+					this.where_str = this.where_str + key + " <= " + where.get(key).get_value();
+				}
+				break;
+			case "<":
+				if (where.get(key).get_value() instanceof String) {
+					this.where_str = this.where_str + key + " < '" + where.get(key).get_value() + "'";
+				} else {
+					this.where_str = this.where_str + key + " < " + where.get(key).get_value();
+				}
+				break;
+			case "<=":
+				if (where.get(key).get_value() instanceof String) {
+					this.where_str = this.where_str + key + " <= '" + where.get(key).get_value() + "'";
+				} else {
+					this.where_str = this.where_str + key + " <= " + where.get(key).get_value();
+				}
+				break;
+			case "like":
+				if (where.get(key).get_value() instanceof String) {
+					this.where_str = this.where_str + key + " like '" + where.get(key).get_value() + "'";
+				} else {
+					this.where_str = this.where_str + key + " like " + where.get(key).get_value();
+				}
+				break;
+			case "between":
+				if (where.get(key).get_value_list().get(0) instanceof String) {
+					string1 = "'" + where.get(key).get_value_list().get(0) + "'";
+				} else {
+					string1 = where.get(key).get_value_list().get(0) + "";
+				}
+				if (where.get(key).get_value_list().get(1) instanceof String) {
+					string2 = "'" + where.get(key).get_value_list().get(1) + "'";
+				} else {
+					string2 = where.get(key).get_value_list().get(1) + "";
+				}
+				this.where_str = this.where_str + key + " between " + string1 + " and " + string2;
+				break;
+			case "not between":
+				if (where.get(key).get_value_list().get(0) instanceof String) {
+					string1 = "'" + where.get(key).get_value_list().get(0) + "'";
+				} else {
+					string1 = where.get(key).get_value_list().get(0) + "";
+				}
+				if (where.get(key).get_value_list().get(1) instanceof String) {
+					string2 = "'" + where.get(key).get_value_list().get(1) + "'";
+				} else {
+					string2 = where.get(key).get_value_list().get(1) + "";
+				}
+				this.where_str = this.where_str + key + " not between " + string1 + " and " + string2;
+				break;
+			case "in":
+				if (where.get(key).get_value_list().size() > 1) {
+					String wenhao_str = "";
+					if (where.get(key).get_value_list().get(0) instanceof String) {
+						wenhao_str = "'" + where.get(key).get_value_list().get(0) + "'";
+					} else {
+						wenhao_str = "" + where.get(key).get_value_list().get(0);
+					}
+					for (Integer integer = 1; integer < where.get(key).get_value_list().size(); integer = integer + 1) {
+						if (where.get(key).get_value_list().get(integer) instanceof String) {
+							wenhao_str = wenhao_str + ",'" + where.get(key).get_value_list().get(integer) + "'";
+						} else {
+							wenhao_str = wenhao_str + "," + where.get(key).get_value_list().get(integer);
+						}
+					}
+					this.where_str = this.where_str + key + " in (" + wenhao_str + ") ";
+				} else if (where.get(key).get_value_list().size() == 1) {
+					if (where.get(key).get_value_list().get(0) instanceof String) {
+						this.where_str = this.where_str + key + "= '" + where.get(key).get_value_list().get(0) + "'";
+					} else {
+						this.where_str = this.where_str + key + "= " + where.get(key).get_value_list().get(0);
+					}
+				}
+				break;
+			case "not in":
+				if (where.get(key).get_value_list().size() > 1) {
+					String wenhao_str = "";
+					if (where.get(key).get_value_list().get(0) instanceof String) {
+						wenhao_str = "'" + where.get(key).get_value_list().get(0) + "'";
+					} else {
+						wenhao_str = "" + where.get(key).get_value_list().get(0);
+					}
+					for (Integer integer = 1; integer < where.get(key).get_value_list().size(); integer = integer + 1) {
+						if (where.get(key).get_value_list().get(integer) instanceof String) {
+							wenhao_str = wenhao_str + ",'" + where.get(key).get_value_list().get(integer) + "'";
+						} else {
+							wenhao_str = wenhao_str + "," + where.get(key).get_value_list().get(integer);
+						}
+					}
+					this.where_str = this.where_str + key + " not in (" + wenhao_str + ") ";
+				} else if (where.get(key).get_value_list().size() == 1) {
+					if (where.get(key).get_value_list().get(0) instanceof String) {
+						this.where_str = this.where_str + key + "!= '" + where.get(key).get_value_list().get(0) + "'";
+					} else {
+						this.where_str = this.where_str + key + "!= " + where.get(key).get_value_list().get(0);
+					}
+				}
+				break;
+			default:
+				this.where_str = temp_where_string;
+				break;
+			}
+		}
+		return this;
+	}
+
+	// where方法
+	public ElasticSearch where(String where_str) {
+		if (this.where_str.equals("")) {
+			this.where_str = " where " + where_str;
+		} else {
+			this.where_str = this.where_str + " and " + where_str + " ";
+		}
+		return this;
+	}
+
+	// order方法
+	public ElasticSearch order(String order_str) {
+		this.order_str = " order by " + order_str;
+		return this;
+	}
+
+	// limit方法
+	public ElasticSearch limit(String limit_str) {
+		this.limit_str = " limit " + limit_str + " ";
+		return this;
+	}
+
+	// filed方法
+	public ElasticSearch field(String field_str) {
+		this.field_str = " " + field_str + " ";
+		return this;
+	}
+
+	// select方法
+	public JSONObject select() {
+		this.sql = "select " + this.field_str + " from " + this.table_name + this.where_str + this.group_str + this.order_str + this.limit_str;
+		String _sql = this.sql;
+		this.clear();
+		System.out.print(_sql);
+		return this.sqlQuery(_sql);
+	}
+
+	// find方法
+	public JSONObject find() {
+		this.sql = "select " + this.field_str + " from " + this.table_name + this.where_str + this.group_str + this.order_str + " limit 1;";
+		String _sql = this.sql;
+		this.clear();
+		return this.sqlQuery(_sql);
+	}
+
+	// 清理数据
+	public void clear() {
+		this.sql = "";
+		this.table_name = "";
+		this.where_str = " where ";
+		this.order_str = "";
+		this.field_str = " * ";
+		this.limit_str = "";
+		this.group_str = "";
+	}
 }
