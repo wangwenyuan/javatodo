@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.javatodo.core.tools.Http;
 
 public class ElasticSearch {
 	private String ip = "";
@@ -112,6 +114,33 @@ public class ElasticSearch {
 		}
 	}
 
+	public JSONObject sqlQuery(String sql) {
+		try {
+			URL httpurl = new URL(ip + ":" + port + "/_xpack/sql?format=json");
+			HttpURLConnection conn = (HttpURLConnection) httpurl.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setReadTimeout(5000);
+			conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			JSONObject object = new JSONObject();
+			object.put("query", sql);
+			String data = object.toJSONString();
+			conn.setRequestProperty("Content-Length", String.valueOf(data.getBytes().length));
+			conn.setDoOutput(true);
+			conn.getOutputStream().write(data.getBytes("UTF-8"));
+			Integer code = conn.getResponseCode();
+			if (code == 200) {
+				InputStream inputStream = conn.getInputStream();
+				String jsonString = this.stremToString(inputStream, "UTF-8");
+				return JSONObject.parseObject(jsonString);
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public String query(String _index, String _type, String jsonString) {
 		try {
 			URL httpurl = new URL(ip + ":" + port + "/" + _index + "/" + _type + "/_search");
@@ -124,7 +153,6 @@ public class ElasticSearch {
 			conn.setDoOutput(true);
 			conn.getOutputStream().write(data.getBytes("UTF-8"));
 			Integer code = conn.getResponseCode();
-			System.out.print(code);
 			if (code == 200) {
 				InputStream inputStream = conn.getInputStream();
 				return this.stremToString(inputStream, "UTF-8");
@@ -134,6 +162,16 @@ public class ElasticSearch {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	public JSONObject find(String _index, String _type, String _id) {
+		Http http = new Http();
+		String ret = http.get(ip + ":" + port + "/" + _index + "/" + _type + "/" + _id);
+		if (ret == null) {
+			return null;
+		} else {
+			return JSONObject.parseObject(ret);
 		}
 	}
 
