@@ -420,13 +420,12 @@ public class ElasticSearch {
 		this.sql = "select " + this.field_str + " from " + this.table_name + this.where_str + this.group_str + this.order_str + this.limit_str;
 		String _sql = this.sql;
 		this.clear();
-		System.out.print(_sql);
 		return this.sqlQuery(_sql);
 	}
 
 	// find方法
 	public JSONObject find() {
-		this.sql = "select " + this.field_str + " from " + this.table_name + this.where_str + this.group_str + this.order_str + " limit 1;";
+		this.sql = "select " + this.field_str + " from " + this.table_name + this.where_str + this.group_str + this.order_str + " limit 1";
 		String _sql = this.sql;
 		this.clear();
 		return this.sqlQuery(_sql);
