@@ -131,6 +131,59 @@ public class Http {
 		return post(url, paramString);
 	}
 
+	public String postJson(String url, String jsonString) {
+		try {
+			URL httpurl = new URL(url);
+			HttpURLConnection conn = (HttpURLConnection) httpurl.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setReadTimeout(5000);
+			conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			String data = jsonString;
+			conn.setRequestProperty("Content-Length", String.valueOf(data.getBytes().length));
+			conn.setDoOutput(true);
+			conn.getOutputStream().write(data.getBytes("UTF-8"));
+			this.code = conn.getResponseCode();
+			if (code == 200) {
+				InputStream inputStream = conn.getInputStream();
+				this.html = this.stremToString(inputStream, "UTF-8");
+				return this.html;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public String postJson(String url, Map<String, String> header, String jsonString) {
+		try {
+			URL httpurl = new URL(url);
+			HttpURLConnection conn = (HttpURLConnection) httpurl.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setReadTimeout(5000);
+			conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			for (String key : header.keySet()) {
+				conn.setRequestProperty(key, header.get(key));
+			}
+			String data = jsonString;
+			conn.setRequestProperty("Content-Length", String.valueOf(data.getBytes().length));
+			conn.setDoOutput(true);
+			conn.getOutputStream().write(data.getBytes("UTF-8"));
+			this.code = conn.getResponseCode();
+			if (code == 200) {
+				InputStream inputStream = conn.getInputStream();
+				this.html = this.stremToString(inputStream, "UTF-8");
+				return this.html;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	private String stremToString(InputStream is, String encoding) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int i = -1;
