@@ -111,6 +111,36 @@ public class ElasticSearch {
 		}
 	}
 
+	/**
+	 * 删除索引
+	 * 
+	 * @param _index
+	 *            String
+	 *            ElasticSearch中的索引相当于数据表（版本6之前相当于数据库，版本6之后相当于数据表）版本6之后一个索引只能有一个类型，因此去除类型参数，默认类型与索引名称相同
+	 * @param _id
+	 *            String 标识某个数据库、某个数据表中的唯一数据ID
+	 */
+	public Boolean deleteALL(String _index) {
+		try {
+			URL httpurl = new URL(ip + ":" + port + "/" + _index);
+			HttpURLConnection conn = (HttpURLConnection) httpurl.openConnection();
+			conn.setRequestMethod("DELETE");
+			conn.setReadTimeout(5000);
+			conn.setDoOutput(true);
+			conn.getOutputStream();
+			Integer code = conn.getResponseCode();
+			if (code == 201 || code == 200) {
+				InputStream inputStream = conn.getInputStream();
+				this.log = this.stremToString(inputStream, "UTF-8");
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	public JSONObject sqlQuery(String sql) {
 		try {
 			URL httpurl = new URL(ip + ":" + port + "/_xpack/sql?format=json");
