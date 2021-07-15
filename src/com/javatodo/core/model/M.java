@@ -783,7 +783,7 @@ public class M {
 	 * @return Integer 记录的总条数
 	 * @throws SQLException
 	 */
-	public Integer count() throws SQLException {
+	public long count() throws SQLException {
 		if (this.connection == null) {
 			this.connection = MC.get_connection(this.dbIndex);
 		}
@@ -795,7 +795,7 @@ public class M {
 			if (count == null) {
 				return 0;
 			} else {
-				return Integer.parseInt(count.toString());
+				return Long.valueOf(count.toString());
 			}
 		} else {
 			return 0;

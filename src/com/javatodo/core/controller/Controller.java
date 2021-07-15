@@ -721,6 +721,19 @@ public class Controller {
 	}
 
 	/**
+	 * 生成分页类
+	 * 
+	 * @param total
+	 *            Long 内容总数
+	 * @param num
+	 *            int 每页条数
+	 * @return Pagination 分页类
+	 */
+	public Page page(Long total, int num) {
+		return new Page(total, num, this.entrance, this.routerMap);
+	}
+
+	/**
 	 * 带有错误信息的跳转页面，例如“操作错误”，并且自动跳转到另外一个目标页面
 	 * 
 	 * @param errMsg

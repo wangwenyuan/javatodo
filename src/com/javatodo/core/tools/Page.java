@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class Page {
 	public String entrance = "";
-	public int total = 0;// 总条数
+	public long total = 0;// 总条数
 	public int listRows = 0;// 每页条数
 	public int current = 1;// 当前页码
 	public int firstRow = 0;// 起始条数
@@ -28,6 +28,24 @@ public class Page {
 	public Map<String, String> map = new HashMap<>();
 
 	public Page(int total, int num, String entrance, Map<String, String> routerMap) {
+		this.total = total;
+		this.listRows = num;
+		if (routerMap.containsKey("p")) {
+			current = T.toInt(routerMap.get("p").toString());
+			if (current == 0) {
+				current = 1;
+			}
+		} else {
+			current = 1;
+		}
+		this.firstRow = (current - 1) * listRows;
+		for (Map.Entry<String, String> entry : routerMap.entrySet()) {
+			this.map.put(entry.getKey().toString(), entry.getValue().toString());
+		}
+		this.entrance = entrance;
+	}
+
+	public Page(long total, int num, String entrance, Map<String, String> routerMap) {
 		this.total = total;
 		this.listRows = num;
 		if (routerMap.containsKey("p")) {

@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.javatodo.core.tools.Http;
 
@@ -200,6 +201,39 @@ public class ElasticSearch {
 		} else {
 			return JSONObject.parseObject(ret);
 		}
+	}
+
+	public Object getField(String field) {
+		JSONObject object = this.field(field).find();
+		JSONArray columns = object.getJSONArray("columns");
+		JSONArray rows = object.getJSONArray("rows");
+		if (rows.size() == 0) {
+			return null;
+		} else {
+			JSONArray row = rows.getJSONArray(0);
+			for (Integer i = 0; i < columns.size(); i = i + 1) {
+				if (columns.getJSONObject(i).getString("name").equals(field)) {
+					return row.get(i);
+				}
+			}
+			return null;
+		}
+	}
+
+	public long count() {
+		JSONObject object = this.field("count(*)").find();
+		JSONArray columns = object.getJSONArray("columns");
+		JSONArray rows = object.getJSONArray("rows");
+		if (rows.size() == 0) {
+			return 0;
+		}
+		JSONArray row = rows.getJSONArray(0);
+		for (Integer i = 0; i < columns.size(); i = i + 1) {
+			if (columns.getJSONObject(i).getString("name").equals("count(*)")) {
+				return row.getLong(i);
+			}
+		}
+		return 0;
 	}
 
 	private String stremToString(InputStream is, String encoding) throws IOException {
