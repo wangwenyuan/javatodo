@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.javatodo.core.tools.Http;
+import com.javatodo.core.tools.T;
 
 public class ElasticSearch {
 	private String ip = "";
@@ -205,35 +206,15 @@ public class ElasticSearch {
 
 	public Object getField(String field) {
 		JSONObject object = this.field(field).find();
-		JSONArray columns = object.getJSONArray("columns");
-		JSONArray rows = object.getJSONArray("rows");
-		if (rows.size() == 0) {
-			return null;
-		} else {
-			JSONArray row = rows.getJSONArray(0);
-			for (Integer i = 0; i < columns.size(); i = i + 1) {
-				if (columns.getJSONObject(i).getString("name").equals(field)) {
-					return row.get(i);
-				}
-			}
+		if (object == null) {
 			return null;
 		}
+		return object.get(field);
 	}
 
 	public long count() {
 		JSONObject object = this.field("count(*)").find();
-		JSONArray columns = object.getJSONArray("columns");
-		JSONArray rows = object.getJSONArray("rows");
-		if (rows.size() == 0) {
-			return 0;
-		}
-		JSONArray row = rows.getJSONArray(0);
-		for (Integer i = 0; i < columns.size(); i = i + 1) {
-			if (columns.getJSONObject(i).getString("name").equals("count(*)")) {
-				return row.getLong(i);
-			}
-		}
-		return 0;
+		return object.getLong("count(*)");
 	}
 
 	private String stremToString(InputStream is, String encoding) throws IOException {
@@ -253,6 +234,9 @@ public class ElasticSearch {
 	private String field_str = " * ";
 	private String limit_str = "";
 	private String group_str = "";
+
+	private int elasticsearch_size = 0;
+	private int elasticsearch_row_num = 0;
 
 	public ElasticSearch table(String table_name) {
 		this.table_name = table_name;
@@ -469,7 +453,20 @@ public class ElasticSearch {
 
 	// limit方法
 	public ElasticSearch limit(String limit_str) {
-		this.limit_str = " limit " + limit_str + " ";
+		limit_str = limit_str.trim();
+		String[] arr = limit_str.split(",");
+		if (arr.length == 0) {
+			this.limit_str = "";
+			return this;
+		} else if (arr.length == 1) {
+			this.limit_str = " limit " + limit_str + " ";
+			this.elasticsearch_size = T.toInt(limit_str.trim());
+			this.elasticsearch_row_num = this.elasticsearch_size;
+		} else if (arr.length == 2) {
+			this.elasticsearch_size = T.toInt(arr[0].trim()) + T.toInt(arr[1].trim());
+			this.elasticsearch_row_num = T.toInt(arr[1].trim());
+			this.limit_str = " limit " + this.elasticsearch_size + " ";
+		}
 		return this;
 	}
 
@@ -480,11 +477,22 @@ public class ElasticSearch {
 	}
 
 	// select方法
-	public JSONObject select() {
+	public JSONArray select() {
 		this.sql = "select " + this.field_str + " from " + this.table_name + this.where_str + this.group_str + this.order_str + this.limit_str;
 		String _sql = this.sql;
+		JSONObject ret = this.sqlQuery(_sql);
+		JSONArray columns = ret.getJSONArray("columns");
+		JSONArray rows = ret.getJSONArray("rows");
+		JSONArray list = new JSONArray();
+		for (Integer i = this.elasticsearch_size - this.elasticsearch_row_num; i < this.elasticsearch_size; i = i + 1) {
+			JSONObject object = new JSONObject();
+			for (Integer n = 0; n < columns.size(); n = n + 1) {
+				object.put(columns.getJSONObject(n).getString("name"), rows.getJSONArray(i).getString(n));
+			}
+			list.add(object);
+		}
 		this.clear();
-		return this.sqlQuery(_sql);
+		return list;
 	}
 
 	// find方法
@@ -492,17 +500,30 @@ public class ElasticSearch {
 		this.sql = "select " + this.field_str + " from " + this.table_name + this.where_str + this.group_str + this.order_str + " limit 1";
 		String _sql = this.sql;
 		this.clear();
-		return this.sqlQuery(_sql);
+		JSONObject ret = this.sqlQuery(_sql);
+		JSONArray columns = ret.getJSONArray("columns");
+		JSONArray rows = ret.getJSONArray("rows");
+		if (rows.size() == 0) {
+			return null;
+		}
+		JSONArray row = rows.getJSONArray(0);
+		JSONObject object = new JSONObject();
+		for (Integer i = 0; i < columns.size(); i = i + 1) {
+			object.put(columns.getJSONObject(i).getString("name"), row.get(i));
+		}
+		return object;
 	}
 
 	// 清理数据
 	public void clear() {
 		this.sql = "";
 		this.table_name = "";
-		this.where_str = " where ";
+		this.where_str = "";
 		this.order_str = "";
 		this.field_str = " * ";
 		this.limit_str = "";
 		this.group_str = "";
+		this.elasticsearch_size = 0;
+		this.elasticsearch_row_num = 0;
 	}
 }
