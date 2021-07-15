@@ -214,7 +214,11 @@ public class ElasticSearch {
 
 	public long count() {
 		JSONObject object = this.field("count(*)").find();
-		return object.getLong("count(*)");
+		if (object.getLong("count(*)") > 1000) {
+			return 1000;// ElasticSearch 通过sql查询获取到的数据最大1000条
+		} else {
+			return object.getLong("count(*)");
+		}
 	}
 
 	private String stremToString(InputStream is, String encoding) throws IOException {
@@ -483,14 +487,32 @@ public class ElasticSearch {
 		JSONObject ret = this.sqlQuery(_sql);
 		JSONArray columns = ret.getJSONArray("columns");
 		JSONArray rows = ret.getJSONArray("rows");
+		Integer rows_count = rows.size();
 		JSONArray list = new JSONArray();
-		for (Integer i = this.elasticsearch_size - this.elasticsearch_row_num; i < this.elasticsearch_size; i = i + 1) {
-			JSONObject object = new JSONObject();
-			for (Integer n = 0; n < columns.size(); n = n + 1) {
-				object.put(columns.getJSONObject(n).getString("name"), rows.getJSONArray(i).getString(n));
+		if (this.where_str.trim().equals("")) {
+			for (Integer i = 0; i < rows_count; i = i + 1) {
+				JSONObject object = new JSONObject();
+				for (Integer n = 0; n < columns.size(); n = n + 1) {
+					object.put(columns.getJSONObject(n).getString("name"), rows.getJSONArray(i).getString(n));
+				}
+				list.add(object);
 			}
-			list.add(object);
+		} else {
+			if (this.elasticsearch_size - this.elasticsearch_row_num > -1) {
+				for (Integer i = this.elasticsearch_size - this.elasticsearch_row_num; i < this.elasticsearch_size; i = i + 1) {
+					if (i < rows_count) {
+						JSONObject object = new JSONObject();
+						for (Integer n = 0; n < columns.size(); n = n + 1) {
+							object.put(columns.getJSONObject(n).getString("name"), rows.getJSONArray(i).getString(n));
+						}
+						list.add(object);
+					} else {
+						break;
+					}
+				}
+			}
 		}
+
 		this.clear();
 		return list;
 	}
