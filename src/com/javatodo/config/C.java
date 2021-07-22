@@ -18,6 +18,8 @@ public class C {
 	public static boolean is_debug = true;
 	// 日志文件夹
 	public static String log_file_path = "";
+	//缓存文件夹
+	public static String cache_path = "";
 
 	// 设置使用的模版引擎：velocity、jsp、freemaker
 	public static String template_engines = "jsp";
