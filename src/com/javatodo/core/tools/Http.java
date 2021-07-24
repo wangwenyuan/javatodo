@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class Http {
@@ -20,7 +21,7 @@ public class Http {
 			this.code = conn.getResponseCode();
 			if (code == 200) {
 				InputStream inputStream = conn.getInputStream();
-				this.html = this.stremToString(inputStream, "utf-8");
+				this.html = this.stremToString(inputStream, StandardCharsets.UTF_8.toString());
 				return html;
 			} else {
 				return null;
@@ -43,7 +44,7 @@ public class Http {
 			this.code = conn.getResponseCode();
 			if (code == 200) {
 				InputStream inputStream = conn.getInputStream();
-				this.html = this.stremToString(inputStream, "utf-8");
+				this.html = this.stremToString(inputStream, StandardCharsets.UTF_8.toString());
 				return html;
 			} else {
 				return null;
@@ -64,11 +65,11 @@ public class Http {
 			String data = param;
 			conn.setRequestProperty("Content-Length", String.valueOf(data.getBytes().length));
 			conn.setDoOutput(true);
-			conn.getOutputStream().write(data.getBytes("UTF-8"));
+			conn.getOutputStream().write(data.getBytes(StandardCharsets.UTF_8.toString()));
 			this.code = conn.getResponseCode();
 			if (code == 200) {
 				InputStream inputStream = conn.getInputStream();
-				this.html = this.stremToString(inputStream, "UTF-8");
+				this.html = this.stremToString(inputStream, StandardCharsets.UTF_8.toString());
 				return this.html;
 			} else {
 				return null;
@@ -92,11 +93,11 @@ public class Http {
 			String data = param;
 			conn.setRequestProperty("Content-Length", String.valueOf(data.getBytes().length));
 			conn.setDoOutput(true);
-			conn.getOutputStream().write(data.getBytes("UTF-8"));
+			conn.getOutputStream().write(data.getBytes(StandardCharsets.UTF_8.toString()));
 			this.code = conn.getResponseCode();
 			if (code == 200) {
 				InputStream inputStream = conn.getInputStream();
-				this.html = this.stremToString(inputStream, "UTF-8");
+				this.html = this.stremToString(inputStream, StandardCharsets.UTF_8.toString());
 				return this.html;
 			} else {
 				return null;
@@ -141,11 +142,11 @@ public class Http {
 			String data = jsonString;
 			conn.setRequestProperty("Content-Length", String.valueOf(data.getBytes().length));
 			conn.setDoOutput(true);
-			conn.getOutputStream().write(data.getBytes("UTF-8"));
+			conn.getOutputStream().write(data.getBytes(StandardCharsets.UTF_8.toString()));
 			this.code = conn.getResponseCode();
 			if (code == 200) {
 				InputStream inputStream = conn.getInputStream();
-				this.html = this.stremToString(inputStream, "UTF-8");
+				this.html = this.stremToString(inputStream, StandardCharsets.UTF_8.toString());
 				return this.html;
 			} else {
 				return null;
@@ -169,11 +170,11 @@ public class Http {
 			String data = jsonString;
 			conn.setRequestProperty("Content-Length", String.valueOf(data.getBytes().length));
 			conn.setDoOutput(true);
-			conn.getOutputStream().write(data.getBytes("UTF-8"));
+			conn.getOutputStream().write(data.getBytes(StandardCharsets.UTF_8.toString()));
 			this.code = conn.getResponseCode();
 			if (code == 200) {
 				InputStream inputStream = conn.getInputStream();
-				this.html = this.stremToString(inputStream, "UTF-8");
+				this.html = this.stremToString(inputStream, StandardCharsets.UTF_8.toString());
 				return this.html;
 			} else {
 				return null;

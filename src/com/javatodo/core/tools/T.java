@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.sql.Connection;
 import java.text.ParseException;
@@ -60,8 +61,7 @@ public class T {
 	/**
 	 * 获取当前时间
 	 * 
-	 * @param format
-	 *            String 时间格式
+	 * @param format String 时间格式
 	 * @return
 	 */
 	public static String now(String format) {
@@ -72,10 +72,8 @@ public class T {
 	/**
 	 * 时间转成时间戳
 	 * 
-	 * @param date
-	 *            String 时间字符串
-	 * @param format
-	 *            String 时间格式
+	 * @param date   String 时间字符串
+	 * @param format String 时间格式
 	 * @return 时间戳
 	 * @throws ParseException
 	 * 
@@ -93,10 +91,8 @@ public class T {
 	/**
 	 * 时间转日期
 	 * 
-	 * @param format
-	 *            String 时间格式
-	 * @param time
-	 *            Integer 时间戳
+	 * @param format String 时间格式
+	 * @param time   Integer 时间戳
 	 * @return 时间字符串
 	 */
 	public static String date(String format, Long time) {
@@ -118,8 +114,7 @@ public class T {
 	/**
 	 * 对html特殊字符进行转义
 	 * 
-	 * @param string
-	 *            获取转义后的html内容
+	 * @param string 获取转义后的html内容
 	 * @return
 	 */
 	public static String htmlspecialchars(String string) {
@@ -134,8 +129,7 @@ public class T {
 	/**
 	 * 对使用T.htmlspecialchars(String string)进行转义后的内容再进行反转义
 	 * 
-	 * @param string
-	 *            使用T.htmlspecialchars(String string)转义后的内容
+	 * @param string 使用T.htmlspecialchars(String string)转义后的内容
 	 * @return 反转义后的内容
 	 */
 	public static String htmlspecialchars_decode(String string) {
@@ -150,10 +144,8 @@ public class T {
 	/**
 	 * 对数据的格式进行检测
 	 * 
-	 * @param value
-	 *            Object 数据
-	 * @param type
-	 *            String 格式（mobile、email、require）
+	 * @param value Object 数据
+	 * @param type  String 格式（mobile、email、require）
 	 * @return boolean true:说明数据格式正确；false:说明数据格式不正确
 	 */
 	public static boolean detect(Object value, String type) {
@@ -195,14 +187,13 @@ public class T {
 	/**
 	 * 生成字符串的md5值
 	 * 
-	 * @param string
-	 *            String 要进行md5加密的字符串
+	 * @param string String 要进行md5加密的字符串
 	 * @return String md5加密以后的字符串
 	 */
 	public static String md5(String string) {
 		char hexDigits[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 		try {
-			byte[] strTemp = string.getBytes("utf-8");
+			byte[] strTemp = string.getBytes(StandardCharsets.UTF_8.toString());
 			// 使用MD5创建MessageDigest对象
 			MessageDigest mdTemp = MessageDigest.getInstance("MD5");
 			mdTemp.update(strTemp);
@@ -224,8 +215,7 @@ public class T {
 	/**
 	 * 生成url地址
 	 * 
-	 * @param path
-	 *            [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param path [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
 	 * @return String 对应的url链接
 	 */
 	public static String U(String path, String entrance) {
@@ -240,8 +230,7 @@ public class T {
 	/**
 	 * 生成url地址
 	 * 
-	 * @param map
-	 *            Map<String 参数名,String 参数值> url中的参数（m：标识模块名；c：表示控制器名；a：表示操作名）
+	 * @param map Map<String 参数名,String 参数值> url中的参数（m：标识模块名；c：表示控制器名；a：表示操作名）
 	 * @return String 对应的url链接
 	 */
 	public static String U(Map<String, String> map, String entrance) {
@@ -261,10 +250,8 @@ public class T {
 	/**
 	 * 生成url地址
 	 * 
-	 * @param path
-	 *            [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
-	 * @param param
-	 *            map的json结构
+	 * @param path  [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param param map的json结构
 	 * @return String 对应的url链接
 	 */
 	public static String UJ(String path, String param, String entrance) {
@@ -283,10 +270,8 @@ public class T {
 	/**
 	 * 生成url地址
 	 * 
-	 * @param path
-	 *            [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
-	 * @param param
-	 *            参数，形如：“fra=javatodo&v=3.0”
+	 * @param path  [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param param 参数，形如：“fra=javatodo&v=3.0”
 	 * @return String 对应的url链接
 	 */
 	public static String U(String path, String param, String entrance) {
@@ -302,10 +287,8 @@ public class T {
 	/**
 	 * 生成url地址
 	 * 
-	 * @param path
-	 *            String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
-	 * @param map
-	 *            Map<String 参数名,String 参数值> url中的参数
+	 * @param path String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param map  Map<String 参数名,String 参数值> url中的参数
 	 * @return String 对应的url链接
 	 */
 	public static String U(String path, Map<String, Object> map, String entrance) {
@@ -367,6 +350,9 @@ public class T {
 		try {
 			String pathname = filePath; // 绝对路径或相对路径都可以，这里是绝对路径，写入文件时演示相对路径
 			File filename = new File(pathname); // 要读取以上路径的input。txt文件
+			if (!filename.exists()) {
+				return "";
+			}
 			InputStreamReader reader = new InputStreamReader(new FileInputStream(filename), charset); // 建立一个输入流对象reader
 			BufferedReader br = new BufferedReader(reader); // 建立一个对象，它把文件内容转成计算机能读懂的语言
 			String content = "";
@@ -404,7 +390,7 @@ public class T {
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-			byte[] contentInBytes = content.getBytes();
+			byte[] contentInBytes = content.getBytes(StandardCharsets.UTF_8.toString());
 			fop.write(contentInBytes);
 			fop.flush();
 			fop.close();
@@ -437,7 +423,7 @@ public class T {
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-			byte[] contentInBytes = content.getBytes();
+			byte[] contentInBytes = content.getBytes(StandardCharsets.UTF_8.toString());
 			fop.write(contentInBytes);
 			fop.flush();
 			fop.close();
@@ -462,6 +448,28 @@ public class T {
 		}
 	}
 
+	// 写入缓存
+	public static void S(String cacheName, String cacheValue) {
+		cacheName = md5(cacheName);
+		if (cacheValue == null) {
+			deleteFile(C.cache_path + cacheName);
+		} else {
+			if (!C.cache_path.equals("")) {
+				coverFile(C.cache_path + cacheName, cacheValue);
+			}
+		}
+	}
+
+	// 读取缓存
+	public static String S(String cacheName) {
+		cacheName = md5(cacheName);
+		String ret = "";
+		if (!C.cache_path.equals("")) {
+			ret = readFile(C.cache_path + cacheName, StandardCharsets.UTF_8.toString());
+		}
+		return ret;
+	}
+
 	// 删除目录（遍历删除目录内的文件以及子目录）
 	public static void deleteDir(String dirPath) {
 		File file = new File(dirPath);
@@ -483,10 +491,12 @@ public class T {
 	// 删除文件
 	public static void deleteFile(String filePath) {
 		File file = new File(filePath);
-		if (file.isFile()) {
-			file.delete();
-		} else {
-			deleteDir(filePath);
+		if (file.exists()) {
+			if (file.isFile()) {
+				file.delete();
+			} else {
+				deleteDir(filePath);
+			}
 		}
 	}
 
@@ -589,8 +599,8 @@ public class T {
 
 	// 判断是否是手机浏览器
 	public static boolean isMobile(HttpServletRequest request) {
-		List<String> mobile_agents = Arrays.asList("240x320", "acer", "acoon", "acs-", "abacho", "ahong", "airness", "alcatel", "amoi", "android", "anywhereyougo.com", "applewebkit/525", "applewebkit/532", "asus", "audio", "au-mic", "avantogo", "becker", "benq", "bilbo", "bird", "blackberry", "blazer", "bleu", "cdm-", "compal", "coolpad", "danger", "dbtel", "dopod", "elaine", "eric", "etouch", "fly ", "fly_", "fly-", "go.web", "goodaccess", "gradiente", "grundig", "haier", "hedy", "hitachi", "htc", "huawei", "hutchison", "inno", "ipad", "ipaq", "iphone", "ipod", "jbrowser", "kddi", "kgt", "kwc", "lenovo", "lg ", "lg2", "lg3", "lg4", "lg5", "lg7", "lg8", "lg9", "lg-", "lge-", "lge9", "longcos", "maemo", "mercator", "meridian", "micromax", "midp", "mini", "mitsu", "mmm", "mmp", "mobi", "mot-", "moto", "nec-", "netfront", "newgen", "nexian", "nf-browser", "nintendo", "nitro", "nokia", "nook", "novarra", "obigo", "palm", "panasonic", "pantech", "philips", "phone", "pg-", "playstation",
-				"pocket", "pt-", "qc-", "qtek", "rover", "sagem", "sama", "samu", "sanyo", "samsung", "sch-", "scooter", "sec-", "sendo", "sgh-", "sharp", "siemens", "sie-", "softbank", "sony", "spice", "sprint", "spv", "symbian", "tablet", "talkabout", "tcl-", "teleca", "telit", "tianyu", "tim-", "toshiba", "tsm", "up.browser", "utec", "utstar", "verykool", "virgin", "vk-", "voda", "voxtel", "vx", "wap", "wellco", "wig browser", "wii", "windows ce", "wireless", "xda", "xde", "zte");
+		List<String> mobile_agents = Arrays.asList("240x320", "acer", "acoon", "acs-", "abacho", "ahong", "airness", "alcatel", "amoi", "android", "anywhereyougo.com", "applewebkit/525", "applewebkit/532", "asus", "audio", "au-mic", "avantogo", "becker", "benq", "bilbo", "bird", "blackberry", "blazer", "bleu", "cdm-", "compal", "coolpad", "danger", "dbtel", "dopod", "elaine", "eric", "etouch", "fly ", "fly_", "fly-", "go.web", "goodaccess", "gradiente", "grundig", "haier", "hedy", "hitachi", "htc", "huawei", "hutchison", "inno", "ipad", "ipaq", "iphone", "ipod", "jbrowser", "kddi", "kgt", "kwc", "lenovo", "lg ", "lg2", "lg3", "lg4", "lg5", "lg7", "lg8", "lg9", "lg-", "lge-", "lge9", "longcos", "maemo", "mercator", "meridian", "micromax", "midp", "mini", "mitsu", "mmm", "mmp", "mobi", "mot-", "moto", "nec-", "netfront", "newgen", "nexian", "nf-browser", "nintendo", "nitro", "nokia", "nook", "novarra", "obigo", "palm", "panasonic", "pantech", "philips", "phone", "pg-", "playstation", "pocket", "pt-", "qc-", "qtek", "rover", "sagem", "sama", "samu", "sanyo", "samsung", "sch-", "scooter", "sec-", "sendo", "sgh-", "sharp", "siemens", "sie-", "softbank", "sony", "spice", "sprint", "spv",
+				"symbian", "tablet", "talkabout", "tcl-", "teleca", "telit", "tianyu", "tim-", "toshiba", "tsm", "up.browser", "utec", "utstar", "verykool", "virgin", "vk-", "voda", "voxtel", "vx", "wap", "wellco", "wig browser", "wii", "windows ce", "wireless", "xda", "xde", "zte");
 		String user_agent = request.getHeader("User-Agent").toLowerCase();
 		for (Integer i = 0; i < mobile_agents.size(); i = i + 1) {
 			if (user_agent.contains(mobile_agents.get(i))) {

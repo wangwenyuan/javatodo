@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
@@ -47,15 +48,13 @@ public class QR {
 		BasicStroke stroke = new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 		g2.setStroke(stroke);// 设置笔画对象
 		// 指定弧度的圆角矩形
-		RoundRectangle2D.Float round = new RoundRectangle2D.Float(matrixWidth / 5 * 2, matrixHeigh / 5 * 2,
-				matrixWidth / 5, matrixHeigh / 5, 20, 20);
+		RoundRectangle2D.Float round = new RoundRectangle2D.Float(matrixWidth / 5 * 2, matrixHeigh / 5 * 2, matrixWidth / 5, matrixHeigh / 5, 20, 20);
 		g2.setColor(Color.white);
 		g2.draw(round);// 绘制圆弧矩形
 		// 设置logo 有一道灰色边框
 		BasicStroke stroke2 = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 		g2.setStroke(stroke2);// 设置笔画对象
-		RoundRectangle2D.Float round2 = new RoundRectangle2D.Float(matrixWidth / 5 * 2 + 2, matrixHeigh / 5 * 2 + 2,
-				matrixWidth / 5 - 4, matrixHeigh / 5 - 4, 20, 20);
+		RoundRectangle2D.Float round2 = new RoundRectangle2D.Float(matrixWidth / 5 * 2 + 2, matrixHeigh / 5 * 2 + 2, matrixWidth / 5 - 4, matrixHeigh / 5 - 4, 20, 20);
 		g2.setColor(new Color(128, 128, 128));
 		g2.draw(round2);// 绘制圆弧矩形
 		g2.dispose();
@@ -84,8 +83,7 @@ public class QR {
 		}
 	}
 
-	private static void writeToFile(BitMatrix matrix, String logo_img_path, String format, File file)
-			throws IOException {
+	private static void writeToFile(BitMatrix matrix, String logo_img_path, String format, File file) throws IOException {
 		BufferedImage image = toBufferedImage(matrix);
 		// 设置logo图标
 		image = QR.LogoMatrix(image, logo_img_path);
@@ -104,8 +102,7 @@ public class QR {
 		}
 	}
 
-	private static void writeToStream(BitMatrix matrix, String logo_img_path, String format, OutputStream stream)
-			throws IOException {
+	private static void writeToStream(BitMatrix matrix, String logo_img_path, String format, OutputStream stream) throws IOException {
 		BufferedImage image = toBufferedImage(matrix);
 		// 设置logo图标
 		image = QR.LogoMatrix(image, logo_img_path);
@@ -121,7 +118,7 @@ public class QR {
 		// 指定纠错等级,纠错级别（L 7%、M 15%、Q 25%、H 30%）
 		hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
 		// 内容所使用字符集编码
-		hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+		hints.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.toString());
 		hints.put(EncodeHintType.MARGIN, 1);// 设置二维码边的空度，非负数
 		BitMatrix bitMatrix = new MultiFormatWriter().encode(contents, // 要编码的内容
 				BarcodeFormat.QR_CODE, width, // 条形码的宽度
@@ -140,8 +137,7 @@ public class QR {
 	}
 
 	// 输出二维码到文件
-	public static void EncodeToFile(String contents, String logo_img_path, String output_file_path)
-			throws IOException, WriterException {
+	public static void EncodeToFile(String contents, String logo_img_path, String output_file_path) throws IOException, WriterException {
 		BitMatrix bitMatrix = QR.createQrBitMatrix(contents);
 		String format = "png";// 二维码的图片格式 png
 		// 生成二维码
@@ -158,8 +154,7 @@ public class QR {
 	}
 
 	// 输出二维码到流
-	public static void EncodeToStream(String contents, String logo_img_path, OutputStream stream)
-			throws IOException, WriterException {
+	public static void EncodeToStream(String contents, String logo_img_path, OutputStream stream) throws IOException, WriterException {
 		BitMatrix bitMatrix = QR.createQrBitMatrix(contents);
 		String format = "png";// 二维码的图片格式 png
 		// 生成二维码
@@ -185,8 +180,7 @@ public class QR {
 	}
 
 	// 输出带logo的二维码到base64
-	public static String EncodeToBase64(String contents, String logo_img_path, OutputStream stream)
-			throws IOException, WriterException {
+	public static String EncodeToBase64(String contents, String logo_img_path, OutputStream stream) throws IOException, WriterException {
 		BitMatrix bitMatrix = QR.createQrBitMatrix(contents);
 		BufferedImage image = toBufferedImage(bitMatrix);
 		image = QR.LogoMatrix(image, logo_img_path);

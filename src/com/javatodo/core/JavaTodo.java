@@ -90,7 +90,7 @@ public class JavaTodo {
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			C.log_file_path = servlet.getServletContext().getRealPath("/") + "WEB-INF/log/";
+			C.log_file_path = servlet.getServletContext().getRealPath("/") + "WEB-INF/Runtime/log/";
 			T.javatodo_error_log(e);
 		}
 	}
