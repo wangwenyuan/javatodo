@@ -367,6 +367,8 @@ public class T {
 					content = content + line;
 				}
 			}
+			reader.close();
+			br.close();
 			return content;
 		} catch (Exception e) {
 			// TODO: handle exception
