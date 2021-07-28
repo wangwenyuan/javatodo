@@ -35,13 +35,10 @@ public class ElasticSearch {
 	/**
 	 * 新增或修改数据
 	 * 
-	 * @param _index
-	 *            String
-	 *            ElasticSearch中的索引相当于数据表（版本6之前相当于数据库，版本6之后相当于数据表）版本6之后一个索引只能有一个类型，因此去除类型参数，默认类型与索引名称相同
-	 * @param _id
-	 *            String 标识某个数据库、某个数据表中的唯一数据ID
-	 * @param jsonString
-	 *            String 提交的json数据
+	 * @param _index     String
+	 *                   ElasticSearch中的索引相当于数据表（版本6之前相当于数据库，版本6之后相当于数据表）版本6之后一个索引只能有一个类型，因此去除类型参数，默认类型与索引名称相同
+	 * @param _id        String 标识某个数据库、某个数据表中的唯一数据ID
+	 * @param jsonString String 提交的json数据
 	 */
 	public Boolean save(String _index, String _id, String jsonString) {
 		try {
@@ -70,13 +67,10 @@ public class ElasticSearch {
 	/**
 	 * 新增或修改数据
 	 * 
-	 * @param _index
-	 *            String
-	 *            ElasticSearch中的索引相当于数据表（版本6之前相当于数据库，版本6之后相当于数据表）版本6之后一个索引只能有一个类型，因此去除类型参数，默认类型与索引名称相同
-	 * @param _id
-	 *            String 标识某个数据库、某个数据表中的唯一数据ID
-	 * @param map
-	 *            Map<String, Object> 提交的数据
+	 * @param _index String
+	 *               ElasticSearch中的索引相当于数据表（版本6之前相当于数据库，版本6之后相当于数据表）版本6之后一个索引只能有一个类型，因此去除类型参数，默认类型与索引名称相同
+	 * @param _id    String 标识某个数据库、某个数据表中的唯一数据ID
+	 * @param map    Map<String, Object> 提交的数据
 	 */
 	public Boolean save(String _index, String _id, Map<String, Object> map) {
 		String jsonString = JSON.toJSONString(map);
@@ -86,11 +80,9 @@ public class ElasticSearch {
 	/**
 	 * 删除数据
 	 * 
-	 * @param _index
-	 *            String
-	 *            ElasticSearch中的索引相当于数据表（版本6之前相当于数据库，版本6之后相当于数据表）版本6之后一个索引只能有一个类型，因此去除类型参数，默认类型与索引名称相同
-	 * @param _id
-	 *            String 标识某个数据库、某个数据表中的唯一数据ID
+	 * @param _index String
+	 *               ElasticSearch中的索引相当于数据表（版本6之前相当于数据库，版本6之后相当于数据表）版本6之后一个索引只能有一个类型，因此去除类型参数，默认类型与索引名称相同
+	 * @param _id    String 标识某个数据库、某个数据表中的唯一数据ID
 	 */
 	public Boolean delete(String _index, String _id) {
 		try {
@@ -116,11 +108,9 @@ public class ElasticSearch {
 	/**
 	 * 删除索引
 	 * 
-	 * @param _index
-	 *            String
-	 *            ElasticSearch中的索引相当于数据表（版本6之前相当于数据库，版本6之后相当于数据表）版本6之后一个索引只能有一个类型，因此去除类型参数，默认类型与索引名称相同
-	 * @param _id
-	 *            String 标识某个数据库、某个数据表中的唯一数据ID
+	 * @param _index String
+	 *               ElasticSearch中的索引相当于数据表（版本6之前相当于数据库，版本6之后相当于数据表）版本6之后一个索引只能有一个类型，因此去除类型参数，默认类型与索引名称相同
+	 * @param _id    String 标识某个数据库、某个数据表中的唯一数据ID
 	 */
 	public Boolean deleteALL(String _index) {
 		try {
@@ -489,7 +479,7 @@ public class ElasticSearch {
 		JSONArray rows = ret.getJSONArray("rows");
 		Integer rows_count = rows.size();
 		JSONArray list = new JSONArray();
-		if (this.where_str.trim().equals("")) {
+		if (this.limit_str.trim().equals("")) {
 			for (Integer i = 0; i < rows_count; i = i + 1) {
 				JSONObject object = new JSONObject();
 				for (Integer n = 0; n < columns.size(); n = n + 1) {
