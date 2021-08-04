@@ -99,6 +99,8 @@ public class QR {
 		// 设置logo图标
 		if (!ImageIO.write(image, format, stream)) {
 			throw new IOException("Could not write an image of format " + format);
+		} else {
+			stream.close();
 		}
 	}
 

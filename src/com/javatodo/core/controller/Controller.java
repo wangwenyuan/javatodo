@@ -80,7 +80,7 @@ public class Controller {
 		if (C.is_debug && C.log_file_path.equals("")) {
 			C.log_file_path = servlet.getServletContext().getRealPath("/") + "WEB-INF/Runtime/log/";
 		}
-		if(C.cache_path.equals("")) {
+		if (C.cache_path.equals("")) {
 			C.cache_path = servlet.getServletContext().getRealPath("/") + "WEB-INF/Runtime/cache/";
 		}
 	}
@@ -165,8 +165,7 @@ public class Controller {
 	/**
 	 * 获取session的值
 	 * 
-	 * @param name
-	 *            String session的名称
+	 * @param name String session的名称
 	 * @return session中该名称对应的值
 	 */
 	public Object session(String name) {
@@ -189,10 +188,8 @@ public class Controller {
 	/**
 	 * 设置session的值
 	 * 
-	 * @param name
-	 *            String session的名称
-	 * @param value
-	 *            Object session的值
+	 * @param name  String session的名称
+	 * @param value Object session的值
 	 * @return 没有返回值
 	 */
 	public void session(String name, Object value) {
@@ -208,8 +205,7 @@ public class Controller {
 	/**
 	 * 获取cookie的值
 	 * 
-	 * @param name
-	 *            String cookie的名称
+	 * @param name String cookie的名称
 	 * @return
 	 */
 	public String cookie(String name) {
@@ -227,10 +223,8 @@ public class Controller {
 	/**
 	 * 设置cookie的值
 	 * 
-	 * @param name
-	 *            String cookie的名称
-	 * @param value
-	 *            String cookie的值
+	 * @param name  String cookie的名称
+	 * @param value String cookie的值
 	 */
 	public void cookie(String name, String value) {
 		if (value == null) {
@@ -247,12 +241,9 @@ public class Controller {
 	/**
 	 * 设置cookie的值
 	 * 
-	 * @param name
-	 *            String cookie的名称
-	 * @param value
-	 *            String cookie的值
-	 * @param expiry
-	 *            int cookie的存活时间，单位(秒)
+	 * @param name   String cookie的名称
+	 * @param value  String cookie的值
+	 * @param expiry int cookie的存活时间，单位(秒)
 	 */
 	public void cookie(String name, String value, int expiry) {
 		if (value == null) {
@@ -269,12 +260,9 @@ public class Controller {
 	/**
 	 * 设置cookie的值
 	 * 
-	 * @param name
-	 *            String cookie的名称
-	 * @param value
-	 *            String cookie的值
-	 * @param domain
-	 *            String cookie的作用域
+	 * @param name   String cookie的名称
+	 * @param value  String cookie的值
+	 * @param domain String cookie的作用域
 	 */
 	public void cookie(String name, String value, String domain) {
 		if (value == null) {
@@ -292,14 +280,10 @@ public class Controller {
 	/**
 	 * 设置cookie的值
 	 * 
-	 * @param name
-	 *            String cookie的名称
-	 * @param value
-	 *            String cookie的值
-	 * @param expiry
-	 *            int cookie的有效时间
-	 * @param domain
-	 *            String cookie的作用域
+	 * @param name   String cookie的名称
+	 * @param value  String cookie的值
+	 * @param expiry int cookie的有效时间
+	 * @param domain String cookie的作用域
 	 */
 	public void cookie(String name, String value, int expiry, String domain) {
 		if (value == null) {
@@ -336,8 +320,7 @@ public class Controller {
 	/**
 	 * 获取系统变量或用户提交的数据
 	 * 
-	 * @param name
-	 *            String 变量名
+	 * @param name String 变量名
 	 * @return String 变量值
 	 */
 	public String I(String name) {
@@ -354,8 +337,7 @@ public class Controller {
 	/**
 	 * 生成url地址
 	 * 
-	 * @param path
-	 *            [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param path [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
 	 * @return String 对应的url链接
 	 */
 	public String U(String path) {
@@ -378,8 +360,7 @@ public class Controller {
 	/**
 	 * 生成url地址
 	 * 
-	 * @param map
-	 *            Map<String 参数名,String 参数值> url中的参数（m：标识模块名；c：表示控制器名；a：表示操作名）
+	 * @param map Map<String 参数名,String 参数值> url中的参数（m：标识模块名；c：表示控制器名；a：表示操作名）
 	 * @return String 对应的url链接
 	 */
 	public String U(Map<String, String> map) {
@@ -403,10 +384,8 @@ public class Controller {
 	/**
 	 * 生成url地址
 	 * 
-	 * @param path
-	 *            String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
-	 * @param map
-	 *            Map<String 参数名,String 参数值> url中的参数
+	 * @param path String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param map  Map<String 参数名,String 参数值> url中的参数
 	 * @return String 对应的url链接
 	 */
 	public String U(String path, Map<String, Object> map) {
@@ -431,8 +410,7 @@ public class Controller {
 	/**
 	 * 页面重定向
 	 * 
-	 * @param url
-	 *            String 页面重定向的链接
+	 * @param url String 页面重定向的链接
 	 * @throws IOException
 	 */
 	public void redirect(String url) throws IOException {
@@ -445,7 +423,7 @@ public class Controller {
 	 * @throws IOException
 	 */
 	public void Verify() throws IOException {
-		response.setContentType("image/jpeg");
+		response.setContentType("image/png");
 		response.setHeader("Pragma", "no-cache");
 		response.setHeader("Cache-Control", "no-cache");
 		response.setDateHeader("Expires", 0);
@@ -458,8 +436,7 @@ public class Controller {
 	/**
 	 * 检测验证码是否正确
 	 * 
-	 * @param code
-	 *            用户输入的验证码的值
+	 * @param code 用户输入的验证码的值
 	 * @return boolean true:正确；false:错误
 	 */
 	public boolean check_verify(String code) {
@@ -479,10 +456,8 @@ public class Controller {
 	/**
 	 * 给模版赋值
 	 * 
-	 * @param name
-	 *            String 模版中变量的名称
-	 * @param value
-	 *            Object 模版中变量的值
+	 * @param name  String 模版中变量的名称
+	 * @param value Object 模版中变量的值
 	 */
 	public void assign(String name, Object value) {
 		this.assignMap.put(name, value);
@@ -633,8 +608,7 @@ public class Controller {
 	/**
 	 * 渲染模版
 	 * 
-	 * @param path
-	 *            String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param path String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
 	 * @throws IOException
 	 * @throws ServletException
 	 * @throws TemplateException
@@ -737,10 +711,8 @@ public class Controller {
 	/**
 	 * 生成分页类
 	 * 
-	 * @param total
-	 *            int 内容总数
-	 * @param num
-	 *            int 每页条数
+	 * @param total int 内容总数
+	 * @param num   int 每页条数
 	 * @return Pagination 分页类
 	 */
 	public Page page(int total, int num) {
@@ -750,10 +722,8 @@ public class Controller {
 	/**
 	 * 生成分页类
 	 * 
-	 * @param total
-	 *            Long 内容总数
-	 * @param num
-	 *            int 每页条数
+	 * @param total Long 内容总数
+	 * @param num   int 每页条数
 	 * @return Pagination 分页类
 	 */
 	public Page page(Long total, int num) {
@@ -763,8 +733,7 @@ public class Controller {
 	/**
 	 * 带有错误信息的跳转页面，例如“操作错误”，并且自动跳转到另外一个目标页面
 	 * 
-	 * @param errMsg
-	 *            String 要提示给用户的错误信息
+	 * @param errMsg String 要提示给用户的错误信息
 	 * @throws IOException
 	 */
 	public void error(String errMsg) throws IOException {
@@ -790,10 +759,8 @@ public class Controller {
 	/**
 	 * 带有错误信息的跳转页面，例如“操作错误”，并且自动跳转到另外一个目标页面
 	 * 
-	 * @param errMsg
-	 *            String 要提示给用户的错误信息
-	 * @param url
-	 *            String 要跳转的目标链接
+	 * @param errMsg String 要提示给用户的错误信息
+	 * @param url    String 要跳转的目标链接
 	 * @throws IOException
 	 */
 	public void error(String errMsg, String url) throws IOException {
@@ -819,12 +786,9 @@ public class Controller {
 	/**
 	 * 带有错误信息的跳转页面，例如“操作错误”，并且自动跳转到另外一个目标页面
 	 * 
-	 * @param errMsg
-	 *            String 要提示给用户的错误信息
-	 * @param url
-	 *            String 要跳转的目标链接
-	 * @param seconds
-	 *            Integer 在提示信息页面的停留时间
+	 * @param errMsg  String 要提示给用户的错误信息
+	 * @param url     String 要跳转的目标链接
+	 * @param seconds Integer 在提示信息页面的停留时间
 	 * @throws IOException
 	 */
 	public void error(String errMsg, String url, Integer seconds) throws IOException {
@@ -850,8 +814,7 @@ public class Controller {
 	/**
 	 * 带有成功信息的跳转页面，例如“操作成功”，并且自动跳转到另外一个目标页面
 	 * 
-	 * @param sucMsg
-	 *            String 提示给用户的成功信息
+	 * @param sucMsg String 提示给用户的成功信息
 	 * @throws IOException
 	 */
 	public void success(String sucMsg) throws IOException {
@@ -877,10 +840,8 @@ public class Controller {
 	/**
 	 * 带有成功信息的跳转页面，例如“操作成功”，并且自动跳转到另外一个目标页面
 	 * 
-	 * @param sucMsg
-	 *            String 提示给用户的成功信息
-	 * @param url
-	 *            String 要跳转的目标链接
+	 * @param sucMsg String 提示给用户的成功信息
+	 * @param url    String 要跳转的目标链接
 	 * @throws IOException
 	 */
 	public void success(String sucMsg, String url) throws IOException {
@@ -906,12 +867,9 @@ public class Controller {
 	/**
 	 * 带有成功信息的跳转页面，例如“操作成功”，并且自动跳转到另外一个目标页面
 	 * 
-	 * @param sucMsg
-	 *            String 提示给用户的成功信息
-	 * @param url
-	 *            String 要跳转的目标链接
-	 * @param seconds
-	 *            Integer 在提示信息页面的停留时间
+	 * @param sucMsg  String 提示给用户的成功信息
+	 * @param url     String 要跳转的目标链接
+	 * @param seconds Integer 在提示信息页面的停留时间
 	 * @throws IOException
 	 */
 	public void success(String sucMsg, String url, Integer seconds) throws IOException {
