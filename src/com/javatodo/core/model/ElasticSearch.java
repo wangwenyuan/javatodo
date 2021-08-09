@@ -211,6 +211,11 @@ public class ElasticSearch {
 		}
 	}
 
+	public long total() {
+		JSONObject object = this.field("count(*)").find();
+		return object.getLong("count(*)");
+	}
+
 	private String stremToString(InputStream is, String encoding) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int i = -1;

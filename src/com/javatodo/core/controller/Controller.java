@@ -536,7 +536,7 @@ public class Controller {
 			return this.parseJsp(path);
 		} else {
 			path = servlet.getServletContext().getRealPath("/") + this.templatePath;
-			path = path + "\\" + PACKAGE_NAME + "\\" + CLASS_NAME + "\\" + FUNCTION_NAME + this.templateSuffix;
+			path = path + "/" + PACKAGE_NAME + "/" + CLASS_NAME + "/" + FUNCTION_NAME + this.templateSuffix;
 			return this.view.parseString(path, routerMap.get("m").toString() + "." + routerMap.get("c").toString() + "." + routerMap.get("a").toString() + ".log");
 		}
 	}
@@ -576,7 +576,7 @@ public class Controller {
 			map.put("a", RC.getRC(MODULE_NAME + "!--javatodo--!" + CONTROLLER_NAME + "!--javatodo--!" + paths[0]));
 		}
 
-		path = root_path + "\\" + map.get("m").toString() + "\\" + map.get("c").toString() + "\\" + map.get("a").toString() + this.templateSuffix;
+		path = root_path + "/" + map.get("m").toString() + "/" + map.get("c").toString() + "/" + map.get("a").toString() + this.templateSuffix;
 		this.tempConstant();
 
 		if (this.templateSuffix.equals(".jsp")) {
@@ -600,7 +600,7 @@ public class Controller {
 		} else {
 			path = servlet.getServletContext().getRealPath("/") + this.templatePath;
 		}
-		path = path + "\\" + PACKAGE_NAME + "\\" + CLASS_NAME + "\\" + FUNCTION_NAME + this.templateSuffix;
+		path = path + "/" + PACKAGE_NAME + "/" + CLASS_NAME + "/" + FUNCTION_NAME + this.templateSuffix;
 		this.tempConstant();
 		this.view.flush(request, response, servlet, path);
 	}
@@ -641,7 +641,7 @@ public class Controller {
 			map.put("class_name", CLASS_NAME);
 			map.put("function_name", RC.getRC(MODULE_NAME, CONTROLLER_NAME, paths[0]) + "Page");
 		}
-		path = root_path + "\\" + map.get("package_name").toString() + "\\" + map.get("class_name").toString() + "\\" + map.get("function_name").toString() + this.templateSuffix;
+		path = root_path + "/" + map.get("package_name").toString() + "/" + map.get("class_name").toString() + "/" + map.get("function_name").toString() + this.templateSuffix;
 		this.tempConstant();
 		this.view.flush(request, response, servlet, path);
 	}
@@ -906,7 +906,7 @@ public class Controller {
 		} else {
 			root_path = servlet.getServletContext().getRealPath("/") + this.templatePath;
 		}
-		String path = root_path + "\\system\\jump" + this.templateSuffix;
+		String path = root_path + "/system/jump" + this.templateSuffix;
 		this.assign("type", session("javatodo_jump_type"));
 		this.assign("msg", session("javatodo_jump_msg"));
 		this.assign("seconds", session("javatodo_jump_seconds"));
