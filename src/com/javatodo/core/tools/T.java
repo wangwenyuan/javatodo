@@ -26,6 +26,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.sql.Connection;
 import java.text.ParseException;
@@ -499,6 +501,62 @@ public class T {
 			} else {
 				deleteDir(filePath);
 			}
+		}
+	}
+
+	// 清空目录
+	public static void clearDir(String dirPath) {
+		File file = new File(dirPath);
+		if (file.isFile()) {
+			return;
+		} else {
+			File[] files = file.listFiles();
+			if (files == null) {
+				return;
+			} else {
+				for (int i = 0; i < files.length; i++) {
+					T.deleteDir(files[i].getAbsolutePath());
+				}
+			}
+		}
+	}
+
+	public static void copyDir(String source_path, String new_path) throws IOException {
+		File source_file = new File(source_path);
+		File new_file = new File(new_path);
+		if (!source_file.exists()) {
+			return;
+		}
+		if (source_file.isFile()) {
+			copyFile(source_path, new_path);
+			return;
+		}
+		if (source_file.isDirectory() && !new_file.exists()) {
+			new_file.mkdirs();
+		}
+		File[] files = source_file.listFiles();
+		if (files == null) {
+			return;
+		} else {
+			for (int i = 0; i < files.length; i++) {
+				copyDir(files[i].getAbsolutePath(), new_path + "/" + files[i].getName());
+			}
+		}
+	}
+
+	public static void copyFile(String source_path, String new_path) throws IOException {
+		File file = new File(new_path);
+		if (!file.getParentFile().isDirectory()) {
+			new File(file.getParent()).mkdirs();
+		}
+		File sourceFile = new File(source_path);
+		if (!sourceFile.exists()) {
+			return;
+		}
+		if (sourceFile.isFile()) {
+			Files.copy(new File(source_path).toPath(), new File(new_path).toPath(), StandardCopyOption.REPLACE_EXISTING);
+		} else if (sourceFile.isDirectory()) {
+			copyDir(source_path, new_path);
 		}
 	}
 
