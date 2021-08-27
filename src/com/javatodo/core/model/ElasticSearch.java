@@ -33,6 +33,45 @@ public class ElasticSearch {
 	}
 
 	/**
+	 * 创建索引（数据库、数据表），同时指定ik分词器为默认分词器
+	 * 
+	 * @param _index
+	 *            String
+	 *            ElasticSearch中的索引相当于数据表（版本6之前相当于数据库，版本6之后相当于数据表）版本6之后一个索引只能有一个类型，因此去除类型参数，默认类型与索引名称相同
+	 */
+	public Boolean create(String _index) {
+
+		try {
+			URL httpurl = new URL(ip + ":" + port + "/" + _index);
+			HttpURLConnection conn = (HttpURLConnection) httpurl.openConnection();
+			conn.setRequestMethod("PUT");
+			conn.setReadTimeout(5000);
+			conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
+			JSONObject object = new JSONObject();
+			object.put("settings", new JSONObject());
+			object.getJSONObject("settings").put("index", new JSONObject());
+			object.getJSONObject("settings").getJSONObject("index").put("analysis.analyzer.default.type", "ik_smart");
+
+			String data = object.toJSONString();
+			conn.setRequestProperty("Content-Length", String.valueOf(data.getBytes().length));
+			conn.setDoOutput(true);
+			conn.getOutputStream().write(data.getBytes(StandardCharsets.UTF_8.toString()));
+			Integer code = conn.getResponseCode();
+			if (code == 200) {
+				InputStream inputStream = conn.getInputStream();
+				this.log = this.stremToString(inputStream, StandardCharsets.UTF_8.toString());
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return true;
+		}
+	}
+	
+	/**
 	 * 新增或修改数据
 	 * 
 	 * @param _index     String
