@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
@@ -35,9 +36,8 @@ public class ElasticSearch {
 	/**
 	 * 创建索引（数据库、数据表），同时指定ik分词器为默认分词器
 	 * 
-	 * @param _index
-	 *            String
-	 *            ElasticSearch中的索引相当于数据表（版本6之前相当于数据库，版本6之后相当于数据表）版本6之后一个索引只能有一个类型，因此去除类型参数，默认类型与索引名称相同
+	 * @param _index String
+	 *               ElasticSearch中的索引相当于数据表（版本6之前相当于数据库，版本6之后相当于数据表）版本6之后一个索引只能有一个类型，因此去除类型参数，默认类型与索引名称相同
 	 */
 	public Boolean create(String _index) {
 
@@ -70,7 +70,7 @@ public class ElasticSearch {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * 新增或修改数据
 	 * 
