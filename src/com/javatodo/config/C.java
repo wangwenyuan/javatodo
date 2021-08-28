@@ -1,9 +1,16 @@
 
 package com.javatodo.config;
 
+import com.alibaba.fastjson.parser.ParserConfig;
 import com.javatodo.core.router.RC;
 
 public class C {
+
+	static {
+		// 开启fastjson的SafeMode
+		ParserConfig.getGlobalInstance().setSafeMode(true);
+	}
+
 	// 数据库配置项
 	public static String db_type = "mysql";// 数据库类型
 	// 可以同时连接多个数据库。
