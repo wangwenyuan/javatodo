@@ -328,7 +328,7 @@ public class T {
 		return url;
 	}
 
-	public static int toInt(String iString) {
+	public static Integer toInt(String iString) {
 		iString = iString.trim();
 		if (iString.equals("")) {
 			return 0;
