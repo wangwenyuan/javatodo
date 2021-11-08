@@ -37,10 +37,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -326,14 +328,130 @@ public class T {
 		return url;
 	}
 
-	public static Integer toInt(String string) {
-		Integer integer = 0;
-		try {
-			integer = Integer.parseInt(string.trim());
-		} catch (Exception e) {
-			integer = 0;
+	public static int toInt(String iString) {
+		iString = iString.trim();
+		if (iString.equals("")) {
+			return 0;
 		}
-		return integer;
+		Set<String> base = new HashSet<String>() {
+			{
+				add("0");
+				add("1");
+				add("2");
+				add("3");
+				add("4");
+				add("5");
+				add("6");
+				add("7");
+				add("8");
+				add("9");
+			}
+		};
+		String[] arr = iString.split("");
+		String int_string = "";
+		for (Integer i = 0; i < arr.length; i = i + 1) {
+			String s = arr[i];
+			if (base.contains(s)) {
+				if (int_string.equals("") && s.equals("0")) {// 说明第一位是0
+					return 0;
+				}
+				int_string = int_string + s;
+			} else {
+				break;
+			}
+		}
+		if (int_string.equals("")) {
+			return 0;
+		} else {
+			Integer integer = 0;
+			try {
+				integer = Integer.parseInt(int_string.trim());
+			} catch (Exception e) {
+				integer = 0;
+			}
+			return integer;
+		}
+	}
+
+	public static float toFloat(String fString) {
+		fString = fString.trim();
+		if (fString.equals("")) {
+			return 0;
+		}
+		Set<String> base = new HashSet<String>() {
+			{
+				add("0");
+				add("1");
+				add("2");
+				add("3");
+				add("4");
+				add("5");
+				add("6");
+				add("7");
+				add("8");
+				add("9");
+				add(".");
+			}
+		};
+		String[] arr = fString.split("");
+		ArrayList<String> float_list = new ArrayList<>();
+		for (Integer i = 0; i < arr.length; i = i + 1) {
+			String s = arr[i];
+			if (base.contains(s)) {
+				if (s.equals(".")) {// 说明是小数点；
+					if (float_list.size() == 0) {// 说明第一位是小数点
+						float_list.add("0");
+						float_list.add(".");
+						continue;
+					}
+					if (float_list.contains(".")) {// 说明之前已经包含有小数点
+						break;
+					}
+					float_list.add(".");
+					continue;
+				}
+				if (s.equals("0")) {
+					if (float_list.size() == 0) {// 说明第一位是0；
+						if (arr.length > 1 && arr[1].equals(".")) {
+							float_list.add(s);
+							continue;
+						} else {
+							return 0;
+						}
+					}
+					float_list.add(s);
+					continue;
+				}
+				float_list.add(s);
+			} else {
+				break;
+			}
+		}
+		if (float_list.get(float_list.size() - 1).equals(".")) {
+			float_list.remove(float_list.size() - 1);
+		}
+		String float_string = "";
+		for (Integer i = 0; i < float_list.size(); i = i + 1) {
+			float_string = float_string + float_list.get(i);
+		}
+		return Float.parseFloat(float_string);
+	}
+
+	public static String getPostData(InputStream in, int size, String charset) {
+		if (in != null && size > 0) {
+			byte[] buf = new byte[size];
+			try {
+				in.read(buf);
+				if (charset == null || charset.length() == 0)
+					return new String(buf);
+				else {
+					return new String(buf, charset);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
 	}
 
 	public static String toString(Object object) {
