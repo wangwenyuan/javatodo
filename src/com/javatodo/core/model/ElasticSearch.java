@@ -172,6 +172,36 @@ public class ElasticSearch {
 		}
 	}
 
+	public JSONArray analyze(String sentence) throws IOException {
+		JSONObject json = new JSONObject();
+		json.put("analyzer", "ik_smart");
+		json.put("text", sentence);
+		URL httpurl = new URL(ip + ":" + port + "/_analyze");
+		HttpURLConnection conn = (HttpURLConnection) httpurl.openConnection();
+		conn.setRequestMethod("POST");
+		conn.setReadTimeout(5000);
+		conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+		String data = json.toJSONString();
+		conn.setRequestProperty("Content-Length", String.valueOf(data.getBytes().length));
+		conn.setDoOutput(true);
+		conn.getOutputStream().write(data.getBytes("UTF-8"));
+		Integer code = conn.getResponseCode();
+		if (code == 201 || code == 200) {
+			InputStream inputStream = conn.getInputStream();
+			String ret = stremToString(inputStream, "UTF-8");
+			JSONObject retjson = JSONObject.parseObject(ret);
+			if (retjson.containsKey("tokens")) {
+				JSONArray list = retjson.getJSONArray("tokens");
+				return list;
+			} else {
+				return null;
+			}
+
+		} else {
+			return null;
+		}
+	}
+
 	public JSONObject sqlQuery(String sql) {
 		try {
 			URL httpurl = new URL(ip + ":" + port + "/_xpack/sql?format=json");
