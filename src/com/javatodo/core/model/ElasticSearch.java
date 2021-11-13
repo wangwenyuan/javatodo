@@ -172,7 +172,12 @@ public class ElasticSearch {
 		}
 	}
 
-	public JSONArray analyze(String sentence) throws IOException {
+	/**
+	 * ik分词器分词结果
+	 * 
+	 * @param sentence String 需要分词的句子或者短语
+	 */
+	public JSONArray ik_Analyze(String sentence) throws IOException {
 		JSONObject json = new JSONObject();
 		json.put("analyzer", "ik_smart");
 		json.put("text", sentence);
