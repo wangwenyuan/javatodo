@@ -753,7 +753,7 @@ public class Controller {
 	 * @return Pagination 分页类
 	 */
 	public Page page(int total, int num) {
-		return new Page(total, num, this.entrance, this.routerMap);
+		return new Page(total, num, this.entrance, this.routerMap, this.request);
 	}
 
 	/**
@@ -766,7 +766,7 @@ public class Controller {
 	 * @return Pagination 分页类
 	 */
 	public Page page(Long total, int num) {
-		return new Page(total, num, this.entrance, this.routerMap);
+		return new Page(total, num, this.entrance, this.routerMap, this.request);
 	}
 
 	/**
