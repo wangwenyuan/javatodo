@@ -102,7 +102,7 @@ public class Controller {
 			}
 		}
 		this.ROOT = request.getContextPath();
-		this.PUBLIC = ROOT + "/" + C.default_template_public;
+		this.PUBLIC = T.getRootUrl(request) + "/" + C.default_template_public;
 		// 设置模版
 		if ("velocity".equals(C.template_engines)) {
 			view = new VelocityView();
