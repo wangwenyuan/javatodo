@@ -230,10 +230,28 @@ public class T {
 	}
 
 	/**
+	 * 获取协议、域名以及端口
+	 * 
+	 * @param request
+	 *            HttpServletRequest请求
+	 * @return String 对应的url链接
+	 */
+	public static String getHost(HttpServletRequest request) {
+		String url = request.getScheme() // 当前链接使用的协议
+				+ "://" + request.getServerName();// 服务器地址
+		if (request.getServerPort() != 80) {
+			url = url + ":" + request.getServerPort(); // 端口号
+		}
+		return url;
+	}
+
+	/**
 	 * 生成url地址
 	 * 
 	 * @param path
 	 *            [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param entrance
+	 *            入口文件，如"index.jsp" 或 "admin.jsp"
 	 * @return String 对应的url链接
 	 */
 	public static String U(String path, String entrance) {
@@ -248,8 +266,30 @@ public class T {
 	/**
 	 * 生成url地址
 	 * 
+	 * @param path
+	 *            [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param entrance
+	 *            入口文件，如"index.jsp" 或 "admin.jsp"
+	 * @param request
+	 *            HttpServletRequest请求
+	 * @return String 对应的url链接
+	 */
+	public static String U(String path, String entrance, HttpServletRequest request) {
+		String url = T.getRootUrl(request) + "/" + entrance;
+		String[] paths = path.split("/");
+		if (paths.length == 3) {
+			url = url + "?m=" + paths[0] + "&c=" + paths[1] + "&a=" + paths[2];
+		}
+		return url;
+	}
+
+	/**
+	 * 生成url地址
+	 * 
 	 * @param map
 	 *            Map<String 参数名,String 参数值> url中的参数（m：标识模块名；c：表示控制器名；a：表示操作名）
+	 * @param entrance
+	 *            入口文件，如"index.jsp" 或 "admin.jsp"
 	 * @return String 对应的url链接
 	 */
 	public static String U(Map<String, String> map, String entrance) {
@@ -269,10 +309,37 @@ public class T {
 	/**
 	 * 生成url地址
 	 * 
+	 * @param map
+	 *            Map<String 参数名,String 参数值> url中的参数（m：标识模块名；c：表示控制器名；a：表示操作名）
+	 * @param entrance
+	 *            入口文件，如"index.jsp" 或 "admin.jsp"
+	 * @param request
+	 *            HttpServletRequest请求
+	 * @return String 对应的url链接
+	 */
+	public static String U(Map<String, String> map, String entrance, HttpServletRequest request) {
+		String url = T.getRootUrl(request) + "/" + entrance;
+		Integer i = 0;
+		for (Entry<String, String> entry : map.entrySet()) {
+			if (i == 0) {
+				url = url + "?" + entry.getKey() + "=" + entry.getValue().toString();
+			} else {
+				url = url + "&" + entry.getKey() + "=" + entry.getValue().toString();
+			}
+			i = i + 1;
+		}
+		return url;
+	}
+
+	/**
+	 * 生成url地址
+	 * 
 	 * @param path
 	 *            [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
 	 * @param param
 	 *            map的json结构
+	 * @param entrance
+	 *            入口文件，如"index.jsp" 或 "admin.jsp"
 	 * @return String 对应的url链接
 	 */
 	public static String UJ(String path, String param, String entrance) {
@@ -294,7 +361,35 @@ public class T {
 	 * @param path
 	 *            [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
 	 * @param param
+	 *            map的json结构
+	 * @param entrance
+	 *            入口文件，如"index.jsp" 或 "admin.jsp"
+	 * @param request
+	 *            HttpServletRequest请求
+	 * @return String 对应的url链接
+	 */
+	public static String UJ(String path, String param, String entrance, HttpServletRequest request) {
+		String url = T.getRootUrl(request) + "/" + entrance;
+		Map<String, Object> map = JSON.parseObject(param);
+		String[] paths = path.split("/");
+		if (paths.length == 3) {
+			url = url + "?m=" + paths[0] + "&c=" + paths[1] + "&a=" + paths[2];
+		}
+		for (Entry<String, Object> entry : map.entrySet()) {
+			url = url + "&" + entry.getKey() + "=" + entry.getValue().toString();
+		}
+		return url;
+	}
+
+	/**
+	 * 生成url地址
+	 * 
+	 * @param path
+	 *            [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param param
 	 *            参数，形如：“fra=javatodo&v=3.0”
+	 * @param entrance
+	 *            入口文件，如"index.jsp" 或 "admin.jsp"
 	 * @return String 对应的url链接
 	 */
 	public static String U(String path, String param, String entrance) {
@@ -311,13 +406,63 @@ public class T {
 	 * 生成url地址
 	 * 
 	 * @param path
+	 *            [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param param
+	 *            参数，形如：“fra=javatodo&v=3.0”
+	 * @param entrance
+	 *            入口文件，如"index.jsp" 或 "admin.jsp"
+	 * @param request
+	 *            HttpServletRequest请求
+	 * @return String 对应的url链接
+	 */
+	public static String U(String path, String param, String entrance, HttpServletRequest request) {
+		String url = T.getRootUrl(request) + "/" + entrance;
+		String[] paths = path.split("/");
+		if (paths.length == 3) {
+			url = url + "?m=" + paths[0] + "&c=" + paths[1] + "&a=" + paths[2];
+		}
+		url = url + "&" + param;
+		return url;
+	}
+
+	/**
+	 * 生成url地址
+	 * 
+	 * @param path
 	 *            String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
 	 * @param map
 	 *            Map<String 参数名,String 参数值> url中的参数
+	 * @param entrance
+	 *            入口文件，如"index.jsp" 或 "admin.jsp"
 	 * @return String 对应的url链接
 	 */
 	public static String U(String path, Map<String, Object> map, String entrance) {
 		String url = "./" + entrance;
+		String[] paths = path.split("/");
+		if (paths.length == 3) {
+			url = url + "?m=" + paths[0] + "&c=" + paths[1] + "&a=" + paths[2];
+		}
+		for (Entry<String, Object> entry : map.entrySet()) {
+			url = url + "&" + entry.getKey() + "=" + entry.getValue().toString();
+		}
+		return url;
+	}
+
+	/**
+	 * 生成url地址
+	 * 
+	 * @param path
+	 *            String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param map
+	 *            Map<String 参数名,String 参数值> url中的参数
+	 * @param entrance
+	 *            入口文件，如"index.jsp" 或 "admin.jsp"
+	 * @param request
+	 *            HttpServletRequest请求
+	 * @return String 对应的url链接
+	 */
+	public static String U(String path, Map<String, Object> map, String entrance, HttpServletRequest request) {
+		String url = T.getRootUrl(request) + "/" + entrance;
 		String[] paths = path.split("/");
 		if (paths.length == 3) {
 			url = url + "?m=" + paths[0] + "&c=" + paths[1] + "&a=" + paths[2];
