@@ -238,17 +238,25 @@ public class MysqlDriver extends Driver {
 
 	// where方法
 	public MysqlDriver where(String where_str) {
-		this.where_str = this.where_str + " and " + where_str + " ";
-		return this;
+		if (where_str.equals("")) {
+			return this;
+		} else {
+			this.where_str = this.where_str + " and " + where_str + " ";
+			return this;
+		}
 	}
 
 	// where方法
 	public MysqlDriver where(String where_str, Object... params) {
-		this.where_str = this.where_str + " and " + where_str + " ";
-		for (Integer integer = 0; integer < params.length; integer = integer + 1) {
-			this.where_value_list.add(params[integer]);
+		if (where_str.equals("")) {
+			return this;
+		} else {
+			this.where_str = this.where_str + " and " + where_str + " ";
+			for (Integer integer = 0; integer < params.length; integer = integer + 1) {
+				this.where_value_list.add(params[integer]);
+			}
+			return this;
 		}
-		return this;
 	}
 
 	// order方法
