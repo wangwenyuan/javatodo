@@ -162,7 +162,8 @@ public class MysqlDriver extends Driver {
 				}
 				break;
 			case "in":
-				List<Object> values = where.get(key).get_value_list();
+				List<Object> values = new ArrayList<>();
+				values.addAll(where.get(key).get_value_list());
 				if (values.contains(null)) {
 					values.remove(null);
 					if (values.size() > 1) {
@@ -195,7 +196,8 @@ public class MysqlDriver extends Driver {
 				}
 				break;
 			case "not in":
-				List<Object> not_values = where.get(key).get_value_list();
+				List<Object> not_values = new ArrayList<>();
+				not_values.addAll(where.get(key).get_value_list());
 				if (not_values.contains(null)) {
 					not_values.remove(null);
 					if (not_values.size() > 1) {
