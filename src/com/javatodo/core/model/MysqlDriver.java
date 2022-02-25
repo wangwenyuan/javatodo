@@ -66,24 +66,44 @@ public class MysqlDriver extends Driver {
 		for (String key : where.keySet()) {
 			switch (where.get(key).get_relation().toLowerCase().trim()) {
 			case "eq":
-				this.where_str = this.where_str + " and " + key + " =? ";
-				this.where_value_list.add(where.get(key).get_value());
+				if (where.get(key).get_value() == null) {
+					this.where_str = this.where_str + " and " + key + " is null ";
+				} else {
+					this.where_str = this.where_str + " and " + key + " =? ";
+					this.where_value_list.add(where.get(key).get_value());
+				}
 				break;
 			case "=":
-				this.where_str = this.where_str + " and " + key + " =? ";
-				this.where_value_list.add(where.get(key).get_value());
+				if (where.get(key).get_value() == null) {
+					this.where_str = this.where_str + " and " + key + " is null ";
+				} else {
+					this.where_str = this.where_str + " and " + key + " =? ";
+					this.where_value_list.add(where.get(key).get_value());
+				}
 				break;
 			case "!=":
-				this.where_str = this.where_str + " and " + key + " !=? ";
-				this.where_value_list.add(where.get(key).get_value());
+				if (where.get(key).get_value() == null) {
+					this.where_str = this.where_str + " and " + key + " is not null ";
+				} else {
+					this.where_str = this.where_str + " and " + key + " !=? ";
+					this.where_value_list.add(where.get(key).get_value());
+				}
 				break;
 			case "<>":
-				this.where_str = this.where_str + " and " + key + " !=? ";
-				this.where_value_list.add(where.get(key).get_value());
+				if (where.get(key).get_value() == null) {
+					this.where_str = this.where_str + " and " + key + " is not null ";
+				} else {
+					this.where_str = this.where_str + " and " + key + " !=? ";
+					this.where_value_list.add(where.get(key).get_value());
+				}
 				break;
 			case "neq":
-				this.where_str = this.where_str + " and " + key + " !=? ";
-				this.where_value_list.add(where.get(key).get_value());
+				if (where.get(key).get_value() == null) {
+					this.where_str = this.where_str + " and " + key + " is not null ";
+				} else {
+					this.where_str = this.where_str + " and " + key + " !=? ";
+					this.where_value_list.add(where.get(key).get_value());
+				}
 				break;
 			case ">":
 				this.where_str = this.where_str + " and " + key + " >? ";
@@ -142,31 +162,69 @@ public class MysqlDriver extends Driver {
 				}
 				break;
 			case "in":
-				if (where.get(key).get_value_list().size() > 1) {
-					String wenhao_str = "?";
-					this.where_value_list.add(where.get(key).get_value_list().get(0));
-					for (Integer integer = 1; integer < where.get(key).get_value_list().size(); integer = integer + 1) {
-						wenhao_str = wenhao_str + ",?";
-						this.where_value_list.add(where.get(key).get_value_list().get(integer));
+				List<Object> values = where.get(key).get_value_list();
+				if (values.contains(null)) {
+					values.remove(null);
+					if (values.size() > 1) {
+						String wenhao_str = "?";
+						this.where_value_list.add(values.get(0));
+						for (Integer integer = 1; integer < values.size(); integer = integer + 1) {
+							wenhao_str = wenhao_str + ",?";
+							this.where_value_list.add(values.get(integer));
+						}
+						this.where_str = this.where_str + " and " + key + " is null or" + key + " in (" + wenhao_str + ") ";
+					} else if (values.size() == 1) {
+						this.where_str = this.where_str + " and " + key + " is null or " + key + "=? ";
+						this.where_value_list.add(values.get(0));
+					} else if (values.size() == 0) {
+						this.where_str = this.where_str + " and " + key + " is null ";
 					}
-					this.where_str = this.where_str + " and " + key + " in (" + wenhao_str + ") ";
-				} else if (where.get(key).get_value_list().size() == 1) {
-					this.where_str = this.where_str + " and " + key + "=? ";
-					this.where_value_list.add(where.get(key).get_value_list().get(0));
+				} else {
+					if (values.size() > 1) {
+						String wenhao_str = "?";
+						this.where_value_list.add(values.get(0));
+						for (Integer integer = 1; integer < values.size(); integer = integer + 1) {
+							wenhao_str = wenhao_str + ",?";
+							this.where_value_list.add(values.get(integer));
+						}
+						this.where_str = this.where_str + " and " + key + " in (" + wenhao_str + ") ";
+					} else if (values.size() == 1) {
+						this.where_str = this.where_str + " and " + key + "=? ";
+						this.where_value_list.add(values.get(0));
+					}
 				}
 				break;
 			case "not in":
-				if (where.get(key).get_value_list().size() > 1) {
-					String wenhao_str = "?";
-					this.where_value_list.add(where.get(key).get_value_list().get(0));
-					for (Integer integer = 1; integer < where.get(key).get_value_list().size(); integer = integer + 1) {
-						wenhao_str = wenhao_str + ",?";
-						this.where_value_list.add(where.get(key).get_value_list().get(integer));
+				List<Object> not_values = where.get(key).get_value_list();
+				if (not_values.contains(null)) {
+					not_values.remove(null);
+					if (not_values.size() > 1) {
+						String wenhao_str = "?";
+						this.where_value_list.add(not_values.get(0));
+						for (Integer integer = 1; integer < not_values.size(); integer = integer + 1) {
+							wenhao_str = wenhao_str + ",?";
+							this.where_value_list.add(not_values.get(integer));
+						}
+						this.where_str = this.where_str + " and " + key + " is not null and " + key + " not in (" + wenhao_str + ") ";
+					} else if (not_values.size() == 1) {
+						this.where_str = this.where_str + " and " + key + " is not null and " + key + "!=? ";
+						this.where_value_list.add(not_values.get(0));
+					} else if (not_values.size() == 0) {
+						this.where_str = this.where_str + " and " + key + " is not null ";
 					}
-					this.where_str = this.where_str + " and " + key + " not in (" + wenhao_str + ") ";
-				} else if (where.get(key).get_value_list().size() == 1) {
-					this.where_str = this.where_str + " and " + key + "!=? ";
-					this.where_value_list.add(where.get(key).get_value_list().get(0));
+				} else {
+					if (not_values.size() > 1) {
+						String wenhao_str = "?";
+						this.where_value_list.add(not_values.get(0));
+						for (Integer integer = 1; integer < not_values.size(); integer = integer + 1) {
+							wenhao_str = wenhao_str + ",?";
+							this.where_value_list.add(not_values.get(integer));
+						}
+						this.where_str = this.where_str + " and " + key + " not in (" + wenhao_str + ") ";
+					} else if (not_values.size() == 1) {
+						this.where_str = this.where_str + " and " + key + "!=? ";
+						this.where_value_list.add(not_values.get(0));
+					}
 				}
 				break;
 			default:
