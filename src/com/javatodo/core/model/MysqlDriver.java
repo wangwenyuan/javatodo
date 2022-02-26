@@ -173,9 +173,9 @@ public class MysqlDriver extends Driver {
 							wenhao_str = wenhao_str + ",?";
 							this.where_value_list.add(values.get(integer));
 						}
-						this.where_str = this.where_str + " and " + key + " is null or" + key + " in (" + wenhao_str + ") ";
+						this.where_str = this.where_str + " and (" + key + " is null or " + key + " in (" + wenhao_str + ")) ";
 					} else if (values.size() == 1) {
-						this.where_str = this.where_str + " and " + key + " is null or " + key + "=? ";
+						this.where_str = this.where_str + " and (" + key + " is null or " + key + "=?) ";
 						this.where_value_list.add(values.get(0));
 					} else if (values.size() == 0) {
 						this.where_str = this.where_str + " and " + key + " is null ";
