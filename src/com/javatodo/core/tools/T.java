@@ -972,8 +972,10 @@ public class T {
 	public static String getHost(HttpServletRequest request) {
 		String url = request.getScheme() // 当前链接使用的协议
 				+ "://" + request.getServerName();// 服务器地址
-		if (request.getServerPort() != 80 && request.getServerPort() != 443) {
-			url = url + ":" + request.getServerPort(); // 端口号
+		if (C.is_debug) {
+			if (request.getServerPort() != 80 && request.getServerPort() != 443) {
+				url = url + ":" + request.getServerPort(); // 端口号
+			}
 		}
 		return url;
 	}
