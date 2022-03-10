@@ -230,22 +230,6 @@ public class T {
 	}
 
 	/**
-	 * 获取协议、域名以及端口
-	 * 
-	 * @param request
-	 *            HttpServletRequest请求
-	 * @return String 对应的url链接
-	 */
-	public static String getHost(HttpServletRequest request) {
-		String url = request.getScheme() // 当前链接使用的协议
-				+ "://" + request.getServerName();// 服务器地址
-		if (request.getServerPort() != 80) {
-			url = url + ":" + request.getServerPort(); // 端口号
-		}
-		return url;
-	}
-
-	/**
 	 * 生成url地址
 	 * 
 	 * @param path
@@ -978,13 +962,25 @@ public class T {
 		}
 	}
 
-	// 获取根目录的url链接
-	public static String getRootUrl(HttpServletRequest request) {
+	/**
+	 * 获取协议、域名以及端口
+	 * 
+	 * @param request
+	 *            HttpServletRequest请求
+	 * @return String 对应的url链接
+	 */
+	public static String getHost(HttpServletRequest request) {
 		String url = request.getScheme() // 当前链接使用的协议
 				+ "://" + request.getServerName();// 服务器地址
-		if (request.getServerPort() != 80) {
+		if (request.getServerPort() != 80 && request.getServerPort() != 443) {
 			url = url + ":" + request.getServerPort(); // 端口号
 		}
+		return url;
+	}
+
+	// 获取根目录的url链接
+	public static String getRootUrl(HttpServletRequest request) {
+		String url = getHost(request);
 		url = url + request.getContextPath();
 		return url;
 	}
