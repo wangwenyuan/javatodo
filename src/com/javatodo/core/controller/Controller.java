@@ -351,15 +351,6 @@ public class Controller {
 		return string;
 	}
 
-	private String getHost() {
-		String url = request.getScheme() // 当前链接使用的协议
-				+ "://" + request.getServerName();// 服务器地址
-		if (request.getServerPort() != 80) {
-			url = url + ":" + request.getServerPort(); // 端口号
-		}
-		return url;
-	}
-
 	/**
 	 * 生成url地址
 	 * 
@@ -369,7 +360,7 @@ public class Controller {
 	 */
 	public String U(String path) {
 		Map<String, String> map = this.routerMap;
-		String url = this.getHost();
+		String url = T.getRootUrl(request);
 		String[] paths = path.split("/");
 		String root_path = request.getRequestURI();
 		if (paths.length == 3) {
@@ -392,7 +383,7 @@ public class Controller {
 	 * @return String 对应的url链接
 	 */
 	public String U(Map<String, String> map) {
-		String url = this.getHost() + request.getRequestURI();
+		String url = T.getRootUrl(request) + request.getRequestURI();
 		if (map.containsKey("m") && map.containsKey("c") && map.containsKey("a")) {
 			String paramUrl = "";
 			Integer i = 0;
@@ -421,7 +412,7 @@ public class Controller {
 	public String U(String path, Map<String, Object> map) {
 		String url = "";
 		String[] paths = path.split("/");
-		String root_path = this.getHost() + request.getRequestURI();
+		String root_path = T.getRootUrl(request) + request.getRequestURI();
 		if (paths.length == 3) {
 			url = root_path + "?m=" + paths[0] + "&c=" + paths[1] + "&a=" + paths[2];
 		}
