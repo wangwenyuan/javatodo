@@ -23,6 +23,8 @@ public class C {
 
 	// 是否调试模式
 	public static boolean is_debug = true;
+	// 网站根目录链接,如果该值是空，则T.getHost()获取网站的当前网址，如果该值不为null，则获取该值信息。
+	public static String ROOTURL = null;
 	// 日志文件夹
 	public static String log_file_path = "";
 	// 缓存文件夹

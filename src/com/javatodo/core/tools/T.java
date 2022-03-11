@@ -970,12 +970,17 @@ public class T {
 	 * @return String 对应的url链接
 	 */
 	public static String getHost(HttpServletRequest request) {
-		String url = request.getScheme() // 当前链接使用的协议
-				+ "://" + request.getServerName();// 服务器地址
-		if (C.is_debug) {
-			if (request.getServerPort() != 80 && request.getServerPort() != 443) {
-				url = url + ":" + request.getServerPort(); // 端口号
+		String url = "";
+		if (C.ROOTURL == null) {
+			url = request.getScheme() // 当前链接使用的协议
+					+ "://" + request.getServerName();// 服务器地址
+			if (C.is_debug) {
+				if (request.getServerPort() != 80 && request.getServerPort() != 443) {
+					url = url + ":" + request.getServerPort(); // 端口号
+				}
 			}
+		} else {
+			url = C.ROOTURL;
 		}
 		return url;
 	}
