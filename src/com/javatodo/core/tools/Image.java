@@ -47,6 +47,34 @@ public class Image {
 	 * 
 	 * @param src,原图片路径
 	 * @param dist,新图片路径
+	 * @param width,新图片的宽度
+	 * @param height,新图片的高度
+	 * @return
+	 */
+	public static Boolean resizeImage(String src, String dist, float width, float height) {
+		try {
+			BufferedImage image = ImageIO.read(new File(src));
+			int newWidth = (int) width;
+			int newHeight = (int) height;
+			BufferedImage bfImage = new BufferedImage(newWidth, newHeight, image.getType());
+			bfImage.getGraphics().drawImage(image.getScaledInstance(newWidth, newHeight, java.awt.Image.SCALE_SMOOTH), 0, 0, null);
+			FileOutputStream os = new FileOutputStream(dist);
+			ImageIO.write(bfImage, getType(src), os);
+			os.close();
+			os = null;
+			return true;
+		} catch (IOException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * 调整图片尺寸
+	 * 
+	 * @param src,原图片路径
+	 * @param dist,新图片路径
 	 * @param startX,裁剪起始位置的X坐标
 	 * @param startY,裁剪起始位置的Y坐标
 	 * @param endX,裁剪结束位置的X坐标
