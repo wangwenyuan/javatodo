@@ -1,9 +1,13 @@
 package com.javatodo.core.tools;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -120,6 +124,46 @@ public class Image {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+
+	/**
+	 * 在图片上写字
+	 * 
+	 * @param src,原图片路径
+	 * @param dist,合并后的图片路径
+	 * @param text,文字内容
+	 * @param left,文字左边距离
+	 * @param top,文字顶部距离
+	 * @param color,文字颜色
+	 * @param fontSize,文字大小
+	 * @return
+	 */
+	public static void drawText(String src, String dist, String text, int left, int top, String color, int fontSize) throws IOException {
+		BufferedImage bimage = ImageIO.read(new File(src));
+		Graphics2D g = bimage.createGraphics();
+		Font font = new Font("宋体", Font.CENTER_BASELINE, fontSize); // 定义字体
+		FontMetrics fm = sun.font.FontDesignMetrics.getMetrics(font);
+		top = top + fm.getHeight();
+		color = color.replace("#", "");
+		int _color = (int) Long.parseLong(color, 16);
+		int _r = (_color >> 16) & 0xFF;
+		int _g = (_color >> 8) & 0xFF;
+		int _b = (_color >> 0) & 0xFF;
+		g.setPaint(new Color(_r, _g, _b));
+		g.setFont(font);
+		g.drawString(text, left, top);
+		g.dispose();
+		try {
+			FileOutputStream out = new FileOutputStream(dist);
+			ImageIO.write(bimage, "png", out);
+			out.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
