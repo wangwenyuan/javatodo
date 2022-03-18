@@ -170,7 +170,7 @@ public class Image {
 	public static void drawText(String src, String dist, String text, int left, int top, String color, int fontSize) throws IOException {
 		BufferedImage bimage = ImageIO.read(new File(src));
 		Graphics2D g = bimage.createGraphics();
-		Font font = new Font("宋体", Font.CENTER_BASELINE, fontSize); // 定义字体
+		Font font = new Font("宋体", Font.BOLD, fontSize); // 定义字体
 		FontMetrics fm = sun.font.FontDesignMetrics.getMetrics(font);
 		top = top + fm.getHeight();
 		color = color.replace("#", "");
