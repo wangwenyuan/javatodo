@@ -71,7 +71,7 @@ public class Image {
 	}
 
 	/**
-	 * 调整图片尺寸
+	 * 裁剪图片
 	 * 
 	 * @param src,原图片路径
 	 * @param dist,新图片路径
@@ -136,16 +136,16 @@ public class Image {
 	 * @param src,原图片路径
 	 * @param logosrc,LOGO的路径
 	 * @param dist,合并后的图片路径
+	 * @param x,logo在原图片的x坐标
+	 * @param y,logo在原图片的y坐标
 	 * @return
 	 */
-	public static boolean overlapImage(String src, String logosrc, String dist) {
+	public static boolean overlapImage(String src, String logosrc, String dist, float x, float y) {
 		try {
 			BufferedImage big = ImageIO.read(new File(src));
 			BufferedImage logo = ImageIO.read(new File(logosrc));
 			Graphics2D g = big.createGraphics();
-			int x = (big.getWidth() - logo.getWidth()) / 2;
-			int y = (big.getHeight() - logo.getHeight()) / 2;
-			g.drawImage(logo, x, y, logo.getWidth(), logo.getHeight(), null);
+			g.drawImage(logo, (int) x, (int) y, logo.getWidth(), logo.getHeight(), null);
 			g.dispose();
 			ImageIO.write(big, dist.split("\\.")[1], new File(dist));
 			return true;
