@@ -147,8 +147,10 @@ public class Image {
 			Graphics2D g = big.createGraphics();
 			g.drawImage(logo, (int) x, (int) y, logo.getWidth(), logo.getHeight(), null);
 			g.dispose();
-			ImageIO.write(big, dist.split("\\.")[1], new File(dist));
-			return true;
+			if (!new File(dist).exists()) {
+				new File(dist).createNewFile();
+			}
+			return ImageIO.write(big, dist.split("\\.")[1], new File(dist));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
@@ -254,10 +256,8 @@ public class Image {
 	/**
 	 * 标示一致性比较
 	 * 
-	 * @param buf
-	 *            待检测标示
-	 * @param markBuf
-	 *            标识符字节数组
+	 * @param buf     待检测标示
+	 * @param markBuf 标识符字节数组
 	 * @return 返回false标示标示不匹配
 	 */
 	private static boolean compare(byte[] buf, byte[] markBuf) {
@@ -274,12 +274,9 @@ public class Image {
 
 	/**
 	 * 
-	 * @param fis
-	 *            输入流对象
-	 * @param skiplength
-	 *            跳过位置长度
-	 * @param length
-	 *            要读取的长度
+	 * @param fis        输入流对象
+	 * @param skiplength 跳过位置长度
+	 * @param length     要读取的长度
 	 * @return 字节数组
 	 * @throws IOException
 	 */
