@@ -26,6 +26,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -1003,5 +1004,48 @@ public class T {
 			e.printStackTrace();
 		}
 		return ret;
+	}
+
+	public static boolean downloadFile(String fileUrl, String filePath) {
+		boolean bool = false;
+		InputStream is = null;
+		FileOutputStream os = null;
+		try {
+			java.net.URL url = new java.net.URL(fileUrl);
+			URLConnection con = url.openConnection();
+			is = con.getInputStream();
+			byte[] bs = new byte[1024];
+			int len;
+			File file = new File(filePath);
+			File dir = new File(file.getParent());
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+			os = new FileOutputStream(filePath, false);// false：覆盖文件,true:在原有文件后追加
+			while ((len = is.read(bs)) != -1) {
+				os.write(bs, 0, len);
+			}
+			bool = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			// 完毕，关闭所有链接
+			if (null != os) {
+				try {
+					os.flush();
+					os.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (null != is) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return bool;
 	}
 }
