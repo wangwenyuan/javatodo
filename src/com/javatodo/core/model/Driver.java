@@ -41,7 +41,7 @@ public abstract class Driver {
 
 	public abstract Driver field(String field_str);
 
-	public abstract void group(String field_str);
+	public abstract Driver group(String field_str);
 
 	public abstract Driver add();
 

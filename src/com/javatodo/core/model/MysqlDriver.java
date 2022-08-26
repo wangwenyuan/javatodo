@@ -355,17 +355,7 @@ public class MysqlDriver extends Driver {
 
 	// find方法
 	public MysqlDriver find() {
-		String join_sql = "";
-		int i = 0;
-		while (i < this.join_str_list.size()) {
-			join_sql = join_sql + this.join_str_list.get(i);
-			i = i + 1;
-		}
-		if (!this.where_str.equals("")) {
-			this.where_str = " where " + this.where_str;
-		}
-		this.sql = "select " + this.field_str + " from `" + this.table_pre + this.table_name + "`" + this.as_str + join_sql + this.where_str + this.group_str + this.order_str + " limit 1;";
-		return this;
+		return this.limit("1").select();
 	}
 
 	// 获取sql
@@ -389,8 +379,9 @@ public class MysqlDriver extends Driver {
 	}
 
 	// group方法
-	public void group(String fields) {
+	public MysqlDriver group(String fields) {
 		this.group_str = " group by " + fields + " ";
+		return this;
 	}
 
 	public MysqlDriver setInc(String field, Integer value) {
@@ -414,23 +405,11 @@ public class MysqlDriver extends Driver {
 	}
 
 	public MysqlDriver setInc(String field) {
-		String str = "";
-		str = " set " + field + "=" + field + "+1";
-		if (!this.where_str.equals("")) {
-			this.where_str = " where " + this.where_str;
-		}
-		this.sql = "update `" + this.table_pre + this.table_name + "`" + str + this.where_str + ";";
-		return this;
+		return setInc(field, 1);
 	}
 
 	public MysqlDriver setDec(String field) {
-		String str = "";
-		str = " set " + field + "=" + field + "-1";
-		if (!this.where_str.equals("")) {
-			this.where_str = " where " + this.where_str;
-		}
-		this.sql = "update `" + this.table_pre + this.table_name + "`" + str + this.where_str + ";";
-		return this;
+		return setDec(field, 1);
 	}
 
 	// 清理数据

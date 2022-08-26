@@ -252,8 +252,10 @@ public class PgsqlDriver extends Driver {
 		String[] limit_arr = new String[2];
 		if (limit_str.contains(",")) {
 			limit_arr = limit_str.split(",");
+			this.limit_str = " limit " + limit_arr[1] + " offset " + limit_arr[0] + " ";
+		} else {
+			this.limit_str = " limit " + limit_str + " ";
 		}
-		this.limit_str = " limit " + limit_arr[1] + " offset " + limit_arr[0] + " ";
 		return this;
 	}
 
@@ -359,17 +361,7 @@ public class PgsqlDriver extends Driver {
 
 	// find方法
 	public PgsqlDriver find() {
-		String join_sql = "";
-		int i = 0;
-		while (i < this.join_str_list.size()) {
-			join_sql = join_sql + this.join_str_list.get(i);
-			i = i + 1;
-		}
-		if (!this.where_str.equals("")) {
-			this.where_str = " where " + this.where_str;
-		}
-		this.sql = "select " + this.field_str + " from " + this.table_pre + this.table_name + this.as_str + join_sql + this.where_str + this.group_str + this.order_str + " limit 1;";
-		return this;
+		return this.limit("1").select();
 	}
 
 	// 获取sql
@@ -393,8 +385,9 @@ public class PgsqlDriver extends Driver {
 	}
 
 	// group方法
-	public void group(String fields) {
+	public PgsqlDriver group(String fields) {
 		this.group_str = " group by " + fields + " ";
+		return this;
 	}
 
 	public PgsqlDriver setInc(String field, Integer value) {
@@ -418,23 +411,11 @@ public class PgsqlDriver extends Driver {
 	}
 
 	public PgsqlDriver setInc(String field) {
-		String str = "";
-		str = " set " + field + "=" + field + "+1";
-		if (!this.where_str.equals("")) {
-			this.where_str = " where " + this.where_str;
-		}
-		this.sql = "update `" + this.table_pre + this.table_name + "`" + str + this.where_str + ";";
-		return this;
+		return setInc(field, 1);
 	}
 
 	public PgsqlDriver setDec(String field) {
-		String str = "";
-		str = " set " + field + "=" + field + "-1";
-		if (!this.where_str.equals("")) {
-			this.where_str = " where " + this.where_str;
-		}
-		this.sql = "update `" + this.table_pre + this.table_name + "`" + str + this.where_str + ";";
-		return this;
+		return setDec(field, 1);
 	}
 
 	// 清理数据
