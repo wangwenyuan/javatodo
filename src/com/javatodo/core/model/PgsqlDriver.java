@@ -23,7 +23,7 @@ public class PgsqlDriver extends Driver {
 	private String table_pre = "";// 表前缀
 	private String sql = "";
 	private String table_name = "";
-	private String where_str = " where true ";
+	private String where_str = "";
 	private List<Object> where_value_list = new ArrayList<>();
 	private List<Object> data_value_list = new ArrayList<>();
 	private List<Object> update_value_list = new ArrayList<>();
@@ -49,6 +49,7 @@ public class PgsqlDriver extends Driver {
 		this.table_name = table_name;
 	}
 
+	// 初始化当前表
 	public PgsqlDriver(String table_name, Integer dbIndex) {
 		this.table_pre = MC.table_pre.get(dbIndex);
 		this.table_name = table_name;
@@ -62,113 +63,203 @@ public class PgsqlDriver extends Driver {
 	// where方法
 	public PgsqlDriver where(Map<String, W> where) {
 		for (String key : where.keySet()) {
-			switch (where.get(key).get_relation().toLowerCase().trim()) {
-			case "eq":
-				this.where_str = this.where_str + " and " + key + " =? ";
-				this.where_value_list.add(where.get(key).get_value());
-				break;
-			case "=":
-				this.where_str = this.where_str + " and " + key + " =? ";
-				this.where_value_list.add(where.get(key).get_value());
-				break;
-			case "!=":
-				this.where_str = this.where_str + " and " + key + " !=? ";
-				this.where_value_list.add(where.get(key).get_value());
-				break;
-			case "<>":
-				this.where_str = this.where_str + " and " + key + " !=? ";
-				this.where_value_list.add(where.get(key).get_value());
-				break;
-			case "neq":
-				this.where_str = this.where_str + " and " + key + " !=? ";
-				this.where_value_list.add(where.get(key).get_value());
-				break;
-			case ">":
-				this.where_str = this.where_str + " and " + key + " >? ";
-				this.where_value_list.add(where.get(key).get_value());
-				break;
-			case "gt":
-				this.where_str = this.where_str + " and " + key + " >? ";
-				this.where_value_list.add(where.get(key).get_value());
-				break;
-			case ">=":
-				this.where_str = this.where_str + " and " + key + " >=? ";
-				this.where_value_list.add(where.get(key).get_value());
-				break;
-			case "egt":
-				this.where_str = this.where_str + " and " + key + " >=? ";
-				this.where_value_list.add(where.get(key).get_value());
-				break;
-			case "lt":
-				this.where_str = this.where_str + " and " + key + " <? ";
-				this.where_value_list.add(where.get(key).get_value());
-				break;
-			case "elt":
-				this.where_str = this.where_str + " and " + key + " <=? ";
-				this.where_value_list.add(where.get(key).get_value());
-				break;
-			case "<":
-				this.where_str = this.where_str + " and " + key + " <? ";
-				this.where_value_list.add(where.get(key).get_value());
-				break;
-			case "<=":
-				this.where_str = this.where_str + " and " + key + " <=? ";
-				this.where_value_list.add(where.get(key).get_value());
-				break;
-			case "like":
-				this.where_str = this.where_str + " and " + key + " like ? ";
-				this.where_value_list.add(where.get(key).get_value());
-				break;
-			case "between":
-				this.where_str = this.where_str + " and " + key + " between ? and ? ";
-				if (where.get(key).get_value_list().get(0) != null && where.get(key).get_value_list().get(1) != null) {
-					this.where_value_list.add(where.get(key).get_value_list().get(0));
-					this.where_value_list.add(where.get(key).get_value_list().get(1));
-				} else if (where.get(key).get_value_list().size() == 2) {
-					this.where_value_list.add(where.get(key).get_value_list().get(0));
-					this.where_value_list.add(where.get(key).get_value_list().get(1));
+			String relation = where.get(key).get_relation().toLowerCase().trim();
+			if (relation.equals("eq") || relation.equals("=")) {
+				String _where = "";
+				if (where.get(key).get_value() == null) {
+					_where = key + " is null ";
+				} else {
+					_where = key + " = ? ";
+					this.where_value_list.add(where.get(key).get_value());
 				}
-				break;
-			case "not between":
-				this.where_str = this.where_str + " and " + key + " not between ? and ? ";
-				if (where.get(key).get_value_list().get(0) != null && where.get(key).get_value_list().get(1) != null) {
-					this.where_value_list.add(where.get(key).get_value_list().get(0));
-					this.where_value_list.add(where.get(key).get_value_list().get(1));
-				} else if (where.get(key).get_value_list().size() == 2) {
-					this.where_value_list.add(where.get(key).get_value_list().get(0));
-					this.where_value_list.add(where.get(key).get_value_list().get(1));
+				if (where_str.equals("")) {
+					this.where_str = _where;
+				} else {
+					this.where_str = this.where_str + " and " + _where;
 				}
-				break;
-			case "in":
-				if (where.get(key).get_value_list().size() > 1) {
-					String wenhao_str = "?";
-					this.where_value_list.add(where.get(key).get_value_list().get(0));
-					for (Integer integer = 1; integer < where.get(key).get_value_list().size(); integer = integer + 1) {
-						wenhao_str = wenhao_str + ",?";
-						this.where_value_list.add(where.get(key).get_value_list().get(integer));
+			}
+
+			if (relation.equals("neq") || relation.equals("!=") || relation.equals("<>")) {
+				String _where = "";
+				if (where.get(key).get_value() == null) {
+					_where = key + " is not null ";
+				} else {
+					_where = key + " != ? ";
+					this.where_value_list.add(where.get(key).get_value());
+				}
+				if (where_str.equals("")) {
+					this.where_str = _where;
+				} else {
+					this.where_str = this.where_str + " and " + _where;
+				}
+			}
+
+			if (relation.equals(">") || relation.equals("gt")) {
+				String _where = key + " > ? ";
+				if (where_str.equals("")) {
+					this.where_str = _where;
+				} else {
+					this.where_str = this.where_str + " and " + _where;
+				}
+				this.where_value_list.add(where.get(key).get_value());
+			}
+
+			if (relation.equals(">=") || relation.equals("egt")) {
+				String _where = key + " >= ? ";
+				if (where_str.equals("")) {
+					this.where_str = _where;
+				} else {
+					this.where_str = this.where_str + " and " + _where;
+				}
+				this.where_value_list.add(where.get(key).get_value());
+			}
+
+			if (relation.equals("<") || relation.equals("lt")) {
+				String _where = key + " < ? ";
+				if (where_str.equals("")) {
+					this.where_str = _where;
+				} else {
+					this.where_str = this.where_str + " and " + _where;
+				}
+				this.where_value_list.add(where.get(key).get_value());
+			}
+
+			if (relation.equals("<=") || relation.equals("elt")) {
+				String _where = key + " <= ? ";
+				if (where_str.equals("")) {
+					this.where_str = _where;
+				} else {
+					this.where_str = this.where_str + " and " + _where;
+				}
+				this.where_value_list.add(where.get(key).get_value());
+			}
+
+			if (relation.equals("like")) {
+				String _where = key + " like ? ";
+				if (where_str.equals("")) {
+					this.where_str = _where;
+				} else {
+					this.where_str = this.where_str + " and " + _where;
+				}
+				this.where_value_list.add(where.get(key).get_value());
+			}
+
+			if (relation.equals("between")) {
+				List<Object> value_list = where.get(key).get_value_list();
+				if (value_list.size() > 1) {
+					if (value_list.get(0) != null && value_list.get(1) != null) {
+						String _where = key + " between ? and ? ";
+						if (where_str.equals("")) {
+							this.where_str = _where;
+						} else {
+							this.where_str = this.where_str + " and " + _where;
+						}
+						this.where_value_list.add(value_list.get(0));
+						this.where_value_list.add(value_list.get(1));
 					}
-					this.where_str = this.where_str + " and " + key + " in (" + wenhao_str + ") ";
-				} else if (where.get(key).get_value_list().size() == 1) {
-					this.where_str = this.where_str + " and " + key + "=? ";
-					this.where_value_list.add(where.get(key).get_value_list().get(0));
 				}
-				break;
-			case "not in":
-				if (where.get(key).get_value_list().size() > 1) {
-					String wenhao_str = "?";
-					this.where_value_list.add(where.get(key).get_value_list().get(0));
-					for (Integer integer = 1; integer < where.get(key).get_value_list().size(); integer = integer + 1) {
-						wenhao_str = wenhao_str + ",?";
-						this.where_value_list.add(where.get(key).get_value_list().get(integer));
+			}
+
+			if (relation.equals("not between")) {
+				List<Object> value_list = where.get(key).get_value_list();
+				if (value_list.size() > 1) {
+					if (value_list.get(0) != null && value_list.get(1) != null) {
+						String _where = key + " not between ? and ? ";
+						if (where_str.equals("")) {
+							this.where_str = _where;
+						} else {
+							this.where_str = this.where_str + " and " + _where;
+						}
+						this.where_value_list.add(value_list.get(0));
+						this.where_value_list.add(value_list.get(1));
 					}
-					this.where_str = this.where_str + " and " + key + " not in (" + wenhao_str + ") ";
-				} else if (where.get(key).get_value_list().size() == 1) {
-					this.where_str = this.where_str + " and " + key + "!=? ";
-					this.where_value_list.add(where.get(key).get_value_list().get(0));
 				}
-				break;
-			default:
-				break;
+			}
+
+			if (relation.equals("in")) {
+				String _where = "";
+				List<Object> values = new ArrayList<>();
+				values.addAll(where.get(key).get_value_list());
+				if (values.contains(null)) {
+					values.remove(null);
+					if (values.size() > 1) {
+						String wenhao_str = "?";
+						this.where_value_list.add(values.get(0));
+						for (Integer integer = 1; integer < values.size(); integer = integer + 1) {
+							wenhao_str = wenhao_str + ",?";
+							this.where_value_list.add(values.get(integer));
+						}
+						_where = " (" + key + " is null or " + key + " in (" + wenhao_str + ")) ";
+					} else if (values.size() == 1) {
+						_where = " (" + key + " is null or " + key + "= ?) ";
+						this.where_value_list.add(values.get(0));
+					} else if (values.size() == 0) {
+						_where = key + " is null ";
+					}
+				} else {
+					if (values.size() > 1) {
+						String wenhao_str = "?";
+						this.where_value_list.add(values.get(0));
+						for (Integer integer = 1; integer < values.size(); integer = integer + 1) {
+							wenhao_str = wenhao_str + ",?";
+							this.where_value_list.add(values.get(integer));
+						}
+						_where = key + " in (" + wenhao_str + ") ";
+					} else if (values.size() == 1) {
+						_where = key + " = ? ";
+						this.where_value_list.add(values.get(0));
+					}
+				}
+				if (!_where.equals("")) {
+					if (this.where_str.equals("")) {
+						this.where_str = _where;
+					} else {
+						this.where_str = this.where_str + " and " + _where;
+					}
+				}
+			}
+
+			if (relation.equals("not in")) {
+				String _where = "";
+				List<Object> not_values = new ArrayList<>();
+				not_values.addAll(where.get(key).get_value_list());
+				if (not_values.contains(null)) {
+					not_values.remove(null);
+					if (not_values.size() > 1) {
+						String wenhao_str = "?";
+						this.where_value_list.add(not_values.get(0));
+						for (Integer integer = 1; integer < not_values.size(); integer = integer + 1) {
+							wenhao_str = wenhao_str + ",?";
+							this.where_value_list.add(not_values.get(integer));
+						}
+						_where = key + " is not null and " + key + " not in (" + wenhao_str + ") ";
+					} else if (not_values.size() == 1) {
+						_where = key + " is not null and " + key + " != ? ";
+						this.where_value_list.add(not_values.get(0));
+					} else if (not_values.size() == 0) {
+						_where = key + " is not null ";
+					}
+				} else {
+					if (not_values.size() > 1) {
+						String wenhao_str = "?";
+						this.where_value_list.add(not_values.get(0));
+						for (Integer integer = 1; integer < not_values.size(); integer = integer + 1) {
+							wenhao_str = wenhao_str + ",?";
+							this.where_value_list.add(not_values.get(integer));
+						}
+						_where = key + " not in (" + wenhao_str + ") ";
+					} else if (not_values.size() == 1) {
+						_where = key + " != ? ";
+						this.where_value_list.add(not_values.get(0));
+					}
+				}
+				if (!_where.equals("")) {
+					if (this.where_str.equals("")) {
+						this.where_str = _where;
+					} else {
+						this.where_str = this.where_str + " and " + _where;
+					}
+				}
 			}
 		}
 		return this;
@@ -179,7 +270,11 @@ public class PgsqlDriver extends Driver {
 		if (where_str.equals("")) {
 			return this;
 		} else {
-			this.where_str = this.where_str + " and " + where_str + " ";
+			if (this.where_str.equals("")) {
+				this.where_str = where_str;
+			} else {
+				this.where_str = this.where_str + " and " + where_str + " ";
+			}
 			return this;
 		}
 	}
@@ -189,7 +284,11 @@ public class PgsqlDriver extends Driver {
 		if (where_str.equals("")) {
 			return this;
 		} else {
-			this.where_str = this.where_str + " and " + where_str + " ";
+			if (this.where_str.equals("")) {
+				this.where_str = where_str;
+			} else {
+				this.where_str = this.where_str + " and " + where_str + " ";
+			}
 			for (Integer integer = 0; integer < params.length; integer = integer + 1) {
 				this.where_value_list.add(params[integer]);
 			}
@@ -289,12 +388,18 @@ public class PgsqlDriver extends Driver {
 			}
 		}
 		str = " set " + str;
+		if (!this.where_str.equals("")) {
+			this.where_str = " where " + this.where_str;
+		}
 		this.sql = "update " + this.table_pre + this.table_name + str + this.where_str + ";";
 		return this;
 	}
 
 	// delete方法
 	public PgsqlDriver delete() {
+		if (!this.where_str.equals("")) {
+			this.where_str = " where " + this.where_str;
+		}
 		this.sql = "delete from " + this.table_pre + this.table_name + this.where_str + ";";
 		return this;
 	}
@@ -307,6 +412,9 @@ public class PgsqlDriver extends Driver {
 			join_sql = join_sql + this.join_str.get(i);
 			i = i + 1;
 		}
+		if (!this.where_str.equals("")) {
+			this.where_str = " where " + this.where_str;
+		}
 		this.sql = "select " + this.field_str + " from " + this.table_pre + this.table_name + this.as_str + join_sql + this.where_str + this.group_str + this.order_str + this.limit_str + ";";
 		return this;
 	}
@@ -318,6 +426,9 @@ public class PgsqlDriver extends Driver {
 		while (i < this.join_str.size()) {
 			join_sql = join_sql + this.join_str.get(i);
 			i = i + 1;
+		}
+		if (!this.where_str.equals("")) {
+			this.where_str = " where " + this.where_str;
 		}
 		this.sql = "select " + this.field_str + " from " + this.table_pre + this.table_name + this.as_str + join_sql + this.where_str + this.group_str + this.order_str + " limit 1;";
 		return this;
@@ -351,6 +462,9 @@ public class PgsqlDriver extends Driver {
 	public PgsqlDriver setInc(String field, Integer value) {
 		String str = "";
 		str = " set " + field + "=" + field + "+" + value;
+		if (!this.where_str.equals("")) {
+			this.where_str = " where " + this.where_str;
+		}
 		this.sql = "update `" + this.table_pre + this.table_name + "`" + str + this.where_str + ";";
 		return this;
 	}
@@ -358,6 +472,9 @@ public class PgsqlDriver extends Driver {
 	public PgsqlDriver setDec(String field, Integer value) {
 		String str = "";
 		str = " set " + field + "=" + field + "-" + value;
+		if (!this.where_str.equals("")) {
+			this.where_str = " where " + this.where_str;
+		}
 		this.sql = "update `" + this.table_pre + this.table_name + "`" + str + this.where_str + ";";
 		return this;
 	}
@@ -365,6 +482,9 @@ public class PgsqlDriver extends Driver {
 	public PgsqlDriver setInc(String field) {
 		String str = "";
 		str = " set " + field + "=" + field + "+1";
+		if (!this.where_str.equals("")) {
+			this.where_str = " where " + this.where_str;
+		}
 		this.sql = "update `" + this.table_pre + this.table_name + "`" + str + this.where_str + ";";
 		return this;
 	}
@@ -372,6 +492,9 @@ public class PgsqlDriver extends Driver {
 	public PgsqlDriver setDec(String field) {
 		String str = "";
 		str = " set " + field + "=" + field + "-1";
+		if (!this.where_str.equals("")) {
+			this.where_str = " where " + this.where_str;
+		}
 		this.sql = "update `" + this.table_pre + this.table_name + "`" + str + this.where_str + ";";
 		return this;
 	}
@@ -380,7 +503,7 @@ public class PgsqlDriver extends Driver {
 	public void clear() {
 		// this.table_pre = "";
 		this.sql = "";
-		this.where_str = " where true ";
+		this.where_str = "";
 		this.where_value_list = new ArrayList<>();
 		this.data_value_list = new ArrayList<>();
 		this.update_value_list = new ArrayList<>();
