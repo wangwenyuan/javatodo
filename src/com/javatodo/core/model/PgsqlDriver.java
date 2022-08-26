@@ -32,7 +32,7 @@ public class PgsqlDriver extends Driver {
 	private String limit_str = "";
 	private String add_str = "";
 	private String as_str = "";
-	private List<String> join_str = new ArrayList<String>();
+	private List<String> join_str_list = new ArrayList<String>();
 	private String group_str = "";
 
 	public PgsqlDriver() {
@@ -289,7 +289,7 @@ public class PgsqlDriver extends Driver {
 		table_name = this.table_pre + table_name;
 		String sql;
 		sql = " inner join " + table_name + " " + on_sql + " ";
-		this.join_str.add(sql);
+		this.join_str_list.add(sql);
 		return this;
 	}
 
@@ -298,7 +298,7 @@ public class PgsqlDriver extends Driver {
 		table_name = this.table_pre + table_name;
 		String sql;
 		sql = " " + type + " join " + table_name + " " + on_sql + " ";
-		this.join_str.add(sql);
+		this.join_str_list.add(sql);
 		return this;
 	}
 
@@ -316,21 +316,14 @@ public class PgsqlDriver extends Driver {
 
 	// save方法
 	public PgsqlDriver save(Map<String, Object> data) {
-		String key_str = "";
-		String value_str = "";
 		String str = "";
 		for (String key : data.keySet()) {
-			if (key_str == "") {
-				key_str = key;
-				value_str = "?";
-				this.update_value_list.add(data.get(key));
-				str = " " + key_str + "=" + value_str + " ";
+			if (str.equals("")) {
+				str = " " + key + " = ? ";
 			} else {
-				key_str = key;
-				value_str = "?";
-				this.update_value_list.add(data.get(key));
-				str = str + "," + key_str + "=" + value_str + " ";
+				str = str + "," + key + " = ? ";
 			}
+			this.update_value_list.add(data.get(key));
 		}
 		str = " set " + str;
 		if (!this.where_str.equals("")) {
@@ -353,8 +346,8 @@ public class PgsqlDriver extends Driver {
 	public PgsqlDriver select() {
 		String join_sql = "";
 		int i = 0;
-		while (i < this.join_str.size()) {
-			join_sql = join_sql + this.join_str.get(i);
+		while (i < this.join_str_list.size()) {
+			join_sql = join_sql + this.join_str_list.get(i);
 			i = i + 1;
 		}
 		if (!this.where_str.equals("")) {
@@ -368,8 +361,8 @@ public class PgsqlDriver extends Driver {
 	public PgsqlDriver find() {
 		String join_sql = "";
 		int i = 0;
-		while (i < this.join_str.size()) {
-			join_sql = join_sql + this.join_str.get(i);
+		while (i < this.join_str_list.size()) {
+			join_sql = join_sql + this.join_str_list.get(i);
 			i = i + 1;
 		}
 		if (!this.where_str.equals("")) {
@@ -458,6 +451,6 @@ public class PgsqlDriver extends Driver {
 		this.add_str = "";
 		this.as_str = "";
 		this.group_str = "";
-		this.join_str = new ArrayList<String>();
+		this.join_str_list = new ArrayList<String>();
 	}
 }
