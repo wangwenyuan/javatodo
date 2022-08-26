@@ -63,84 +63,48 @@ public class PgsqlDriver extends Driver {
 	// where方法
 	public PgsqlDriver where(Map<String, W> where) {
 		for (String key : where.keySet()) {
+			String _where = "";
 			String relation = where.get(key).get_relation().toLowerCase().trim();
 			if (relation.equals("eq") || relation.equals("=")) {
-				String _where = "";
 				if (where.get(key).get_value() == null) {
 					_where = key + " is null ";
 				} else {
 					_where = key + " = ? ";
 					this.where_value_list.add(where.get(key).get_value());
 				}
-				if (where_str.equals("")) {
-					this.where_str = _where;
-				} else {
-					this.where_str = this.where_str + " and " + _where;
-				}
 			}
 
 			if (relation.equals("neq") || relation.equals("!=") || relation.equals("<>")) {
-				String _where = "";
 				if (where.get(key).get_value() == null) {
 					_where = key + " is not null ";
 				} else {
 					_where = key + " != ? ";
 					this.where_value_list.add(where.get(key).get_value());
 				}
-				if (where_str.equals("")) {
-					this.where_str = _where;
-				} else {
-					this.where_str = this.where_str + " and " + _where;
-				}
 			}
 
 			if (relation.equals(">") || relation.equals("gt")) {
-				String _where = key + " > ? ";
-				if (where_str.equals("")) {
-					this.where_str = _where;
-				} else {
-					this.where_str = this.where_str + " and " + _where;
-				}
+				_where = key + " > ? ";
 				this.where_value_list.add(where.get(key).get_value());
 			}
 
 			if (relation.equals(">=") || relation.equals("egt")) {
-				String _where = key + " >= ? ";
-				if (where_str.equals("")) {
-					this.where_str = _where;
-				} else {
-					this.where_str = this.where_str + " and " + _where;
-				}
+				_where = key + " >= ? ";
 				this.where_value_list.add(where.get(key).get_value());
 			}
 
 			if (relation.equals("<") || relation.equals("lt")) {
-				String _where = key + " < ? ";
-				if (where_str.equals("")) {
-					this.where_str = _where;
-				} else {
-					this.where_str = this.where_str + " and " + _where;
-				}
+				_where = key + " < ? ";
 				this.where_value_list.add(where.get(key).get_value());
 			}
 
 			if (relation.equals("<=") || relation.equals("elt")) {
-				String _where = key + " <= ? ";
-				if (where_str.equals("")) {
-					this.where_str = _where;
-				} else {
-					this.where_str = this.where_str + " and " + _where;
-				}
+				_where = key + " <= ? ";
 				this.where_value_list.add(where.get(key).get_value());
 			}
 
 			if (relation.equals("like")) {
-				String _where = key + " like ? ";
-				if (where_str.equals("")) {
-					this.where_str = _where;
-				} else {
-					this.where_str = this.where_str + " and " + _where;
-				}
+				_where = key + " like ? ";
 				this.where_value_list.add(where.get(key).get_value());
 			}
 
@@ -148,12 +112,7 @@ public class PgsqlDriver extends Driver {
 				List<Object> value_list = where.get(key).get_value_list();
 				if (value_list.size() > 1) {
 					if (value_list.get(0) != null && value_list.get(1) != null) {
-						String _where = key + " between ? and ? ";
-						if (where_str.equals("")) {
-							this.where_str = _where;
-						} else {
-							this.where_str = this.where_str + " and " + _where;
-						}
+						_where = key + " between ? and ? ";
 						this.where_value_list.add(value_list.get(0));
 						this.where_value_list.add(value_list.get(1));
 					}
@@ -164,12 +123,7 @@ public class PgsqlDriver extends Driver {
 				List<Object> value_list = where.get(key).get_value_list();
 				if (value_list.size() > 1) {
 					if (value_list.get(0) != null && value_list.get(1) != null) {
-						String _where = key + " not between ? and ? ";
-						if (where_str.equals("")) {
-							this.where_str = _where;
-						} else {
-							this.where_str = this.where_str + " and " + _where;
-						}
+						_where = key + " not between ? and ? ";
 						this.where_value_list.add(value_list.get(0));
 						this.where_value_list.add(value_list.get(1));
 					}
@@ -177,7 +131,6 @@ public class PgsqlDriver extends Driver {
 			}
 
 			if (relation.equals("in")) {
-				String _where = "";
 				List<Object> values = new ArrayList<>();
 				values.addAll(where.get(key).get_value_list());
 				if (values.contains(null)) {
@@ -210,17 +163,9 @@ public class PgsqlDriver extends Driver {
 						this.where_value_list.add(values.get(0));
 					}
 				}
-				if (!_where.equals("")) {
-					if (this.where_str.equals("")) {
-						this.where_str = _where;
-					} else {
-						this.where_str = this.where_str + " and " + _where;
-					}
-				}
 			}
 
 			if (relation.equals("not in")) {
-				String _where = "";
 				List<Object> not_values = new ArrayList<>();
 				not_values.addAll(where.get(key).get_value_list());
 				if (not_values.contains(null)) {
@@ -253,12 +198,12 @@ public class PgsqlDriver extends Driver {
 						this.where_value_list.add(not_values.get(0));
 					}
 				}
-				if (!_where.equals("")) {
-					if (this.where_str.equals("")) {
-						this.where_str = _where;
-					} else {
-						this.where_str = this.where_str + " and " + _where;
-					}
+			}
+			if (!_where.equals("")) {
+				if (this.where_str.equals("")) {
+					this.where_str = _where;
+				} else {
+					this.where_str = this.where_str + " and " + _where;
 				}
 			}
 		}
