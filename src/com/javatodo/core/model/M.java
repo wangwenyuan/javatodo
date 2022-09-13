@@ -78,8 +78,7 @@ public class M {
 	/**
 	 * 实例化M对象
 	 * 
-	 * @param table_name
-	 *            String 表名
+	 * @param table_name String 表名
 	 * @throws Exception
 	 */
 	public M(String table_name) {
@@ -99,8 +98,7 @@ public class M {
 	/**
 	 * 实例化M对象
 	 * 
-	 * @param table_name
-	 *            String 表名
+	 * @param table_name String 表名
 	 * @throws Exception
 	 */
 	public M(String table_name, Integer dbIndex) {
@@ -120,8 +118,7 @@ public class M {
 	/**
 	 * table方法属于模型类的连贯操作方法之一，主要用于指定操作的数据表。
 	 * 
-	 * @param table_name
-	 *            String 数据表名
+	 * @param table_name String 数据表名
 	 * @return
 	 */
 	public M table(String table_name) {
@@ -190,8 +187,7 @@ public class M {
 	/**
 	 * 模型类的连贯操作方法之一，使用查询表达式可以支持更多的SQL查询语法
 	 * 
-	 * @param where
-	 *            Map<String 数据库字段名,W 查询条件>
+	 * @param where Map<String 数据库字段名,W 查询条件>
 	 * @return 模型类<br>
 	 *         <br>
 	 *         示例：<br>
@@ -211,8 +207,7 @@ public class M {
 	/**
 	 * 模型类的连贯操作方法之一，主要用于字符串条件直接查询和操作
 	 * 
-	 * @param where_str
-	 *            查询条件语句
+	 * @param where_str 查询条件语句
 	 * @return 模型类<br>
 	 *         <br>
 	 *         示例：<br>
@@ -229,10 +224,8 @@ public class M {
 	/**
 	 * 模型类的连贯操作方法之一，主要用于字符串条件直接查询和操作
 	 * 
-	 * @param where_str
-	 *            查询条件语句
-	 * @param params
-	 *            相关参数
+	 * @param where_str 查询条件语句
+	 * @param params    相关参数
 	 * @return 模型类<br>
 	 *         <br>
 	 *         示例：<br>
@@ -248,8 +241,7 @@ public class M {
 	/**
 	 * 用于对操作结果进行排序
 	 * 
-	 * @param order_str
-	 *            排序方式
+	 * @param order_str 排序方式
 	 * @return 模型类<br>
 	 *         <br>
 	 *         示例：<br>
@@ -267,8 +259,7 @@ public class M {
 	/**
 	 * 用于对结果条数进行限制
 	 * 
-	 * @param limit_str
-	 *            限制条数
+	 * @param limit_str 限制条数
 	 * @return 模型类
 	 */
 	public M limit(String limit_str) {
@@ -297,8 +288,7 @@ public class M {
 	/**
 	 * 设置当前数据表的别名。
 	 * 
-	 * @param as_str
-	 *            String 当前数据表的别名
+	 * @param as_str String 当前数据表的别名
 	 * @return 模型类
 	 */
 	public M alias(String as_str) {
@@ -309,10 +299,8 @@ public class M {
 	/**
 	 * 根据两个或多个表中的列之间的关系，从这些表中查询数据(默认为inner连表查询)
 	 * 
-	 * @param table_name
-	 *            所要连表的表名
-	 * @param on_sql
-	 *            连表查询的条件
+	 * @param table_name 所要连表的表名
+	 * @param on_sql     连表查询的条件
 	 * @return 模型类<br>
 	 *         <br>
 	 *         示例：<br>
@@ -330,12 +318,9 @@ public class M {
 	/**
 	 * 根据两个或多个表中的列之间的关系，从这些表中查询数据
 	 * 
-	 * @param table_name
-	 *            String 所要连表的表名
-	 * @param on_sql
-	 *            连表查询的条件
-	 * @param type
-	 *            连表查询的方式
+	 * @param table_name String 所要连表的表名
+	 * @param on_sql     连表查询的条件
+	 * @param type       连表查询的方式
 	 * @return 模型类<br>
 	 *         <br>
 	 *         示例：<br>
@@ -353,8 +338,7 @@ public class M {
 	/**
 	 * 标识要返回或者操作的字段
 	 * 
-	 * @param field_str
-	 *            字段名
+	 * @param field_str 字段名
 	 * @return 模型类
 	 */
 	public M field(String field_str) {
@@ -365,8 +349,7 @@ public class M {
 	/**
 	 * 用于结合合计函数，根据一个或多个列对结果集进行分组
 	 * 
-	 * @param field_str
-	 *            需要分组的字段名
+	 * @param field_str 需要分组的字段名
 	 * @return 模型类
 	 */
 	public M group(String field_str) {
@@ -378,14 +361,15 @@ public class M {
 	 * 将数据写入数据库
 	 * 
 	 * @throws SQLException<br>
-	 *             <br>
-	 *             示例：<br>
-	 *             M m=new M("javatodo");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
-	 *             Map&lt;String,Object&gt;d=new HashMap&lt;String,Object&gt;();
-	 *             <br>
-	 *             d.put("name","javatodo");<br>
-	 *             d.put("author","wangwenyuan");<br>
-	 *             m.data(d).add();<br>
+	 *                          <br>
+	 *                          示例：<br>
+	 *                          M m=new
+	 *                          M("javatodo");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
+	 *                          Map&lt;String,Object&gt;d=new
+	 *                          HashMap&lt;String,Object&gt;(); <br>
+	 *                          d.put("name","javatodo");<br>
+	 *                          d.put("author","wangwenyuan");<br>
+	 *                          m.data(d).add();<br>
 	 */
 	public Object add() throws SQLException {
 		if (this.connection == null) {
@@ -420,17 +404,16 @@ public class M {
 	/**
 	 * 修改数据库中的某条记录
 	 * 
-	 * @param data
-	 *            Map<String, Object> 数据参数
+	 * @param data Map<String, Object> 数据参数
 	 * @throws SQLException<br>
-	 *             示例<br>
-	 *             <br>
-	 *             M m=new M("web");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
-	 *             Map&lt;String,Object&gt;d=new HashMap&lt;String,Object&gt;();
-	 *             <br>
-	 *             d.put("name","javatodo");<br>
-	 *             d.put("url","javatodo.com");<br>
-	 *             m.where("id=1").save(d);
+	 *                          示例<br>
+	 *                          <br>
+	 *                          M m=new M("web");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
+	 *                          Map&lt;String,Object&gt;d=new
+	 *                          HashMap&lt;String,Object&gt;(); <br>
+	 *                          d.put("name","javatodo");<br>
+	 *                          d.put("url","javatodo.com");<br>
+	 *                          m.where("id=1").save(d);
 	 */
 	public Integer save(Map<String, Object> data) throws SQLException {
 		Integer ret = 0;
@@ -465,13 +448,12 @@ public class M {
 	/**
 	 * 对于统计字段（通常指的是数字类型）的更新（增加）
 	 * 
-	 * @param data
-	 *            Map<String, Object> 数据参数
+	 * @param data Map<String, Object> 数据参数
 	 * @throws SQLException<br>
-	 *             示例<br>
-	 *             <br>
-	 *             M m=new M("web");//实例化M对象;<br>
-	 *             m.where("id=1").setInc("num", 1);
+	 *                          示例<br>
+	 *                          <br>
+	 *                          M m=new M("web");//实例化M对象;<br>
+	 *                          m.where("id=1").setInc("num", 1);
 	 */
 	public Integer setInc(String field, Integer value) throws SQLException {
 		Integer ret = 0;
@@ -496,13 +478,12 @@ public class M {
 	/**
 	 * 对于统计字段（通常指的是数字类型）加1
 	 * 
-	 * @param data
-	 *            Map<String, Object> 数据参数
+	 * @param data Map<String, Object> 数据参数
 	 * @throws SQLException<br>
-	 *             示例<br>
-	 *             <br>
-	 *             M m=new M("web");//实例化M对象;<br>
-	 *             m.where("id=1").setInc("num");
+	 *                          示例<br>
+	 *                          <br>
+	 *                          M m=new M("web");//实例化M对象;<br>
+	 *                          m.where("id=1").setInc("num");
 	 */
 	public Integer setInc(String field) throws SQLException {
 		Integer ret = 0;
@@ -527,13 +508,12 @@ public class M {
 	/**
 	 * 对于统计字段（通常指的是数字类型）的更新（减少）
 	 * 
-	 * @param data
-	 *            Map<String, Object> 数据参数
+	 * @param data Map<String, Object> 数据参数
 	 * @throws SQLException<br>
-	 *             示例<br>
-	 *             <br>
-	 *             M m=new M("web");//实例化M对象;<br>
-	 *             m.where("id=1").setDec("num", 1);
+	 *                          示例<br>
+	 *                          <br>
+	 *                          M m=new M("web");//实例化M对象;<br>
+	 *                          m.where("id=1").setDec("num", 1);
 	 */
 	public Integer setDec(String field, Integer value) throws SQLException {
 		Integer ret = 0;
@@ -558,13 +538,12 @@ public class M {
 	/**
 	 * 对于统计字段（通常指的是数字类型）减1
 	 * 
-	 * @param data
-	 *            Map<String, Object> 数据参数
+	 * @param data Map<String, Object> 数据参数
 	 * @throws SQLException<br>
-	 *             示例<br>
-	 *             <br>
-	 *             M m=new M("web");//实例化M对象;<br>
-	 *             m.where("id=1").setDec("num");
+	 *                          示例<br>
+	 *                          <br>
+	 *                          M m=new M("web");//实例化M对象;<br>
+	 *                          m.where("id=1").setDec("num");
 	 */
 	public Integer setDec(String field) throws SQLException {
 		Integer ret = 0;
@@ -590,10 +569,10 @@ public class M {
 	 * 删除数据库中的某条记录
 	 * 
 	 * @throws SQLException<br>
-	 *             示例：<br>
-	 *             <br>
-	 *             M m=new M("web");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
-	 *             m.where("id=15").delete();
+	 *                          示例：<br>
+	 *                          <br>
+	 *                          M m=new M("web");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
+	 *                          m.where("id=15").delete();
 	 */
 	public Integer delete() throws SQLException {
 		Integer ret = 0;
@@ -724,8 +703,7 @@ public class M {
 	/**
 	 * 用于执行SQL查询操作,主要用于“查询”操作，“增、删、改”操作请用execute()
 	 * 
-	 * @param sql
-	 *            String sql语句
+	 * @param sql String sql语句
 	 * @return List<Map<String 字段名, Object 值>> 一个list对象，其中每一条记录是一个以map形式的数据。
 	 * @throws SQLException
 	 */
@@ -751,10 +729,8 @@ public class M {
 	/**
 	 * 用于执行SQL查询操作,主要用于“查询”操作，“增、删、改”操作请用execute()
 	 * 
-	 * @param sql
-	 *            String sql语句
-	 * @param params
-	 *            参数值
+	 * @param sql    String sql语句
+	 * @param params 参数值
 	 * @return List<Map<String 字段名, Object 值>> 一个list对象，其中每一条记录是一个以map形式的数据。
 	 * @throws SQLException
 	 */
@@ -805,8 +781,7 @@ public class M {
 	/**
 	 * 用于更新和写入数据的sql操作,主要用于“增、删、改”的操作，查询操作请用query()
 	 * 
-	 * @param sql
-	 *            String sql语句
+	 * @param sql String sql语句
 	 * @throws SQLException
 	 */
 	public void execute(String sql) throws SQLException {
@@ -827,10 +802,8 @@ public class M {
 	/**
 	 * 用于更新和写入数据的sql操作,主要用于“增、删、改”的操作，查询操作请用query()
 	 * 
-	 * @param sql
-	 *            String sql语句
-	 * @param params
-	 *            参数值
+	 * @param sql    String sql语句
+	 * @param params 参数值
 	 * @throws SQLException
 	 */
 	public void execute(String sql, Object... params) throws SQLException {
@@ -845,6 +818,12 @@ public class M {
 			if (!this.is_transaction) {
 				this.close();
 			}
+		}
+	}
+
+	public void clear() {
+		if (this.db != null) {
+			this.db.clear();
 		}
 	}
 
