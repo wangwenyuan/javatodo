@@ -44,6 +44,10 @@ public class C {
 		new RC("com.javatodo.app.index", "index");
 	}
 
+	/** 在多个机器上部署时，请设置以下信息，可以保证数据ID唯一；如果只是单机部署可以忽略 **/
+	public static long datacenterId = 0;// 数据中心ID
+	public static long machineId = 0;// 机器ID
+
 	/** 以下配置项如无特殊需要请不要更改 **/
 
 	// 默认模版文件目录

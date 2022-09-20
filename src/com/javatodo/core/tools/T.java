@@ -836,21 +836,7 @@ public class T {
 
 	// 生成主键
 	public static String getPriKey() {
-		String[] arr = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
-		BigDecimal seed = new BigDecimal(System.currentTimeMillis());
-		BigDecimal hexadecimal = new BigDecimal(36);
-		List<String> retList = new ArrayList<>();
-		while (seed.compareTo(hexadecimal) > 0) {
-			BigDecimal[] res = seed.divideAndRemainder(hexadecimal);
-			seed = res[0];
-			retList.add(0, arr[res[1].intValue()]);
-		}
-		retList.add(0, arr[seed.intValue()]);
-		String ret = "";
-		for (Integer i = 0; i < retList.size(); i = i + 1) {
-			ret = ret + retList.get(i).toString();
-		}
-		return ret;
+		return String.valueOf(SnowFlake.snowFlake.nextId());
 	}
 
 	// 数字转36进制
