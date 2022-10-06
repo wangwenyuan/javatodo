@@ -620,12 +620,12 @@ public class T {
 			String line = "";
 			line = br.readLine();
 			if (line != null) {
-				content = content + line;
+				content = content + line + '\n';
 			}
 			while (line != null) {
 				line = br.readLine(); // 一次读入一行数据
 				if (line != null) {
-					content = content + line;
+					content = content + line + '\n';
 				}
 			}
 			reader.close();
