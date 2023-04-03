@@ -26,6 +26,8 @@ public class PgsqlDriver extends Driver {
 	private String where_str = "";
 	private List<Object> where_value_list = new ArrayList<>();
 	private List<Object> data_value_list = new ArrayList<>();
+	private List<String> batch_data_key_list = new ArrayList<>();
+	private List<List<Object>> batch_data_value_list = new ArrayList<>();
 	private List<Object> update_value_list = new ArrayList<>();
 	private String order_str = "";
 	private String field_str = " * ";
@@ -316,6 +318,43 @@ public class PgsqlDriver extends Driver {
 		return this;
 	}
 
+	public PgsqlDriver add(List<Map<String, Object>> list) {
+		if (list.size() > 0) {
+			Map<String, Object> data = list.get(0);
+			String key_str = "";
+			String value_str = "";
+			List<Object> _list = new ArrayList<>();
+			for (String key : data.keySet()) {
+				if (key_str.equals("")) {
+					key_str = key;
+					value_str = "?";
+				} else {
+					key_str = key_str + "," + key;
+					value_str = value_str + ",?";
+				}
+				this.batch_data_key_list.add(key);
+				_list.add(data.get(key));
+			}
+			this.batch_data_value_list.add(_list);
+
+			for (Integer i = 1; i < list.size(); i = i + 1) {
+				_list = new ArrayList<>();
+				for (Integer kn = 0; kn < batch_data_key_list.size(); kn = kn + 1) {
+					String _key = batch_data_key_list.get(kn);
+					_list.add(list.get(i).get(_key));
+				}
+				this.batch_data_value_list.add(_list);
+			}
+
+			key_str = "(" + key_str + ")";
+			value_str = "(" + value_str + ")";
+			this.add_str = " " + key_str + " values " + value_str + " ";
+			this.sql = "insert into `" + this.table_pre + this.table_name + "` " + this.add_str + ";";
+		}
+
+		return this;
+	}
+
 	// save方法
 	public PgsqlDriver save(Map<String, Object> data) {
 		String str = "";
@@ -372,6 +411,10 @@ public class PgsqlDriver extends Driver {
 	// 获取add参数
 	public List<Object> get_add_data() {
 		return this.data_value_list;
+	}
+
+	public List<List<Object>> get_batch_add_data_list() {
+		return this.batch_data_value_list;
 	}
 
 	// 获取update参数
@@ -433,5 +476,7 @@ public class PgsqlDriver extends Driver {
 		this.as_str = "";
 		this.group_str = "";
 		this.join_str_list = new ArrayList<String>();
+		this.batch_data_key_list = new ArrayList<>();
+		this.batch_data_value_list = new ArrayList<>();
 	}
 }

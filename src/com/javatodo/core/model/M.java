@@ -402,6 +402,39 @@ public class M {
 	}
 
 	/**
+	 * 将数据写入数据库
+	 * 
+	 * @throws SQLException<br>
+	 */
+	public void add(List<Map<String, Object>> list) throws SQLException {
+		if (this.connection == null) {
+			this.connection = MC.get_connection(this.dbIndex);
+		}
+		if (this.connection != null) {
+			this.db.add(list);
+			String sql = this.db.get_sql();
+			List<List<Object>> batch_add_data_list = this.db.get_batch_add_data_list();
+			List<Object[]> params = new ArrayList<>();
+			for (Integer i = 0; i < batch_add_data_list.size(); i = i + 1) {
+				List<Object> _batch_data = batch_add_data_list.get(i);
+				params.add(_batch_data.toArray());
+			}
+			try {
+				queryRunner.batch(this.connection, sql, params.toArray(new Object[params.size()][]));
+			} catch (SQLException throwables) {
+				throwables.printStackTrace();
+			}
+
+			this.db.clear();
+			this.lastSql = sql;
+			this.sql_params = params;
+			if (!this.is_transaction) {
+				this.close();
+			}
+		}
+	}
+
+	/**
 	 * 修改数据库中的某条记录
 	 * 
 	 * @param data Map<String, Object> 数据参数
@@ -836,6 +869,17 @@ public class M {
 		System.out.println(this.lastSql);
 		if (this.sql_params.getClass().getName().contains("String")) {
 			System.out.println(this.sql_params);
+		} else if (this.sql_params.getClass().getName().contains("List")) {
+			List<Object[]> objects = (List<Object[]>) this.sql_params;
+			List<List<String>> list = new ArrayList<>();
+			for (Integer i = 0; i < objects.size(); i = i + 1) {
+				List<String> _list = new ArrayList<>();
+				for (Integer n = 0; n < objects.get(i).length; n = n + 1) {
+					_list.add(objects.get(i)[n].toString());
+				}
+				list.add(_list);
+			}
+			System.out.println(list);
 		} else {
 			Object[] objects = (Object[]) this.sql_params;
 			List<String> list = new ArrayList<>();

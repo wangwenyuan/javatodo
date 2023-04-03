@@ -45,6 +45,8 @@ public abstract class Driver {
 
 	public abstract Driver add();
 
+	public abstract Driver add(List<Map<String, Object>> list);
+
 	public abstract Driver save(Map<String, Object> data);
 
 	public abstract Driver delete();
@@ -56,6 +58,8 @@ public abstract class Driver {
 	public abstract String get_sql();
 
 	public abstract List<Object> get_add_data();
+
+	public abstract List<List<Object>> get_batch_add_data_list();
 
 	public abstract List<Object> get_update_data();
 
