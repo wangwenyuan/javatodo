@@ -19,40 +19,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class W {
-	private String relation = "";
+	private Relation relation;
 	private Object value = new Object();
-	private List<Object> value_list = new ArrayList<>();
+	private List<Object> valueList = new ArrayList<>();
 
 	@SuppressWarnings("unchecked")
-	public W(String relation, Object value) {
+	public W(Relation relation, Object value) {
 		if ((!value.getClass().isArray())&&(!value.getClass().getName().toLowerCase().contains("list"))) {
 			this.relation = relation;
 			this.value = value;
 		}else{
 			if(value.getClass().getName().toLowerCase().contains("list")){
 				this.relation = relation;
-				this.value_list = (ArrayList<Object>)value;
+				this.valueList = (ArrayList<Object>)value;
 			}
 		}
 	}
 
-	public W(String relation, Object[] values) {
+	public W(Relation relation, Object[] values) {
 		this.relation = relation;
-		this.value_list = new ArrayList<>();
+		this.valueList = new ArrayList<>();
 		for (Integer i = 0; i < values.length; i = i + 1) {
-			this.value_list.add(values[i]);
+			this.valueList.add(values[i]);
 		}
 	}
 
-	public String get_relation() {
+	public Relation getRelation() {
 		return this.relation;
 	}
 
-	public Object get_value() {
+	public Object getValue() {
 		return this.value;
 	}
 
-	public List<Object> get_value_list() {
-		return this.value_list;
+	public List<Object> getValueList() {
+		return this.valueList;
 	}
 }

@@ -20,192 +20,180 @@ import java.util.List;
 import java.util.Map;
 
 public class PgsqlDriver extends Driver {
-	private String table_pre = "";// 表前缀
+	private String tablePrefix = "";// 表前缀
 	private String sql = "";
-	private String table_name = "";
-	private String where_str = "";
-	private List<Object> where_value_list = new ArrayList<>();
-	private List<Object> data_value_list = new ArrayList<>();
-	private List<String> batch_data_key_list = new ArrayList<>();
-	private List<List<Object>> batch_data_value_list = new ArrayList<>();
-	private List<Object> update_value_list = new ArrayList<>();
-	private String order_str = "";
-	private String field_str = " * ";
-	private String limit_str = "";
-	private String add_str = "";
-	private String as_str = "";
-	private List<String> join_str_list = new ArrayList<String>();
-	private String group_str = "";
+	private String tableName = "";
+	private String whereSql = "";
+	private List<Object> whereValueList = new ArrayList<>();
+	private List<Object> dataValueList = new ArrayList<>();
+	private List<String> batchDataKeyList = new ArrayList<>();
+	private List<List<Object>> batchDataValueList = new ArrayList<>();
+	private List<Object> updateValueList = new ArrayList<>();
+	private String orderSql = "";
+	private String fieldSql = " * ";
+	private String limitSql = "";
+	private String addSql = "";
+	private String asSql = "";
+	private List<String> joinSqlList = new ArrayList<String>();
+	private String groupSql = "";
 
 	public PgsqlDriver() {
-		this.table_pre = MC.table_pre.get(0);
-	}
-
-	public PgsqlDriver(Integer dbIndex) {
-		this.table_pre = MC.table_pre.get(dbIndex);
 	}
 
 	// 初始化当前表
-	public PgsqlDriver(String table_name) {
-		this.table_pre = MC.table_pre.get(0);
-		this.table_name = table_name;
-	}
-
-	// 初始化当前表
-	public PgsqlDriver(String table_name, Integer dbIndex) {
-		this.table_pre = MC.table_pre.get(dbIndex);
-		this.table_name = table_name;
+	public PgsqlDriver(String tableName) {
+		this.tableName = tableName;
 	}
 
 	// 设置表名称
-	public void table(String table_name) {
-		this.table_name = table_name;
+	public void table(String tableName) {
+		this.tableName = tableName;
 	}
 
 	// where方法
 	public PgsqlDriver where(Map<String, W> where) {
 		for (String key : where.keySet()) {
 			String _where = "";
-			String relation = where.get(key).get_relation().toLowerCase().trim();
-			if (relation.equals("eq") || relation.equals("=")) {
-				if (where.get(key).get_value() == null) {
+			Relation relation = where.get(key).getRelation();
+			if (Relation.EQ == relation) {
+				if (where.get(key).getValue() == null) {
 					_where = key + " is null ";
 				} else {
 					_where = key + " = ? ";
-					this.where_value_list.add(where.get(key).get_value());
+					this.whereValueList.add(where.get(key).getValue());
 				}
 			}
 
-			if (relation.equals("neq") || relation.equals("!=") || relation.equals("<>")) {
-				if (where.get(key).get_value() == null) {
+			if (Relation.NEQ == relation) {
+				if (where.get(key).getValue() == null) {
 					_where = key + " is not null ";
 				} else {
 					_where = key + " != ? ";
-					this.where_value_list.add(where.get(key).get_value());
+					this.whereValueList.add(where.get(key).getValue());
 				}
 			}
 
-			if (relation.equals(">") || relation.equals("gt")) {
+			if (Relation.GT == relation) {
 				_where = key + " > ? ";
-				this.where_value_list.add(where.get(key).get_value());
+				this.whereValueList.add(where.get(key).getValue());
 			}
 
-			if (relation.equals(">=") || relation.equals("egt")) {
+			if (Relation.EGT == relation) {
 				_where = key + " >= ? ";
-				this.where_value_list.add(where.get(key).get_value());
+				this.whereValueList.add(where.get(key).getValue());
 			}
 
-			if (relation.equals("<") || relation.equals("lt")) {
+			if (Relation.LT == relation) {
 				_where = key + " < ? ";
-				this.where_value_list.add(where.get(key).get_value());
+				this.whereValueList.add(where.get(key).getValue());
 			}
 
-			if (relation.equals("<=") || relation.equals("elt")) {
+			if (Relation.ELT == relation) {
 				_where = key + " <= ? ";
-				this.where_value_list.add(where.get(key).get_value());
+				this.whereValueList.add(where.get(key).getValue());
 			}
 
-			if (relation.equals("like")) {
+			if (Relation.LIKE == relation) {
 				_where = key + " like ? ";
-				this.where_value_list.add(where.get(key).get_value());
+				this.whereValueList.add(where.get(key).getValue());
 			}
 
-			if (relation.equals("between")) {
-				List<Object> value_list = where.get(key).get_value_list();
-				if (value_list.size() > 1) {
-					if (value_list.get(0) != null && value_list.get(1) != null) {
+			if (Relation.BETWEEN == relation) {
+				List<Object> valueList = where.get(key).getValueList();
+				if (valueList.size() > 1) {
+					if (valueList.get(0) != null && valueList.get(1) != null) {
 						_where = key + " between ? and ? ";
-						this.where_value_list.add(value_list.get(0));
-						this.where_value_list.add(value_list.get(1));
+						this.whereValueList.add(valueList.get(0));
+						this.whereValueList.add(valueList.get(1));
 					}
 				}
 			}
 
-			if (relation.equals("not between")) {
-				List<Object> value_list = where.get(key).get_value_list();
-				if (value_list.size() > 1) {
-					if (value_list.get(0) != null && value_list.get(1) != null) {
+			if (Relation.NOTBETWEEN == relation) {
+				List<Object> valueList = where.get(key).getValueList();
+				if (valueList.size() > 1) {
+					if (valueList.get(0) != null && valueList.get(1) != null) {
 						_where = key + " not between ? and ? ";
-						this.where_value_list.add(value_list.get(0));
-						this.where_value_list.add(value_list.get(1));
+						this.whereValueList.add(valueList.get(0));
+						this.whereValueList.add(valueList.get(1));
 					}
 				}
 			}
 
-			if (relation.equals("in")) {
+			if (Relation.IN == relation) {
 				List<Object> values = new ArrayList<>();
-				values.addAll(where.get(key).get_value_list());
+				values.addAll(where.get(key).getValueList());
 				if (values.contains(null)) {
 					values.remove(null);
 					if (values.size() > 1) {
-						String wenhao_str = "?";
-						this.where_value_list.add(values.get(0));
+						String paramSql = "?";
+						this.whereValueList.add(values.get(0));
 						for (Integer integer = 1; integer < values.size(); integer = integer + 1) {
-							wenhao_str = wenhao_str + ",?";
-							this.where_value_list.add(values.get(integer));
+							paramSql = paramSql + ",?";
+							this.whereValueList.add(values.get(integer));
 						}
-						_where = " (" + key + " is null or " + key + " in (" + wenhao_str + ")) ";
+						_where = " (" + key + " is null or " + key + " in (" + paramSql + ")) ";
 					} else if (values.size() == 1) {
 						_where = " (" + key + " is null or " + key + "= ?) ";
-						this.where_value_list.add(values.get(0));
+						this.whereValueList.add(values.get(0));
 					} else if (values.size() == 0) {
 						_where = key + " is null ";
 					}
 				} else {
 					if (values.size() > 1) {
-						String wenhao_str = "?";
-						this.where_value_list.add(values.get(0));
+						String paramSql = "?";
+						this.whereValueList.add(values.get(0));
 						for (Integer integer = 1; integer < values.size(); integer = integer + 1) {
-							wenhao_str = wenhao_str + ",?";
-							this.where_value_list.add(values.get(integer));
+							paramSql = paramSql + ",?";
+							this.whereValueList.add(values.get(integer));
 						}
-						_where = key + " in (" + wenhao_str + ") ";
+						_where = key + " in (" + paramSql + ") ";
 					} else if (values.size() == 1) {
 						_where = key + " = ? ";
-						this.where_value_list.add(values.get(0));
+						this.whereValueList.add(values.get(0));
 					}
 				}
 			}
 
-			if (relation.equals("not in")) {
-				List<Object> not_values = new ArrayList<>();
-				not_values.addAll(where.get(key).get_value_list());
-				if (not_values.contains(null)) {
-					not_values.remove(null);
-					if (not_values.size() > 1) {
-						String wenhao_str = "?";
-						this.where_value_list.add(not_values.get(0));
-						for (Integer integer = 1; integer < not_values.size(); integer = integer + 1) {
-							wenhao_str = wenhao_str + ",?";
-							this.where_value_list.add(not_values.get(integer));
+			if (Relation.NOTIN == relation) {
+				List<Object> notValues = new ArrayList<>();
+				notValues.addAll(where.get(key).getValueList());
+				if (notValues.contains(null)) {
+					notValues.remove(null);
+					if (notValues.size() > 1) {
+						String paramSql = "?";
+						this.whereValueList.add(notValues.get(0));
+						for (Integer integer = 1; integer < notValues.size(); integer = integer + 1) {
+							paramSql = paramSql + ",?";
+							this.whereValueList.add(notValues.get(integer));
 						}
-						_where = key + " is not null and " + key + " not in (" + wenhao_str + ") ";
-					} else if (not_values.size() == 1) {
+						_where = key + " is not null and " + key + " not in (" + paramSql + ") ";
+					} else if (notValues.size() == 1) {
 						_where = key + " is not null and " + key + " != ? ";
-						this.where_value_list.add(not_values.get(0));
-					} else if (not_values.size() == 0) {
+						this.whereValueList.add(notValues.get(0));
+					} else if (notValues.size() == 0) {
 						_where = key + " is not null ";
 					}
 				} else {
-					if (not_values.size() > 1) {
-						String wenhao_str = "?";
-						this.where_value_list.add(not_values.get(0));
-						for (Integer integer = 1; integer < not_values.size(); integer = integer + 1) {
-							wenhao_str = wenhao_str + ",?";
-							this.where_value_list.add(not_values.get(integer));
+					if (notValues.size() > 1) {
+						String paramSql = "?";
+						this.whereValueList.add(notValues.get(0));
+						for (Integer integer = 1; integer < notValues.size(); integer = integer + 1) {
+							paramSql = paramSql + ",?";
+							this.whereValueList.add(notValues.get(integer));
 						}
-						_where = key + " not in (" + wenhao_str + ") ";
-					} else if (not_values.size() == 1) {
+						_where = key + " not in (" + paramSql + ") ";
+					} else if (notValues.size() == 1) {
 						_where = key + " != ? ";
-						this.where_value_list.add(not_values.get(0));
+						this.whereValueList.add(notValues.get(0));
 					}
 				}
 			}
 			if (!_where.equals("")) {
-				if (this.where_str.equals("")) {
-					this.where_str = _where;
+				if (this.whereSql.equals("")) {
+					this.whereSql = _where;
 				} else {
-					this.where_str = this.where_str + " and " + _where;
+					this.whereSql = this.whereSql + " and " + _where;
 				}
 			}
 		}
@@ -213,143 +201,143 @@ public class PgsqlDriver extends Driver {
 	}
 
 	// where方法
-	public PgsqlDriver where(String where_str) {
-		if (where_str.equals("")) {
+	public PgsqlDriver where(String whereSql) {
+		if (whereSql.equals("")) {
 			return this;
 		} else {
-			if (this.where_str.equals("")) {
-				this.where_str = where_str;
+			if (this.whereSql.equals("")) {
+				this.whereSql = whereSql;
 			} else {
-				this.where_str = this.where_str + " and " + where_str + " ";
+				this.whereSql = this.whereSql + " and " + whereSql + " ";
 			}
 			return this;
 		}
 	}
 
 	// where方法
-	public PgsqlDriver where(String where_str, Object... params) {
-		if (where_str.equals("")) {
+	public PgsqlDriver where(String whereSql, Object... params) {
+		if (whereSql.equals("")) {
 			return this;
 		} else {
-			if (this.where_str.equals("")) {
-				this.where_str = where_str;
+			if (this.whereSql.equals("")) {
+				this.whereSql = whereSql;
 			} else {
-				this.where_str = this.where_str + " and " + where_str + " ";
+				this.whereSql = this.whereSql + " and " + whereSql + " ";
 			}
-			for (Integer integer = 0; integer < params.length; integer = integer + 1) {
-				this.where_value_list.add(params[integer]);
+			for (Integer i = 0; i < params.length; i = i + 1) {
+				this.whereValueList.add(params[i]);
 			}
 			return this;
 		}
 	}
 
 	// order方法
-	public PgsqlDriver order(String order_str) {
-		this.order_str = " order by " + order_str;
+	public PgsqlDriver order(String orderSql) {
+		this.orderSql = " order by " + orderSql;
 		return this;
 	}
 
 	// limit方法
-	public PgsqlDriver limit(String limit_str) {
-		String[] limit_arr = new String[2];
-		if (limit_str.contains(",")) {
-			limit_arr = limit_str.split(",");
-			this.limit_str = " limit " + limit_arr[1] + " offset " + limit_arr[0] + " ";
+	public PgsqlDriver limit(String limitSql) {
+		String[] limitArr = new String[2];
+		if (limitSql.contains(",")) {
+			limitArr = limitSql.split(",");
+			this.limitSql = " limit " + limitArr[1] + " offset " + limitArr[0] + " ";
 		} else {
-			this.limit_str = " limit " + limit_str + " ";
+			this.limitSql = " limit " + limitSql + " ";
 		}
 		return this;
 	}
 
 	// data方法
 	public PgsqlDriver data(Map<String, Object> data) {
-		String key_str = "";
-		String value_str = "";
+		String _key = "";
+		String _value = "";
 		for (String key : data.keySet()) {
-			if (key_str.equals("")) {
-				key_str = key;
-				value_str = "?";
-				this.data_value_list.add(data.get(key));
+			if (_key.equals("")) {
+				_key = key;
+				_value = "?";
+				this.dataValueList.add(data.get(key));
 			} else {
-				key_str = key_str + "," + key;
-				value_str = value_str + ",?";
-				this.data_value_list.add(data.get(key));
+				_key = _key + "," + key;
+				_value = _value + ",?";
+				this.dataValueList.add(data.get(key));
 			}
 		}
-		key_str = "(" + key_str + ")";
-		value_str = "(" + value_str + ")";
-		this.add_str = " " + key_str + " values " + value_str + " ";
+		_key = "(" + _key + ")";
+		_value = "(" + _value + ")";
+		this.addSql = " " + _key + " values " + _value + " ";
 		return this;
 	}
 
 	// alias方法
-	public PgsqlDriver alias(String as_str) {
-		this.as_str = " as " + as_str + " ";
+	public PgsqlDriver alias(String asSql) {
+		this.asSql = " as " + asSql + " ";
 		return this;
 	}
 
 	// join
-	public PgsqlDriver join(String table_name, String on_sql) {
-		table_name = this.table_pre + table_name;
+	public PgsqlDriver join(String tableName, String onSql) {
+		tableName = this.tablePrefix + tableName;
 		String sql;
-		sql = " inner join " + table_name + " " + on_sql + " ";
-		this.join_str_list.add(sql);
+		sql = " inner join " + tableName + " " + onSql + " ";
+		this.joinSqlList.add(sql);
 		return this;
 	}
 
 	// join
-	public PgsqlDriver join(String table_name, String on_sql, String type) {
-		table_name = this.table_pre + table_name;
+	public PgsqlDriver join(String tableName, String onSql, String type) {
+		tableName = this.tablePrefix + tableName;
 		String sql;
-		sql = " " + type + " join " + table_name + " " + on_sql + " ";
-		this.join_str_list.add(sql);
+		sql = " " + type + " join " + tableName + " " + onSql + " ";
+		this.joinSqlList.add(sql);
 		return this;
 	}
 
 	// filed方法
-	public PgsqlDriver field(String field_str) {
-		this.field_str = " " + field_str + " ";
+	public PgsqlDriver field(String fieldSql) {
+		this.fieldSql = " " + fieldSql + " ";
 		return this;
 	}
 
 	// add方法
 	public PgsqlDriver add() {
-		this.sql = "insert into " + this.table_pre + this.table_name + " " + this.add_str + ";";
+		this.sql = "insert into `" + this.tablePrefix + this.tableName + "` " + this.addSql + ";";
 		return this;
 	}
 
 	public PgsqlDriver add(List<Map<String, Object>> list) {
 		if (list.size() > 0) {
 			Map<String, Object> data = list.get(0);
-			String key_str = "";
-			String value_str = "";
+			String dataKeys = "";
+			String dataValues = "";
 			List<Object> _list = new ArrayList<>();
 			for (String key : data.keySet()) {
-				if (key_str.equals("")) {
-					key_str = key;
-					value_str = "?";
+				if (dataKeys.equals("")) {
+					dataKeys = key;
+					dataValues = "?";
 				} else {
-					key_str = key_str + "," + key;
-					value_str = value_str + ",?";
+					dataKeys = dataKeys + "," + key;
+					dataValues = dataValues + ",?";
 				}
-				this.batch_data_key_list.add(key);
+				this.batchDataKeyList.add(key);
 				_list.add(data.get(key));
 			}
-			this.batch_data_value_list.add(_list);
+			this.batchDataValueList.add(_list);
 
 			for (Integer i = 1; i < list.size(); i = i + 1) {
 				_list = new ArrayList<>();
-				for (Integer kn = 0; kn < batch_data_key_list.size(); kn = kn + 1) {
-					String _key = batch_data_key_list.get(kn);
+				for (Integer kn = 0; kn < batchDataKeyList.size(); kn = kn + 1) {
+					String _key = batchDataKeyList.get(kn);
 					_list.add(list.get(i).get(_key));
 				}
-				this.batch_data_value_list.add(_list);
+				this.batchDataValueList.add(_list);
 			}
 
-			key_str = "(" + key_str + ")";
-			value_str = "(" + value_str + ")";
-			this.add_str = " " + key_str + " values " + value_str + " ";
-			this.sql = "insert into `" + this.table_pre + this.table_name + "` " + this.add_str + ";";
+			dataKeys = "(" + dataKeys + ")";
+			dataValues = "(" + dataValues + ")";
+			this.addSql = " " + dataKeys + " values " + dataValues + " ";
+			this.sql = "insert into `" + this.tablePrefix + this.tableName + "` " + this.addSql + ";";
 		}
 
 		return this;
@@ -357,44 +345,45 @@ public class PgsqlDriver extends Driver {
 
 	// save方法
 	public PgsqlDriver save(Map<String, Object> data) {
-		String str = "";
+		String dataKeys = "";
 		for (String key : data.keySet()) {
-			if (str.equals("")) {
-				str = " " + key + " = ? ";
+			if (dataKeys.equals("")) {
+				dataKeys = " " + key + " = ? ";
 			} else {
-				str = str + "," + key + " = ? ";
+				dataKeys = dataKeys + "," + key + " = ? ";
 			}
-			this.update_value_list.add(data.get(key));
+			this.updateValueList.add(data.get(key));
 		}
-		str = " set " + str;
-		if (!this.where_str.equals("")) {
-			this.where_str = " where " + this.where_str;
+		dataKeys = " set " + dataKeys;
+		if (!this.whereSql.equals("")) {
+			this.whereSql = " where " + this.whereSql;
 		}
-		this.sql = "update " + this.table_pre + this.table_name + str + this.where_str + ";";
+		this.sql = "update `" + this.tablePrefix + this.tableName + "`" + dataKeys + this.whereSql + ";";
 		return this;
 	}
 
 	// delete方法
 	public PgsqlDriver delete() {
-		if (!this.where_str.equals("")) {
-			this.where_str = " where " + this.where_str;
+		if (!this.whereSql.equals("")) {
+			this.whereSql = " where " + this.whereSql;
 		}
-		this.sql = "delete from " + this.table_pre + this.table_name + this.where_str + ";";
+		this.sql = "delete from `" + this.tablePrefix + this.tableName + "`" + this.whereSql + ";";
 		return this;
 	}
 
 	// select方法
 	public PgsqlDriver select() {
-		String join_sql = "";
+		String joinSql = "";
 		int i = 0;
-		while (i < this.join_str_list.size()) {
-			join_sql = join_sql + this.join_str_list.get(i);
+		while (i < this.joinSqlList.size()) {
+			joinSql = joinSql + this.joinSqlList.get(i);
 			i = i + 1;
 		}
-		if (!this.where_str.equals("")) {
-			this.where_str = " where " + this.where_str;
+		if (!this.whereSql.equals("")) {
+			this.whereSql = " where " + this.whereSql;
 		}
-		this.sql = "select " + this.field_str + " from " + this.table_pre + this.table_name + this.as_str + join_sql + this.where_str + this.group_str + this.order_str + this.limit_str + ";";
+		this.sql = "select " + this.fieldSql + " from `" + this.tablePrefix + this.tableName + "`" + this.asSql
+				+ joinSql + this.whereSql + this.groupSql + this.orderSql + this.limitSql + ";";
 		return this;
 	}
 
@@ -404,52 +393,52 @@ public class PgsqlDriver extends Driver {
 	}
 
 	// 获取sql
-	public String get_sql() {
+	public String getSql() {
 		return this.sql;
 	}
 
 	// 获取add参数
-	public List<Object> get_add_data() {
-		return this.data_value_list;
+	public List<Object> getAddData() {
+		return this.dataValueList;
 	}
 
-	public List<List<Object>> get_batch_add_data_list() {
-		return this.batch_data_value_list;
+	public List<List<Object>> getBatchAddDataList() {
+		return this.batchDataValueList;
 	}
 
 	// 获取update参数
-	public List<Object> get_update_data() {
-		return this.update_value_list;
+	public List<Object> getUpdateData() {
+		return this.updateValueList;
 	}
 
 	// 获取where参数
-	public List<Object> get_where_data() {
-		return this.where_value_list;
+	public List<Object> getWhereData() {
+		return this.whereValueList;
 	}
 
 	// group方法
 	public PgsqlDriver group(String fields) {
-		this.group_str = " group by " + fields + " ";
+		this.groupSql = " group by " + fields + " ";
 		return this;
 	}
 
 	public PgsqlDriver setInc(String field, Integer value) {
 		String str = "";
 		str = " set " + field + "=" + field + "+" + value;
-		if (!this.where_str.equals("")) {
-			this.where_str = " where " + this.where_str;
+		if (!this.whereSql.equals("")) {
+			this.whereSql = " where " + this.whereSql;
 		}
-		this.sql = "update `" + this.table_pre + this.table_name + "`" + str + this.where_str + ";";
+		this.sql = "update `" + this.tablePrefix + this.tableName + "`" + str + this.whereSql + ";";
 		return this;
 	}
 
 	public PgsqlDriver setDec(String field, Integer value) {
 		String str = "";
 		str = " set " + field + "=" + field + "-" + value;
-		if (!this.where_str.equals("")) {
-			this.where_str = " where " + this.where_str;
+		if (!this.whereSql.equals("")) {
+			this.whereSql = " where " + this.whereSql;
 		}
-		this.sql = "update `" + this.table_pre + this.table_name + "`" + str + this.where_str + ";";
+		this.sql = "update `" + this.tablePrefix + this.tableName + "`" + str + this.whereSql + ";";
 		return this;
 	}
 
@@ -463,20 +452,19 @@ public class PgsqlDriver extends Driver {
 
 	// 清理数据
 	public void clear() {
-		// this.table_pre = "";
 		this.sql = "";
-		this.where_str = "";
-		this.where_value_list = new ArrayList<>();
-		this.data_value_list = new ArrayList<>();
-		this.update_value_list = new ArrayList<>();
-		this.order_str = "";
-		this.field_str = " * ";
-		this.limit_str = "";
-		this.add_str = "";
-		this.as_str = "";
-		this.group_str = "";
-		this.join_str_list = new ArrayList<String>();
-		this.batch_data_key_list = new ArrayList<>();
-		this.batch_data_value_list = new ArrayList<>();
+		this.whereSql = "";
+		this.whereValueList = new ArrayList<>();
+		this.dataValueList = new ArrayList<>();
+		this.updateValueList = new ArrayList<>();
+		this.orderSql = "";
+		this.fieldSql = " * ";
+		this.limitSql = "";
+		this.addSql = "";
+		this.asSql = "";
+		this.groupSql = "";
+		this.joinSqlList = new ArrayList<String>();
+		this.batchDataKeyList = new ArrayList<>();
+		this.batchDataValueList = new ArrayList<>();
 	}
 }

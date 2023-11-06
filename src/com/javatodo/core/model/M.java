@@ -15,104 +15,46 @@
  */
 package com.javatodo.core.model;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.MapHandler;
-import org.apache.commons.dbutils.handlers.MapListHandler;
-
-import com.javatodo.core.tools.T;
-
 public class M {
 	private Connection connection = null;
-	private QueryRunner queryRunner = new QueryRunner();
 	private Driver db = null;
 
 	private String lastSql = "";
-	private Object sql_params;
-	private boolean is_transaction = false;
-
-	private Integer dbIndex = 0;
+	private Object sqlParams;
+	private boolean isTransaction = false;
 
 	/**
-	 * 实例化M对象
-	 */
-	public M() {
-		this.dbIndex = 0;
-		this.connection = MC.get_connection(this.dbIndex);
-		if (this.connection == null) {
-			System.out.println("找不到数据源");
-		} else {
-			if ("mysql".equals(MC.db_type)) {
-				this.db = new MysqlDriver();
-			}
-			if ("postgresql".equals(MC.db_type)) {
-				this.db = new PgsqlDriver();
-			}
-		}
-	}
-
-	/**
-	 * 实例化M对象
-	 */
-	public M(Integer dbIndex) {
-		this.dbIndex = dbIndex;
-		this.connection = MC.get_connection(dbIndex);
-		if (this.connection == null) {
-			System.out.println("找不到数据源");
-		} else {
-			if ("mysql".equals(MC.db_type)) {
-				this.db = new MysqlDriver(dbIndex);
-			}
-			if ("postgresql".equals(MC.db_type)) {
-				this.db = new PgsqlDriver(dbIndex);
-			}
-		}
-	}
-
-	/**
-	 * 实例化M对象
+	 * 实例化M对象，默认使用mysql驱动
 	 * 
-	 * @param table_name String 表名
-	 * @throws Exception
+	 * @param connection Connection 数据库连接
 	 */
-	public M(String table_name) {
-		this.connection = MC.get_connection(this.dbIndex);
-		if (this.connection == null) {
-			System.out.println("找不到数据源");
-		} else {
-			if ("mysql".equals(MC.db_type)) {
-				this.db = new MysqlDriver(table_name);
-			}
-			if ("postgresql".equals(MC.db_type)) {
-				this.db = new PgsqlDriver(table_name);
-			}
+	public M(Connection connection) {
+		if (connection == null) {
+			throw new Error("找不到数据源");
 		}
+		this.connection = connection;
+		this.db = new MysqlDriver();
 	}
 
 	/**
-	 * 实例化M对象
+	 * 实例化M对象，默认使用mysql驱动
 	 * 
-	 * @param table_name String 表名
-	 * @throws Exception
+	 * @param connection Connection 数据库连接
+	 * @param tableName  String 表名
 	 */
-	public M(String table_name, Integer dbIndex) {
-		this.connection = MC.get_connection(dbIndex);
-		if (this.connection == null) {
-			System.out.println("找不到数据源");
-		} else {
-			if ("mysql".equals(MC.db_type)) {
-				this.db = new MysqlDriver(table_name, dbIndex);
-			}
-			if ("postgresql".equals(MC.db_type)) {
-				this.db = new PgsqlDriver(table_name, dbIndex);
-			}
+	public M(Connection connection, String tableName) {
+		if (connection == null) {
+			throw new Error("找不到数据源");
 		}
+		this.connection = connection;
+		this.db = new MysqlDriver(tableName);
 	}
 
 	/**
@@ -132,16 +74,13 @@ public class M {
 	 * @throws SQLException
 	 */
 	public void transaction() throws SQLException {
-		this.is_transaction = true;
-		if (this.connection != null) {
-			this.connection.setAutoCommit(false);
-		} else {
-			this.connection = MC.get_connection(this.dbIndex);
-			if (this.connection != null) {
-				this.connection.setAutoCommit(false);
-			}
-		}
-		T.javatodo_sql_log(connection, "开启transaction");
+		this.isTransaction = true;
+		this.connection.setAutoCommit(false);
+		Log.javatodo_sql_log(connection, "开启transaction");
+	}
+
+	public boolean getTransaction(){
+		return isTransaction;
 	}
 
 	/**
@@ -150,15 +89,13 @@ public class M {
 	 * @throws SQLException
 	 */
 	public void commit() throws SQLException {
-		if (is_transaction == false) {
+		if (isTransaction == false) {
 			return;
 		} else {
-			this.is_transaction = false;
-			if (this.connection != null) {
-				this.connection.commit();
-				T.javatodo_sql_log(connection, "执行commit");
-				this.close();
-			}
+			this.isTransaction = false;
+			this.connection.commit();
+			Log.javatodo_sql_log(connection, "执行commit");
+			this.close();
 		}
 	}
 
@@ -166,21 +103,20 @@ public class M {
 	 * 回滚（确保已开启事务）
 	 */
 	public void rollback() {
-		if (is_transaction == false) {
+		if (isTransaction == false) {
 			return;
 		} else {
-			this.is_transaction = false;
-			if (this.connection != null) {
-				try {
-					this.connection.rollback();
-					T.javatodo_sql_log(connection, "执行rollback");
-					this.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					T.javatodo_error_log(e);
-				}
+			this.isTransaction = false;
+			try {
+				this.connection.rollback();
+				Log.javatodo_sql_log(connection, "执行rollback");
+				this.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Log.javatodo_error_log(e);
 			}
+
 		}
 	}
 
@@ -207,7 +143,7 @@ public class M {
 	/**
 	 * 模型类的连贯操作方法之一，主要用于字符串条件直接查询和操作
 	 * 
-	 * @param where_str 查询条件语句
+	 * @param whereSql 查询条件语句
 	 * @return 模型类<br>
 	 *         <br>
 	 *         示例：<br>
@@ -216,15 +152,15 @@ public class M {
 	 *         is_del=0").select();//将查询条件传入查询方法<br>
 	 *         所生成的sql语句是：select * from javatodo where `id`=1 and `is_del`=0<br>
 	 */
-	public M where(String where_str) {
-		this.db.where(where_str);
+	public M where(String whereSql) {
+		this.db.where(whereSql);
 		return this;
 	}
 
 	/**
 	 * 模型类的连贯操作方法之一，主要用于字符串条件直接查询和操作
 	 * 
-	 * @param where_str 查询条件语句
+	 * @param whereSql 查询条件语句
 	 * @param params    相关参数
 	 * @return 模型类<br>
 	 *         <br>
@@ -233,15 +169,15 @@ public class M {
 	 *         List&lt;Map&lt;String, Object&gt;&gt; list=m.where("id=? and
 	 *         is_del=?",1,0).select();//将查询条件传入查询方法<br>
 	 */
-	public M where(String where_str, Object... params) {
-		this.db.where(where_str, params);
+	public M where(String whereSql, Object... params) {
+		this.db.where(whereSql, params);
 		return this;
 	}
 
 	/**
 	 * 用于对操作结果进行排序
 	 * 
-	 * @param order_str 排序方式
+	 * @param orderSql 排序方式
 	 * @return 模型类<br>
 	 *         <br>
 	 *         示例：<br>
@@ -251,19 +187,19 @@ public class M {
 	 *         所生成的sql语句是：select * from javatodo where `is_del`=0 order by id
 	 *         desc<br>
 	 */
-	public M order(String order_str) {
-		this.db.order(order_str);
+	public M order(String orderSql) {
+		this.db.order(orderSql);
 		return this;
 	}
 
 	/**
 	 * 用于对结果条数进行限制
 	 * 
-	 * @param limit_str 限制条数
+	 * @param limitSql 限制条数
 	 * @return 模型类
 	 */
-	public M limit(String limit_str) {
-		this.db.limit(limit_str);
+	public M limit(String limitSql) {
+		this.db.limit(limitSql);
 		return this;
 	}
 
@@ -288,19 +224,19 @@ public class M {
 	/**
 	 * 设置当前数据表的别名。
 	 * 
-	 * @param as_str String 当前数据表的别名
+	 * @param asSql String 当前数据表的别名
 	 * @return 模型类
 	 */
-	public M alias(String as_str) {
-		this.db.alias(as_str);
+	public M alias(String asSql) {
+		this.db.alias(asSql);
 		return this;
 	}
 
 	/**
 	 * 根据两个或多个表中的列之间的关系，从这些表中查询数据(默认为inner连表查询)
 	 * 
-	 * @param table_name 所要连表的表名
-	 * @param on_sql     连表查询的条件
+	 * @param tableName 所要连表的表名
+	 * @param onSql     连表查询的条件
 	 * @return 模型类<br>
 	 *         <br>
 	 *         示例：<br>
@@ -310,16 +246,16 @@ public class M {
 	 *         j.uid=u.id").where("u.id=1").select();<br>
 	 *         生成的sql:select * from javatodo as j inner join user as u on j.uid=u.id
 	 */
-	public M join(String table_name, String on_sql) {
-		this.db.join(table_name, on_sql);
+	public M join(String tableName, String onSql) {
+		this.db.join(tableName, onSql);
 		return this;
 	}
 
 	/**
 	 * 根据两个或多个表中的列之间的关系，从这些表中查询数据
 	 * 
-	 * @param table_name String 所要连表的表名
-	 * @param on_sql     连表查询的条件
+	 * @param tableName String 所要连表的表名
+	 * @param onSql     连表查询的条件
 	 * @param type       连表查询的方式
 	 * @return 模型类<br>
 	 *         <br>
@@ -330,37 +266,37 @@ public class M {
 	 *         j.uid=u.id","left").where("u.id=1").select();<br>
 	 *         生成的sql:select * from javatodo as j left join user as u on j.uid=u.id
 	 */
-	public M join(String table_name, String on_sql, String type) {
-		this.db.join(table_name, on_sql, type);
+	public M join(String tableName, String onSql, String type) {
+		this.db.join(tableName, onSql, type);
 		return this;
 	}
 
 	/**
 	 * 标识要返回或者操作的字段
 	 * 
-	 * @param field_str 字段名
+	 * @param fieldSql 字段名
 	 * @return 模型类
 	 */
-	public M field(String field_str) {
-		this.db.field(field_str);
+	public M field(String fieldSql) {
+		this.db.field(fieldSql);
 		return this;
 	}
 
 	/**
 	 * 用于结合合计函数，根据一个或多个列对结果集进行分组
 	 * 
-	 * @param field_str 需要分组的字段名
+	 * @param fieldSql 需要分组的字段名
 	 * @return 模型类
 	 */
-	public M group(String field_str) {
-		this.db.group(field_str);
+	public M group(String fieldSql) {
+		this.db.group(fieldSql);
 		return this;
 	}
 
 	/**
 	 * 将数据写入数据库
 	 * 
-	 * @throws SQLException<br>
+	 * @throws SQLException
 	 *                          <br>
 	 *                          示例：<br>
 	 *                          M m=new
@@ -372,29 +308,26 @@ public class M {
 	 *                          m.data(d).add();<br>
 	 */
 	public Object add() throws SQLException {
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
 		Object lastId = null;
 		if (this.connection != null) {
 			this.db.add();
-			String sql = this.db.get_sql();
-			List<Object> add_data_list = this.db.get_add_data();
-			Object[] params = new Object[add_data_list.size()];
-			for (Integer integer = 0; integer < add_data_list.size(); integer = integer + 1) {
-				params[integer] = add_data_list.get(integer);
+			String sql = this.db.getSql();
+			List<Object> add_data_list = this.db.getAddData();
+			PreparedStatement ptmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			for (Integer i = 0; i < add_data_list.size(); i = i + 1) {
+				ptmt.setObject(i + 1, add_data_list.get(i));
 			}
-			this.queryRunner.update(this.connection, sql, params);
-			T.javatodo_sql_log(connection, sql + "--------参数：" + add_data_list.toString());
-			List<Map<String, Object>> list = this.query("SELECT LAST_INSERT_ID()");
-			// T.javatodo_sql_log(connection, "SELECT LAST_INSERT_ID()");
-			if (list.size() > 0) {
-				lastId = list.get(0).get("LAST_INSERT_ID()");
+			ptmt.execute();
+			ResultSet rs = ptmt.getGeneratedKeys();
+			while (rs.next()) {
+				lastId = rs.getObject(1);
 			}
+			ptmt.close();
+			rs.close();
 			this.db.clear();
 			this.lastSql = sql;
-			this.sql_params = params;
-			if (!this.is_transaction) {
+			this.sqlParams = add_data_list;
+			if (!this.isTransaction) {
 				this.close();
 			}
 		}
@@ -404,31 +337,30 @@ public class M {
 	/**
 	 * 将数据写入数据库
 	 * 
-	 * @throws SQLException<br>
+	 * @throws SQLException
 	 */
 	public void add(List<Map<String, Object>> list) throws SQLException {
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
 		if (this.connection != null) {
 			this.db.add(list);
-			String sql = this.db.get_sql();
-			List<List<Object>> batch_add_data_list = this.db.get_batch_add_data_list();
-			List<Object[]> params = new ArrayList<>();
-			for (Integer i = 0; i < batch_add_data_list.size(); i = i + 1) {
-				List<Object> _batch_data = batch_add_data_list.get(i);
-				params.add(_batch_data.toArray());
-			}
-			try {
-				queryRunner.batch(this.connection, sql, params.toArray(new Object[params.size()][]));
-			} catch (SQLException throwables) {
-				throwables.printStackTrace();
-			}
+			String sql = this.db.getSql();
+			List<List<Object>> batch_add_data_list = this.db.getBatchAddDataList();
 
+			PreparedStatement ptmt = connection.prepareStatement(sql);
+			Integer n = 0;
+			for (Integer i = 0; i < batch_add_data_list.size(); i = i + 1) {
+				List<Object> add_data_list = batch_add_data_list.get(i);
+				for (Integer ii = 0; ii < add_data_list.size(); ii = ii + 1) {
+					n = n + 1;
+					ptmt.setObject(n, add_data_list.get(ii));
+				}
+			}
+			ptmt.execute();
+
+			ptmt.close();
 			this.db.clear();
 			this.lastSql = sql;
-			this.sql_params = params;
-			if (!this.is_transaction) {
+			this.sqlParams = batch_add_data_list;
+			if (!this.isTransaction) {
 				this.close();
 			}
 		}
@@ -438,7 +370,7 @@ public class M {
 	 * 修改数据库中的某条记录
 	 * 
 	 * @param data Map<String, Object> 数据参数
-	 * @throws SQLException<br>
+	 * @throws SQLException
 	 *                          示例<br>
 	 *                          <br>
 	 *                          M m=new M("web");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
@@ -450,14 +382,11 @@ public class M {
 	 */
 	public Integer save(Map<String, Object> data) throws SQLException {
 		Integer ret = 0;
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
 		if (this.connection != null) {
 			this.db.save(data);
-			String sql = this.db.get_sql();
-			List<Object> update_data_list = this.db.get_update_data();
-			List<Object> where_data_list = this.db.get_where_data();
+			String sql = this.db.getSql();
+			List<Object> update_data_list = this.db.getUpdateData();
+			List<Object> where_data_list = this.db.getWhereData();
 			Integer all_total = update_data_list.size() + where_data_list.size();
 			Object[] params = new Object[all_total];
 			for (Integer integer = 0; integer < update_data_list.size(); integer = integer + 1) {
@@ -466,12 +395,20 @@ public class M {
 			for (Integer integer = update_data_list.size(); integer < all_total; integer = integer + 1) {
 				params[integer] = where_data_list.get(integer - update_data_list.size());
 			}
-			ret = this.queryRunner.update(this.connection, sql, params);
-			T.javatodo_sql_log(connection, sql + "--------update参数：" + update_data_list.toString() + "--------where参数：" + where_data_list);
+
+			PreparedStatement ptmt = connection.prepareStatement(sql);
+			for (Integer i = 0; i < params.length; i = i + 1) {
+				ptmt.setObject(i + 1, params[i]);
+			}
+			ret = ptmt.executeUpdate();
+
+			Log.javatodo_sql_log(connection, sql + "--------update参数：" + update_data_list.toString() + "--------where参数：" + where_data_list);
+
+			ptmt.close();
 			this.db.clear();
 			this.lastSql = sql;
-			this.sql_params = params;
-			if (!this.is_transaction) {
+			this.sqlParams = params;
+			if (!this.isTransaction) {
 				this.close();
 			}
 		}
@@ -481,8 +418,9 @@ public class M {
 	/**
 	 * 对于统计字段（通常指的是数字类型）的更新（增加）
 	 * 
-	 * @param data Map<String, Object> 数据参数
-	 * @throws SQLException<br>
+	 * @param field 字段名
+	 * @param value 增加的值
+	 * @throws SQLException
 	 *                          示例<br>
 	 *                          <br>
 	 *                          M m=new M("web");//实例化M对象;<br>
@@ -490,18 +428,17 @@ public class M {
 	 */
 	public Integer setInc(String field, Integer value) throws SQLException {
 		Integer ret = 0;
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
 		if (this.connection != null) {
 			this.db.setInc(field, value);
-			String sql = this.db.get_sql();
-			ret = this.queryRunner.update(this.connection, sql);
-			T.javatodo_sql_log(connection, sql);
+			String sql = this.db.getSql();
+			PreparedStatement ptmt = connection.prepareStatement(sql);
+			ret = ptmt.executeUpdate();
+			Log.javatodo_sql_log(connection, sql);
+			ptmt.close();
 			this.db.clear();
 			this.lastSql = sql;
-			this.sql_params = "";
-			if (!this.is_transaction) {
+			this.sqlParams = "";
+			if (!this.isTransaction) {
 				this.close();
 			}
 		}
@@ -511,8 +448,8 @@ public class M {
 	/**
 	 * 对于统计字段（通常指的是数字类型）加1
 	 * 
-	 * @param data Map<String, Object> 数据参数
-	 * @throws SQLException<br>
+	 * @param field 字段名
+	 * @throws SQLException
 	 *                          示例<br>
 	 *                          <br>
 	 *                          M m=new M("web");//实例化M对象;<br>
@@ -520,18 +457,17 @@ public class M {
 	 */
 	public Integer setInc(String field) throws SQLException {
 		Integer ret = 0;
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
 		if (this.connection != null) {
 			this.db.setInc(field);
-			String sql = this.db.get_sql();
-			ret = this.queryRunner.update(this.connection, sql);
-			T.javatodo_sql_log(connection, sql);
+			String sql = this.db.getSql();
+			PreparedStatement ptmt = connection.prepareStatement(sql);
+			ret = ptmt.executeUpdate();
+			Log.javatodo_sql_log(connection, sql);
+			ptmt.close();
 			this.db.clear();
 			this.lastSql = sql;
-			this.sql_params = "";
-			if (!this.is_transaction) {
+			this.sqlParams = "";
+			if (!this.isTransaction) {
 				this.close();
 			}
 		}
@@ -541,8 +477,9 @@ public class M {
 	/**
 	 * 对于统计字段（通常指的是数字类型）的更新（减少）
 	 * 
-	 * @param data Map<String, Object> 数据参数
-	 * @throws SQLException<br>
+	 * @param field 字段名
+	 * @param value 减去的值
+	 * @throws SQLException
 	 *                          示例<br>
 	 *                          <br>
 	 *                          M m=new M("web");//实例化M对象;<br>
@@ -550,18 +487,17 @@ public class M {
 	 */
 	public Integer setDec(String field, Integer value) throws SQLException {
 		Integer ret = 0;
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
 		if (this.connection != null) {
 			this.db.setDec(field, value);
-			String sql = this.db.get_sql();
-			ret = this.queryRunner.update(this.connection, sql);
-			T.javatodo_sql_log(connection, sql);
+			String sql = this.db.getSql();
+			PreparedStatement ptmt = connection.prepareStatement(sql);
+			ret = ptmt.executeUpdate();
+			Log.javatodo_sql_log(connection, sql);
+			ptmt.close();
 			this.db.clear();
 			this.lastSql = sql;
-			this.sql_params = "";
-			if (!this.is_transaction) {
+			this.sqlParams = "";
+			if (!this.isTransaction) {
 				this.close();
 			}
 		}
@@ -571,8 +507,8 @@ public class M {
 	/**
 	 * 对于统计字段（通常指的是数字类型）减1
 	 * 
-	 * @param data Map<String, Object> 数据参数
-	 * @throws SQLException<br>
+	 * @param field 字段名
+	 * @throws SQLException
 	 *                          示例<br>
 	 *                          <br>
 	 *                          M m=new M("web");//实例化M对象;<br>
@@ -580,18 +516,17 @@ public class M {
 	 */
 	public Integer setDec(String field) throws SQLException {
 		Integer ret = 0;
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
 		if (this.connection != null) {
 			this.db.setDec(field);
-			String sql = this.db.get_sql();
-			ret = this.queryRunner.update(this.connection, sql);
-			T.javatodo_sql_log(connection, sql);
+			String sql = this.db.getSql();
+			PreparedStatement ptmt = connection.prepareStatement(sql);
+			ret = ptmt.executeUpdate();
+			Log.javatodo_sql_log(connection, sql);
+			ptmt.close();
 			this.db.clear();
 			this.lastSql = sql;
-			this.sql_params = "";
-			if (!this.is_transaction) {
+			this.sqlParams = "";
+			if (!this.isTransaction) {
 				this.close();
 			}
 		}
@@ -601,7 +536,7 @@ public class M {
 	/**
 	 * 删除数据库中的某条记录
 	 * 
-	 * @throws SQLException<br>
+	 * @throws SQLException
 	 *                          示例：<br>
 	 *                          <br>
 	 *                          M m=new M("web");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
@@ -609,23 +544,21 @@ public class M {
 	 */
 	public Integer delete() throws SQLException {
 		Integer ret = 0;
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
 		if (this.connection != null) {
 			this.db.delete();
-			String sql = this.db.get_sql();
-			List<Object> where_data_list = this.db.get_where_data();
-			Object[] params = new Object[where_data_list.size()];
-			for (Integer integer = 0; integer < where_data_list.size(); integer = integer + 1) {
-				params[integer] = where_data_list.get(integer);
+			String sql = this.db.getSql();
+			List<Object> where_data_list = this.db.getWhereData();
+			PreparedStatement ptmt = connection.prepareStatement(sql);
+			for (Integer i = 0; i < where_data_list.size(); i = i + 1) {
+				ptmt.setObject(i + 1, where_data_list.get(i));
 			}
-			ret = this.queryRunner.update(this.connection, sql, params);
-			T.javatodo_sql_log(connection, sql + "---------------where参数：" + where_data_list.toString());
+			ret = ptmt.executeUpdate();
+			Log.javatodo_sql_log(connection, sql + "---------------where参数：" + where_data_list.toString());
+			ptmt.close();
 			this.db.clear();
 			this.lastSql = sql;
-			this.sql_params = params;
-			if (!this.is_transaction) {
+			this.sqlParams = where_data_list;
+			if (!this.isTransaction) {
 				this.close();
 			}
 		}
@@ -639,25 +572,25 @@ public class M {
 	 * @throws SQLException
 	 */
 	public List<Map<String, Object>> select() throws SQLException {
-		List<Map<String, Object>> list = new ArrayList<>();
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		if (this.connection != null) {
 			this.db.select();
-			String sql = this.db.get_sql();
-			List<Object> where_data_list = this.db.get_where_data();
-			Object[] params = new Object[where_data_list.size()];
-			for (Integer integer = 0; integer < where_data_list.size(); integer = integer + 1) {
-				params[integer] = where_data_list.get(integer);
-			}
+			String sql = this.db.getSql();
+			List<Object> where_data_list = this.db.getWhereData();
 
-			list = queryRunner.query(this.connection, sql, new MapListHandler(), params);
-			T.javatodo_sql_log(connection, sql + "--------where参数：" + where_data_list.toString());
+			PreparedStatement ptmt = connection.prepareStatement(sql);
+			for (Integer i = 0; i < where_data_list.size(); i = i + 1) {
+				ptmt.setObject(i + 1, where_data_list.get(i));
+			}
+			ResultSet resultSet = ptmt.executeQuery();
+			list = this.resultSetToMap(resultSet);
+			Log.javatodo_sql_log(connection, sql + "--------where参数：" + where_data_list.toString());
+			ptmt.close();
+			resultSet.close();
 			this.db.clear();
 			this.lastSql = sql;
-			this.sql_params = params;
-			if (!this.is_transaction) {
+			this.sqlParams = where_data_list;
+			if (!this.isTransaction) {
 				this.close();
 			}
 			return list;
@@ -674,24 +607,27 @@ public class M {
 	 */
 	public Map<String, Object> find() throws SQLException {
 		Map<String, Object> map = null;
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
 		if (this.connection != null) {
-			map = new HashMap<>();
 			this.db.find();
-			String sql = this.db.get_sql();
-			List<Object> where_data_list = this.db.get_where_data();
-			Object[] params = new Object[where_data_list.size()];
-			for (Integer integer = 0; integer < where_data_list.size(); integer = integer + 1) {
-				params[integer] = where_data_list.get(integer);
+			String sql = this.db.getSql();
+			List<Object> where_data_list = this.db.getWhereData();
+
+			PreparedStatement ptmt = connection.prepareStatement(sql);
+			for (Integer i = 0; i < where_data_list.size(); i = i + 1) {
+				ptmt.setObject(i + 1, where_data_list.get(i));
 			}
-			map = this.queryRunner.query(this.connection, sql, new MapHandler(), params);
-			T.javatodo_sql_log(connection, sql + "-----------where参数：" + where_data_list.toString());
+			ResultSet resultSet = ptmt.executeQuery();
+			List<Map<String, Object>> list = this.resultSetToMap(resultSet);
+			if (list.size() > 0) {
+				map = list.get(0);
+			}
+			Log.javatodo_sql_log(connection, sql + "-----------where参数：" + where_data_list.toString());
+			ptmt.close();
+			resultSet.close();
 			this.db.clear();
 			this.lastSql = sql;
-			this.sql_params = params;
-			if (!this.is_transaction) {
+			this.sqlParams = where_data_list;
+			if (!this.isTransaction) {
 				this.close();
 			}
 			return map;
@@ -709,9 +645,6 @@ public class M {
 	 */
 	public Object getField(String field_name) throws SQLException {
 		Object object = null;
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
 		if (this.connection != null) {
 			object = new Object();
 			this.db.field(field_name);
@@ -724,7 +657,7 @@ public class M {
 			} else {
 				object = null;
 			}
-			if (!this.is_transaction) {
+			if (!this.isTransaction) {
 				this.close();
 			}
 			return object;
@@ -741,16 +674,17 @@ public class M {
 	 * @throws SQLException
 	 */
 	public List<Map<String, Object>> query(String sql) throws SQLException {
-		List<Map<String, Object>> list = new ArrayList<>();
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		if (this.connection != null) {
-			list = queryRunner.query(this.connection, sql, new MapListHandler());
-			T.javatodo_sql_log(connection, sql);
+			PreparedStatement ptmt = connection.prepareStatement(sql);
+			ResultSet resultSet = ptmt.executeQuery();
+			list = this.resultSetToMap(resultSet);
+			Log.javatodo_sql_log(connection, sql);
+			ptmt.close();
+			resultSet.close();
 			this.lastSql = sql;
-			this.sql_params = "";
-			if (!this.is_transaction) {
+			this.sqlParams = "";
+			if (!this.isTransaction) {
 				this.close();
 			}
 			return list;
@@ -768,16 +702,20 @@ public class M {
 	 * @throws SQLException
 	 */
 	public List<Map<String, Object>> query(String sql, Object... params) throws SQLException {
-		List<Map<String, Object>> list = new ArrayList<>();
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		if (this.connection != null) {
-			list = queryRunner.query(this.connection, sql, new MapListHandler(), params);
-			T.javatodo_sql_log(connection, sql + "------------参数：" + params.toString());
+			PreparedStatement ptmt = connection.prepareStatement(sql);
+			for (Integer i = 0; i < params.length; i = i + 1) {
+				ptmt.setObject(i + 1, params[i]);
+			}
+			ResultSet resultSet = ptmt.executeQuery();
+			list = this.resultSetToMap(resultSet);
+			Log.javatodo_sql_log(connection, sql + "------------参数：" + params.toString());
+			ptmt.close();
+			resultSet.close();
 			this.lastSql = sql;
-			this.sql_params = params;
-			if (!this.is_transaction) {
+			this.sqlParams = params;
+			if (!this.isTransaction) {
 				this.close();
 			}
 			return list;
@@ -793,12 +731,9 @@ public class M {
 	 * @throws SQLException
 	 */
 	public long count() throws SQLException {
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
 		if (this.connection != null) {
 			Object count = this.getField("count(*)");
-			if (!this.is_transaction) {
+			if (!this.isTransaction) {
 				this.close();
 			}
 			if (count == null) {
@@ -818,15 +753,14 @@ public class M {
 	 * @throws SQLException
 	 */
 	public void execute(String sql) throws SQLException {
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
 		if (this.connection != null) {
-			this.queryRunner.update(this.connection, sql);
-			T.javatodo_sql_log(connection, sql);
+			PreparedStatement ptmt = connection.prepareStatement(sql);
+			ptmt.execute();
+			Log.javatodo_sql_log(connection, sql);
+			ptmt.close();
 			this.lastSql = sql;
-			this.sql_params = "";
-			if (!this.is_transaction) {
+			this.sqlParams = "";
+			if (!this.isTransaction) {
 				this.close();
 			}
 		}
@@ -840,15 +774,18 @@ public class M {
 	 * @throws SQLException
 	 */
 	public void execute(String sql, Object... params) throws SQLException {
-		if (this.connection == null) {
-			this.connection = MC.get_connection(this.dbIndex);
-		}
 		if (this.connection != null) {
-			this.queryRunner.update(this.connection, sql, params);
-			T.javatodo_sql_log(connection, sql + "----------参数：" + params.toString());
+
+			PreparedStatement ptmt = connection.prepareStatement(sql);
+			for (Integer i = 0; i < params.length; i = i + 1) {
+				ptmt.setObject(i + 1, params[i]);
+			}
+			ptmt.executeUpdate();
+			Log.javatodo_sql_log(connection, sql + "----------参数：" + params.toString());
+			ptmt.close();
 			this.lastSql = sql;
-			this.sql_params = params;
-			if (!this.is_transaction) {
+			this.sqlParams = params;
+			if (!this.isTransaction) {
 				this.close();
 			}
 		}
@@ -867,27 +804,7 @@ public class M {
 	 */
 	public void getLastSql() {
 		System.out.println(this.lastSql);
-		if (this.sql_params.getClass().getName().contains("String")) {
-			System.out.println(this.sql_params);
-		} else if (this.sql_params.getClass().getName().contains("List")) {
-			List<Object[]> objects = (List<Object[]>) this.sql_params;
-			List<List<String>> list = new ArrayList<>();
-			for (Integer i = 0; i < objects.size(); i = i + 1) {
-				List<String> _list = new ArrayList<>();
-				for (Integer n = 0; n < objects.get(i).length; n = n + 1) {
-					_list.add(objects.get(i)[n].toString());
-				}
-				list.add(_list);
-			}
-			System.out.println(list);
-		} else {
-			Object[] objects = (Object[]) this.sql_params;
-			List<String> list = new ArrayList<>();
-			for (Integer i = 0; i < objects.length; i = i + 1) {
-				list.add(objects[i].toString());
-			}
-			System.out.println(list);
-		}
+		System.out.println(this.sqlParams);
 	}
 
 	/**
@@ -897,13 +814,28 @@ public class M {
 		if (this.connection != null) {
 			try {
 				this.connection.close();
-				T.javatodo_sql_log(connection, "connect关闭了");
+				Log.javatodo_sql_log(connection, "connect关闭了");
 				this.connection = null;
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				T.javatodo_error_log(e);
+				Log.javatodo_error_log(e);
 			}
 		}
+	}
+
+	private List<Map<String, Object>> resultSetToMap(ResultSet resultSet) throws SQLException {
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		while (resultSet.next()) {
+			ResultSetMetaData rsm = resultSet.getMetaData();
+			// ResultSetMetaData 接口创建一个对象，可使用该对象找出 ResultSet 中的各列的类型和属性。
+			int size = rsm.getColumnCount(); // 每行列数
+			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+			for (int j = 1; j <= size; j++) {
+				map.put(rsm.getColumnLabel(j), resultSet.getObject(j));
+			}
+			list.add(map);
+		}
+		return list;
 	}
 }
