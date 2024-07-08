@@ -15,9 +15,13 @@
  */
 package com.javatodo.core.model;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +83,7 @@ public class M {
 		Log.javatodo_sql_log(connection, "开启transaction");
 	}
 
-	public boolean getTransaction(){
+	public boolean getTransaction() {
 		return isTransaction;
 	}
 
@@ -161,7 +165,7 @@ public class M {
 	 * 模型类的连贯操作方法之一，主要用于字符串条件直接查询和操作
 	 * 
 	 * @param whereSql 查询条件语句
-	 * @param params    相关参数
+	 * @param params   相关参数
 	 * @return 模型类<br>
 	 *         <br>
 	 *         示例：<br>
@@ -256,7 +260,7 @@ public class M {
 	 * 
 	 * @param tableName String 所要连表的表名
 	 * @param onSql     连表查询的条件
-	 * @param type       连表查询的方式
+	 * @param type      连表查询的方式
 	 * @return 模型类<br>
 	 *         <br>
 	 *         示例：<br>
@@ -296,16 +300,14 @@ public class M {
 	/**
 	 * 将数据写入数据库
 	 * 
-	 * @throws SQLException
-	 *                          <br>
-	 *                          示例：<br>
-	 *                          M m=new
-	 *                          M("javatodo");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
-	 *                          Map&lt;String,Object&gt;d=new
-	 *                          HashMap&lt;String,Object&gt;(); <br>
-	 *                          d.put("name","javatodo");<br>
-	 *                          d.put("author","wangwenyuan");<br>
-	 *                          m.data(d).add();<br>
+	 * @throws SQLException <br>
+	 *                      示例：<br>
+	 *                      M m=new M("javatodo");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
+	 *                      Map&lt;String,Object&gt;d=new
+	 *                      HashMap&lt;String,Object&gt;(); <br>
+	 *                      d.put("name","javatodo");<br>
+	 *                      d.put("author","wangwenyuan");<br>
+	 *                      m.data(d).add();<br>
 	 */
 	public Object add() throws SQLException {
 		Object lastId = null;
@@ -313,12 +315,14 @@ public class M {
 			this.db.add();
 			String sql = this.db.getSql();
 			List<Object> add_data_list = this.db.getAddData();
+			Log.javatodo_sql_log(connection, "开始执行sql：\n" + sql + "\n--------\n add_data_list：" + add_data_list);
 			PreparedStatement ptmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			for (Integer i = 0; i < add_data_list.size(); i = i + 1) {
 				ptmt.setObject(i + 1, add_data_list.get(i));
 			}
 			ptmt.execute();
 			ResultSet rs = ptmt.getGeneratedKeys();
+			Log.javatodo_sql_log(connection, "sql执行结束");
 			while (rs.next()) {
 				lastId = rs.getObject(1);
 			}
@@ -344,7 +348,7 @@ public class M {
 			this.db.add(list);
 			String sql = this.db.getSql();
 			List<List<Object>> batch_add_data_list = this.db.getBatchAddDataList();
-
+			Log.javatodo_sql_log(connection, "开始执行sql：\n" + sql);
 			PreparedStatement ptmt = connection.prepareStatement(sql);
 			Integer n = 0;
 			for (Integer i = 0; i < batch_add_data_list.size(); i = i + 1) {
@@ -355,8 +359,8 @@ public class M {
 				}
 			}
 			ptmt.execute();
-
 			ptmt.close();
+			Log.javatodo_sql_log(connection, "sql执行结束");
 			this.db.clear();
 			this.lastSql = sql;
 			this.sqlParams = batch_add_data_list;
@@ -370,15 +374,14 @@ public class M {
 	 * 修改数据库中的某条记录
 	 * 
 	 * @param data Map<String, Object> 数据参数
-	 * @throws SQLException
-	 *                          示例<br>
-	 *                          <br>
-	 *                          M m=new M("web");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
-	 *                          Map&lt;String,Object&gt;d=new
-	 *                          HashMap&lt;String,Object&gt;(); <br>
-	 *                          d.put("name","javatodo");<br>
-	 *                          d.put("url","javatodo.com");<br>
-	 *                          m.where("id=1").save(d);
+	 * @throws SQLException 示例<br>
+	 *                      <br>
+	 *                      M m=new M("web");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
+	 *                      Map&lt;String,Object&gt;d=new
+	 *                      HashMap&lt;String,Object&gt;(); <br>
+	 *                      d.put("name","javatodo");<br>
+	 *                      d.put("url","javatodo.com");<br>
+	 *                      m.where("id=1").save(d);
 	 */
 	public Integer save(Map<String, Object> data) throws SQLException {
 		Integer ret = 0;
@@ -395,16 +398,15 @@ public class M {
 			for (Integer integer = update_data_list.size(); integer < all_total; integer = integer + 1) {
 				params[integer] = where_data_list.get(integer - update_data_list.size());
 			}
-
+			Log.javatodo_sql_log(connection, "开始执行sql：\n" + sql + "\n--------\n update参数：" + update_data_list.toString()
+					+ "\n--------\n where参数：" + where_data_list);
 			PreparedStatement ptmt = connection.prepareStatement(sql);
 			for (Integer i = 0; i < params.length; i = i + 1) {
 				ptmt.setObject(i + 1, params[i]);
 			}
 			ret = ptmt.executeUpdate();
-
-			Log.javatodo_sql_log(connection, sql + "--------update参数：" + update_data_list.toString() + "--------where参数：" + where_data_list);
-
 			ptmt.close();
+			Log.javatodo_sql_log(connection, "sql执行结束");
 			this.db.clear();
 			this.lastSql = sql;
 			this.sqlParams = params;
@@ -420,20 +422,20 @@ public class M {
 	 * 
 	 * @param field 字段名
 	 * @param value 增加的值
-	 * @throws SQLException
-	 *                          示例<br>
-	 *                          <br>
-	 *                          M m=new M("web");//实例化M对象;<br>
-	 *                          m.where("id=1").setInc("num", 1);
+	 * @throws SQLException 示例<br>
+	 *                      <br>
+	 *                      M m=new M("web");//实例化M对象;<br>
+	 *                      m.where("id=1").setInc("num", 1);
 	 */
 	public Integer setInc(String field, Integer value) throws SQLException {
 		Integer ret = 0;
 		if (this.connection != null) {
 			this.db.setInc(field, value);
 			String sql = this.db.getSql();
+			Log.javatodo_sql_log(connection, "开始执行sql：\n" + sql);
 			PreparedStatement ptmt = connection.prepareStatement(sql);
 			ret = ptmt.executeUpdate();
-			Log.javatodo_sql_log(connection, sql);
+			Log.javatodo_sql_log(connection, "sql执行结束");
 			ptmt.close();
 			this.db.clear();
 			this.lastSql = sql;
@@ -449,20 +451,20 @@ public class M {
 	 * 对于统计字段（通常指的是数字类型）加1
 	 * 
 	 * @param field 字段名
-	 * @throws SQLException
-	 *                          示例<br>
-	 *                          <br>
-	 *                          M m=new M("web");//实例化M对象;<br>
-	 *                          m.where("id=1").setInc("num");
+	 * @throws SQLException 示例<br>
+	 *                      <br>
+	 *                      M m=new M("web");//实例化M对象;<br>
+	 *                      m.where("id=1").setInc("num");
 	 */
 	public Integer setInc(String field) throws SQLException {
 		Integer ret = 0;
 		if (this.connection != null) {
 			this.db.setInc(field);
 			String sql = this.db.getSql();
+			Log.javatodo_sql_log(connection, "开始执行sql：\n" + sql);
 			PreparedStatement ptmt = connection.prepareStatement(sql);
 			ret = ptmt.executeUpdate();
-			Log.javatodo_sql_log(connection, sql);
+			Log.javatodo_sql_log(connection, "sql执行结束");
 			ptmt.close();
 			this.db.clear();
 			this.lastSql = sql;
@@ -479,20 +481,20 @@ public class M {
 	 * 
 	 * @param field 字段名
 	 * @param value 减去的值
-	 * @throws SQLException
-	 *                          示例<br>
-	 *                          <br>
-	 *                          M m=new M("web");//实例化M对象;<br>
-	 *                          m.where("id=1").setDec("num", 1);
+	 * @throws SQLException 示例<br>
+	 *                      <br>
+	 *                      M m=new M("web");//实例化M对象;<br>
+	 *                      m.where("id=1").setDec("num", 1);
 	 */
 	public Integer setDec(String field, Integer value) throws SQLException {
 		Integer ret = 0;
 		if (this.connection != null) {
 			this.db.setDec(field, value);
 			String sql = this.db.getSql();
+			Log.javatodo_sql_log(connection, "开始执行sql：\n" + sql);
 			PreparedStatement ptmt = connection.prepareStatement(sql);
 			ret = ptmt.executeUpdate();
-			Log.javatodo_sql_log(connection, sql);
+			Log.javatodo_sql_log(connection, "sql执行结束");
 			ptmt.close();
 			this.db.clear();
 			this.lastSql = sql;
@@ -508,20 +510,20 @@ public class M {
 	 * 对于统计字段（通常指的是数字类型）减1
 	 * 
 	 * @param field 字段名
-	 * @throws SQLException
-	 *                          示例<br>
-	 *                          <br>
-	 *                          M m=new M("web");//实例化M对象;<br>
-	 *                          m.where("id=1").setDec("num");
+	 * @throws SQLException 示例<br>
+	 *                      <br>
+	 *                      M m=new M("web");//实例化M对象;<br>
+	 *                      m.where("id=1").setDec("num");
 	 */
 	public Integer setDec(String field) throws SQLException {
 		Integer ret = 0;
 		if (this.connection != null) {
 			this.db.setDec(field);
 			String sql = this.db.getSql();
+			Log.javatodo_sql_log(connection, "开始执行sql：\n" + sql);
 			PreparedStatement ptmt = connection.prepareStatement(sql);
 			ret = ptmt.executeUpdate();
-			Log.javatodo_sql_log(connection, sql);
+			Log.javatodo_sql_log(connection, "sql执行结束");
 			ptmt.close();
 			this.db.clear();
 			this.lastSql = sql;
@@ -536,11 +538,10 @@ public class M {
 	/**
 	 * 删除数据库中的某条记录
 	 * 
-	 * @throws SQLException
-	 *                          示例：<br>
-	 *                          <br>
-	 *                          M m=new M("web");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
-	 *                          m.where("id=15").delete();
+	 * @throws SQLException 示例：<br>
+	 *                      <br>
+	 *                      M m=new M("web");//实例化M对象，并制定所要操作的数据表为javatodo;<br>
+	 *                      m.where("id=15").delete();
 	 */
 	public Integer delete() throws SQLException {
 		Integer ret = 0;
@@ -548,13 +549,15 @@ public class M {
 			this.db.delete();
 			String sql = this.db.getSql();
 			List<Object> where_data_list = this.db.getWhereData();
+			Log.javatodo_sql_log(connection,
+					"开始执行sql：\n" + sql + "\n---------------\n where参数：" + where_data_list.toString());
 			PreparedStatement ptmt = connection.prepareStatement(sql);
 			for (Integer i = 0; i < where_data_list.size(); i = i + 1) {
 				ptmt.setObject(i + 1, where_data_list.get(i));
 			}
 			ret = ptmt.executeUpdate();
-			Log.javatodo_sql_log(connection, sql + "---------------where参数：" + where_data_list.toString());
 			ptmt.close();
+			Log.javatodo_sql_log(connection, "sql执行结束");
 			this.db.clear();
 			this.lastSql = sql;
 			this.sqlParams = where_data_list;
@@ -577,16 +580,16 @@ public class M {
 			this.db.select();
 			String sql = this.db.getSql();
 			List<Object> where_data_list = this.db.getWhereData();
-
+			Log.javatodo_sql_log(connection, "开始执行sql：\n" + sql + "\n--------\n where参数：" + where_data_list.toString());
 			PreparedStatement ptmt = connection.prepareStatement(sql);
 			for (Integer i = 0; i < where_data_list.size(); i = i + 1) {
 				ptmt.setObject(i + 1, where_data_list.get(i));
 			}
 			ResultSet resultSet = ptmt.executeQuery();
 			list = this.resultSetToMap(resultSet);
-			Log.javatodo_sql_log(connection, sql + "--------where参数：" + where_data_list.toString());
 			ptmt.close();
 			resultSet.close();
+			Log.javatodo_sql_log(connection, "sql执行结束");
 			this.db.clear();
 			this.lastSql = sql;
 			this.sqlParams = where_data_list;
@@ -611,7 +614,8 @@ public class M {
 			this.db.find();
 			String sql = this.db.getSql();
 			List<Object> where_data_list = this.db.getWhereData();
-
+			Log.javatodo_sql_log(connection,
+					"开始执行sql：\n" + sql + "\n-----------\n where参数：" + where_data_list.toString());
 			PreparedStatement ptmt = connection.prepareStatement(sql);
 			for (Integer i = 0; i < where_data_list.size(); i = i + 1) {
 				ptmt.setObject(i + 1, where_data_list.get(i));
@@ -621,9 +625,9 @@ public class M {
 			if (list.size() > 0) {
 				map = list.get(0);
 			}
-			Log.javatodo_sql_log(connection, sql + "-----------where参数：" + where_data_list.toString());
 			ptmt.close();
 			resultSet.close();
+			Log.javatodo_sql_log(connection, "sql执行结束");
 			this.db.clear();
 			this.lastSql = sql;
 			this.sqlParams = where_data_list;
@@ -676,10 +680,11 @@ public class M {
 	public List<Map<String, Object>> query(String sql) throws SQLException {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		if (this.connection != null) {
+			Log.javatodo_sql_log(connection, "开始执行sql：\n" + sql);
 			PreparedStatement ptmt = connection.prepareStatement(sql);
 			ResultSet resultSet = ptmt.executeQuery();
 			list = this.resultSetToMap(resultSet);
-			Log.javatodo_sql_log(connection, sql);
+			Log.javatodo_sql_log(connection, "sql执行结束");
 			ptmt.close();
 			resultSet.close();
 			this.lastSql = sql;
@@ -704,15 +709,16 @@ public class M {
 	public List<Map<String, Object>> query(String sql, Object... params) throws SQLException {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		if (this.connection != null) {
+			Log.javatodo_sql_log(connection, "开始执行sql：" + sql + "\n------------\n 参数：" + params.toString());
 			PreparedStatement ptmt = connection.prepareStatement(sql);
 			for (Integer i = 0; i < params.length; i = i + 1) {
 				ptmt.setObject(i + 1, params[i]);
 			}
 			ResultSet resultSet = ptmt.executeQuery();
 			list = this.resultSetToMap(resultSet);
-			Log.javatodo_sql_log(connection, sql + "------------参数：" + params.toString());
 			ptmt.close();
 			resultSet.close();
+			Log.javatodo_sql_log(connection, "sql执行结束");
 			this.lastSql = sql;
 			this.sqlParams = params;
 			if (!this.isTransaction) {
@@ -754,10 +760,11 @@ public class M {
 	 */
 	public void execute(String sql) throws SQLException {
 		if (this.connection != null) {
+			Log.javatodo_sql_log(connection, "开始执行sql：" + sql);
 			PreparedStatement ptmt = connection.prepareStatement(sql);
 			ptmt.execute();
-			Log.javatodo_sql_log(connection, sql);
 			ptmt.close();
+			Log.javatodo_sql_log(connection, "sql执行结束");
 			this.lastSql = sql;
 			this.sqlParams = "";
 			if (!this.isTransaction) {
@@ -775,14 +782,14 @@ public class M {
 	 */
 	public void execute(String sql, Object... params) throws SQLException {
 		if (this.connection != null) {
-
+			Log.javatodo_sql_log(connection, "开始执行sql：" + sql + "----------参数：" + params.toString());
 			PreparedStatement ptmt = connection.prepareStatement(sql);
 			for (Integer i = 0; i < params.length; i = i + 1) {
 				ptmt.setObject(i + 1, params[i]);
 			}
 			ptmt.executeUpdate();
-			Log.javatodo_sql_log(connection, sql + "----------参数：" + params.toString());
 			ptmt.close();
+			Log.javatodo_sql_log(connection, "sql执行结束");
 			this.lastSql = sql;
 			this.sqlParams = params;
 			if (!this.isTransaction) {
