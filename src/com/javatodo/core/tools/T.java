@@ -813,7 +813,8 @@ public class T {
 			return;
 		}
 		if (sourceFile.isFile()) {
-			Files.copy(new File(source_path).toPath(), new File(new_path).toPath(), StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(new File(source_path).toPath(), new File(new_path).toPath(),
+					StandardCopyOption.REPLACE_EXISTING);
 		} else if (sourceFile.isDirectory()) {
 			copyDir(source_path, new_path);
 		}
@@ -836,12 +837,13 @@ public class T {
 
 	// 生成主键
 	public static String getPriKey() {
-		return String.valueOf(SnowFlake.snowFlake.nextId());
+		return String.valueOf(IDGenerator.Id.nextId());
 	}
 
 	// 数字转36进制
 	public static String int36Hash(Integer n) {
-		String[] arr = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
+		String[] arr = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f",
+				"g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 		BigDecimal seed = new BigDecimal(n);
 		BigDecimal hexadecimal = new BigDecimal(36);
 		List<String> retList = new ArrayList<>();
@@ -904,8 +906,21 @@ public class T {
 
 	// 判断是否是手机浏览器
 	public static boolean isMobile(HttpServletRequest request) {
-		List<String> mobile_agents = Arrays.asList("240x320", "acer", "acoon", "acs-", "abacho", "ahong", "airness", "alcatel", "amoi", "android", "anywhereyougo.com", "applewebkit/525", "applewebkit/532", "asus", "audio", "au-mic", "avantogo", "becker", "benq", "bilbo", "bird", "blackberry", "blazer", "bleu", "cdm-", "compal", "coolpad", "danger", "dbtel", "dopod", "elaine", "eric", "etouch", "fly ", "fly_", "fly-", "go.web", "goodaccess", "gradiente", "grundig", "haier", "hedy", "hitachi", "htc", "huawei", "hutchison", "inno", "ipad", "ipaq", "iphone", "ipod", "jbrowser", "kddi", "kgt", "kwc", "lenovo", "lg ", "lg2", "lg3", "lg4", "lg5", "lg7", "lg8", "lg9", "lg-", "lge-", "lge9", "longcos", "maemo", "mercator", "meridian", "micromax", "midp", "mini", "mitsu", "mmm", "mmp", "mobi", "mot-", "moto", "nec-", "netfront", "newgen", "nexian", "nf-browser", "nintendo", "nitro", "nokia", "nook", "novarra", "obigo", "palm", "panasonic", "pantech", "philips", "phone", "pg-", "playstation", "pocket", "pt-", "qc-", "qtek", "rover", "sagem", "sama", "samu", "sanyo", "samsung", "sch-", "scooter", "sec-", "sendo", "sgh-", "sharp", "siemens", "sie-", "softbank", "sony", "spice", "sprint", "spv",
-				"symbian", "tablet", "talkabout", "tcl-", "teleca", "telit", "tianyu", "tim-", "toshiba", "tsm", "up.browser", "utec", "utstar", "verykool", "virgin", "vk-", "voda", "voxtel", "vx", "wap", "wellco", "wig browser", "wii", "windows ce", "wireless", "xda", "xde", "zte");
+		List<String> mobile_agents = Arrays.asList("240x320", "acer", "acoon", "acs-", "abacho", "ahong", "airness",
+				"alcatel", "amoi", "android", "anywhereyougo.com", "applewebkit/525", "applewebkit/532", "asus",
+				"audio", "au-mic", "avantogo", "becker", "benq", "bilbo", "bird", "blackberry", "blazer", "bleu",
+				"cdm-", "compal", "coolpad", "danger", "dbtel", "dopod", "elaine", "eric", "etouch", "fly ", "fly_",
+				"fly-", "go.web", "goodaccess", "gradiente", "grundig", "haier", "hedy", "hitachi", "htc", "huawei",
+				"hutchison", "inno", "ipad", "ipaq", "iphone", "ipod", "jbrowser", "kddi", "kgt", "kwc", "lenovo",
+				"lg ", "lg2", "lg3", "lg4", "lg5", "lg7", "lg8", "lg9", "lg-", "lge-", "lge9", "longcos", "maemo",
+				"mercator", "meridian", "micromax", "midp", "mini", "mitsu", "mmm", "mmp", "mobi", "mot-", "moto",
+				"nec-", "netfront", "newgen", "nexian", "nf-browser", "nintendo", "nitro", "nokia", "nook", "novarra",
+				"obigo", "palm", "panasonic", "pantech", "philips", "phone", "pg-", "playstation", "pocket", "pt-",
+				"qc-", "qtek", "rover", "sagem", "sama", "samu", "sanyo", "samsung", "sch-", "scooter", "sec-", "sendo",
+				"sgh-", "sharp", "siemens", "sie-", "softbank", "sony", "spice", "sprint", "spv", "symbian", "tablet",
+				"talkabout", "tcl-", "teleca", "telit", "tianyu", "tim-", "toshiba", "tsm", "up.browser", "utec",
+				"utstar", "verykool", "virgin", "vk-", "voda", "voxtel", "vx", "wap", "wellco", "wig browser", "wii",
+				"windows ce", "wireless", "xda", "xde", "zte");
 		String user_agent = request.getHeader("User-Agent").toLowerCase();
 		for (Integer i = 0; i < mobile_agents.size(); i = i + 1) {
 			if (user_agent.contains(mobile_agents.get(i))) {
@@ -919,7 +934,8 @@ public class T {
 		StringWriter sw = new StringWriter();
 		e.printStackTrace(new PrintWriter(sw, true));
 		String str = sw.toString();
-		str = "\n==========================" + T.date("yyyy-MM-dd HH:mm:ss", T.time()) + "============================\n" + str;
+		str = "\n==========================" + T.date("yyyy-MM-dd HH:mm:ss", T.time())
+				+ "============================\n" + str;
 		T.create_log("javatodo_error_log/" + T.date("yyyy-MM-dd", T.time()) + ".log", str);
 	}
 

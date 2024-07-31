@@ -12,7 +12,7 @@ public class C {
 	}
 
 	// 数据库配置项
-	public static String dbType = "mysql";// 数据库类型
+	public static String[] dbType = { "mysql" };// 数据库类型
 	// 可以同时连接多个数据库。
 	public static String[] dbHost = {};// 数据库地址
 	public static String[] dbPort = {};// 数据库端口

@@ -29,7 +29,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 public class MC {
 
 	public static List<ComboPooledDataSource> dataSource = null;
-	public static String dbType = C.dbType;// 数据库类型
+	public static String[] dbType = C.dbType;// 数据库类型
 	public static List<String> tablePrefix = new ArrayList<String>(Arrays.asList(C.tablePrefix));// 数据表前缀
 	public static List<String> dbHost = new ArrayList<String>(Arrays.asList(C.dbHost));// 数据库地址
 	public static List<String> dbPort = new ArrayList<String>(Arrays.asList(C.dbPort));// 数据库端口
@@ -43,10 +43,10 @@ public class MC {
 				MC.dataSource = new ArrayList<ComboPooledDataSource>();
 				for (Integer i = 0; i < MC.dbHost.size(); i = i + 1) {
 					ComboPooledDataSource source = new ComboPooledDataSource();
-					if (MC.dbType.equals("mysql")) {
+					if (MC.dbType[i].equals("mysql")) {
 						source.setDriverClass("com.mysql.jdbc.Driver");
 					}
-					if (MC.dbType.equals("postgresql")) {
+					if (MC.dbType[i].equals("postgresql")) {
 						source.setDriverClass("org.postgresql.Driver");
 					}
 					source.setMaxPoolSize(C.MaxPoolSize);
@@ -60,7 +60,8 @@ public class MC {
 					} else {
 						port = MC.dbPort.get(i);
 					}
-					source.setJdbcUrl("jdbc:" + MC.dbType + "://" + MC.dbHost.get(i) + ":" + port + "/" + MC.dbName.get(i) + "?zeroDateTimeBehavior=convertToNull");
+					source.setJdbcUrl("jdbc:" + MC.dbType + "://" + MC.dbHost.get(i) + ":" + port + "/"
+							+ MC.dbName.get(i) + "?zeroDateTimeBehavior=convertToNull");
 					source.setUser(MC.dbUsername.get(i));
 					source.setPassword(MC.dbPassword.get(i));
 					MC.dataSource.add(source);
