@@ -26,7 +26,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class Excell {
+public class Excel {
 
 	public static List<Map<String, Object>> read(String path) throws IOException {
 		if (path.contains(".xlsx")) {
@@ -36,7 +36,7 @@ public class Excell {
 		}
 	}
 
-	public static void write(List<Map<String, Object>> list, String sql, String filePath) throws IOException {
+	public static void write(List<Map<String, Object>> list, String filePath) throws IOException {
 		if (list.size() < 1) {
 			return;
 		}
@@ -91,11 +91,6 @@ public class Excell {
 				}
 			}
 		}
-		// 录入sql
-		Sheet sqlSheet = wb.createSheet("sql");
-		// 写入sql
-		Row sqlRow = sqlSheet.createRow(0);
-		sqlRow.createCell(0).setCellValue(sql);
 		OutputStream fileOut = new FileOutputStream(filePath);
 		wb.write(fileOut);
 		fileOut.close();
