@@ -28,21 +28,21 @@ import com.javatodo.core.router.Router;
 import com.javatodo.core.tools.T;
 
 public class JavaTodo {
-	static boolean is_init = false;
+	static boolean isInit = false;
 	private String app = "";
 
 	public JavaTodo() {
-		if (!JavaTodo.is_init) {
+		if (!JavaTodo.isInit) {
 			C.setRouter();
-			JavaTodo.is_init = true;
+			JavaTodo.isInit = true;
 		}
 	}
 
 	public JavaTodo(String appName) {
 		this.app = appName;
-		if (!JavaTodo.is_init) {
+		if (!JavaTodo.isInit) {
 			C.setRouter();
-			JavaTodo.is_init = true;
+			JavaTodo.isInit = true;
 		}
 	}
 
