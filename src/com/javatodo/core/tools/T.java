@@ -706,8 +706,8 @@ public class T {
 
 	// 记录日志
 	public static void create_log(String log_file, String content) {
-		if (!C.log_file_path.equals("")) {
-			writeFile(C.log_file_path + log_file, content + "--------" + T.now() + "\n\r");
+		if (!C.logFilePath.equals("")) {
+			writeFile(C.logFilePath + log_file, content + "--------" + T.now() + "\n\r");
 		}
 	}
 
@@ -715,10 +715,10 @@ public class T {
 	public static void S(String cacheName, String cacheValue) {
 		cacheName = md5(cacheName);
 		if (cacheValue == null) {
-			deleteFile(C.cache_path + cacheName);
+			deleteFile(C.cachePath + cacheName);
 		} else {
-			if (!C.cache_path.equals("")) {
-				coverFile(C.cache_path + cacheName, cacheValue);
+			if (!C.cachePath.equals("")) {
+				coverFile(C.cachePath + cacheName, cacheValue);
 			}
 		}
 	}
@@ -727,8 +727,8 @@ public class T {
 	public static String S(String cacheName) {
 		cacheName = md5(cacheName);
 		String ret = "";
-		if (!C.cache_path.equals("")) {
-			ret = readFile(C.cache_path + cacheName, StandardCharsets.UTF_8.toString());
+		if (!C.cachePath.equals("")) {
+			ret = readFile(C.cachePath + cacheName, StandardCharsets.UTF_8.toString());
 		}
 		return ret;
 	}
@@ -950,7 +950,7 @@ public class T {
 		if (C.ROOTURL == null) {
 			url = request.getScheme() // 当前链接使用的协议
 					+ "://" + request.getServerName();// 服务器地址
-			if (C.is_debug) {
+			if (C.isDebug) {
 				if (request.getServerPort() != 80 && request.getServerPort() != 443) {
 					url = url + ":" + request.getServerPort(); // 端口号
 				}

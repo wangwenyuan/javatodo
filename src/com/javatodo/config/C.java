@@ -12,35 +12,35 @@ public class C {
 	}
 
 	// 数据库配置项
-	public static String db_type = "mysql";// 数据库类型
+	public static String dbType = "mysql";// 数据库类型
 	// 可以同时连接多个数据库。
-	public static String[] db_host = {};// 数据库地址
-	public static String[] db_port = {};// 数据库端口
-	public static String[] db_name = {};// 数据库名称
-	public static String[] db_username = {};// 数据库用户名
-	public static String[] db_password = {};// 数据库密码
-	public static String[] table_pre = {};// 数据表前缀
+	public static String[] dbHost = {};// 数据库地址
+	public static String[] dbPort = {};// 数据库端口
+	public static String[] dbName = {};// 数据库名称
+	public static String[] dbUserName = {};// 数据库用户名
+	public static String[] dbPassword = {};// 数据库密码
+	public static String[] tablePrefix = {};// 数据表前缀
 
 	// 是否调试模式
-	public static boolean is_debug = true;
+	public static boolean isDebug = true;
 	// 网站根目录链接,如果该值是空，则T.getHost()获取网站的当前网址，如果该值不为null，则获取该值信息。
 	public static String ROOTURL = null;
 	// 日志文件夹
-	public static String log_file_path = "";
+	public static String logFilePath = "";
 	// 缓存文件夹
-	public static String cache_path = "";
+	public static String cachePath = "";
 
 	// 设置使用的模版引擎：velocity、jsp、freemaker
-	public static String template_engines = "jsp";
+	public static String templateEngines = "jsp";
 	// 设置编码
-	public static String default_encoding = "utf-8";
+	public static String defaultEncoding = "utf-8";
 	// 默认路由配置项
-	public static String default_module = "index";
-	public static String default_controller = "Index";
-	public static String default_action = "index";
+	public static String defaultModule = "index";
+	public static String defaultController = "Index";
+	public static String defaultAction = "index";
 
 	// 路由
-	public static void set_router() {
+	public static void setRouter() {
 		new RC("com.javatodo.app.index", "index");
 	}
 
@@ -51,8 +51,8 @@ public class C {
 	/** 以下配置项如无特殊需要请不要更改 **/
 
 	// 默认模版文件目录
-	public static String default_template_path = "WEB-INF/Template";
-	public static String default_template_public = "Public";
+	public static String defaultTemplatePath = "WEB-INF/Template";
+	public static String defaultTemplatePublic = "Public";
 	// 数据库连接池C3P0配置信息
 	public static int MaxPoolSize = 100;
 	public static int MinPoolSize = 10;

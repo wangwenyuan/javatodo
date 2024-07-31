@@ -41,8 +41,8 @@ public class FreeMakerView extends View {
 	public FreeMakerView(){
 		configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 		configuration.setObjectWrapper(ObjectWrapper.BEANS_WRAPPER);
-		configuration.setDefaultEncoding(C.default_encoding);
-		configuration.setOutputEncoding(C.default_encoding);
+		configuration.setDefaultEncoding(C.defaultEncoding);
+		configuration.setOutputEncoding(C.defaultEncoding);
 		configuration.setLocalizedLookup(false);
 		configuration.setNumberFormat("#0.#####");
 		configuration.setDateFormat("yyyy-MM-dd");

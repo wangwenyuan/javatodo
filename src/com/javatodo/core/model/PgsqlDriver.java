@@ -38,11 +38,23 @@ public class PgsqlDriver extends Driver {
 	private String groupSql = "";
 
 	public PgsqlDriver() {
+		this.tablePrefix = MC.tablePrefix.get(0);
+	}
+
+	public PgsqlDriver(Integer dbIndex) {
+		this.tablePrefix = MC.tablePrefix.get(dbIndex);
 	}
 
 	// 初始化当前表
-	public PgsqlDriver(String tableName) {
-		this.tableName = tableName;
+	public PgsqlDriver(String table_name) {
+		this.tablePrefix = MC.tablePrefix.get(0);
+		this.tableName = table_name;
+	}
+
+	// 初始化当前表
+	public PgsqlDriver(String table_name, Integer dbIndex) {
+		this.tablePrefix = MC.tablePrefix.get(dbIndex);
+		this.tableName = table_name;
 	}
 
 	// 设置表名称

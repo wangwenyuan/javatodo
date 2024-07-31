@@ -29,24 +29,24 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 public class MC {
 
 	public static List<ComboPooledDataSource> dataSource = null;
-	public static String db_type = C.db_type;// 数据库类型
-	public static List<String> table_pre = new ArrayList<String>(Arrays.asList(C.table_pre));// 数据表前缀
-	public static List<String> db_host = new ArrayList<String>(Arrays.asList(C.db_host));// 数据库地址
-	public static List<String> db_port = new ArrayList<String>(Arrays.asList(C.db_port));// 数据库端口
-	public static List<String> db_name = new ArrayList<String>(Arrays.asList(C.db_name));// 数据库名称
-	public static List<String> db_username = new ArrayList<String>(Arrays.asList(C.db_username));// 数据库用户名
-	public static List<String> db_password = new ArrayList<String>(Arrays.asList(C.db_password));// 数据库密码
+	public static String dbType = C.dbType;// 数据库类型
+	public static List<String> tablePrefix = new ArrayList<String>(Arrays.asList(C.tablePrefix));// 数据表前缀
+	public static List<String> dbHost = new ArrayList<String>(Arrays.asList(C.dbHost));// 数据库地址
+	public static List<String> dbPort = new ArrayList<String>(Arrays.asList(C.dbPort));// 数据库端口
+	public static List<String> dbName = new ArrayList<String>(Arrays.asList(C.dbName));// 数据库名称
+	public static List<String> dbUsername = new ArrayList<String>(Arrays.asList(C.dbUserName));// 数据库用户名
+	public static List<String> dbPassword = new ArrayList<String>(Arrays.asList(C.dbPassword));// 数据库密码
 
 	static {
-		if (MC.dataSource == null && MC.db_host.size() > 0) {
+		if (MC.dataSource == null && MC.dbHost.size() > 0) {
 			try {
 				MC.dataSource = new ArrayList<ComboPooledDataSource>();
-				for (Integer i = 0; i < MC.db_host.size(); i = i + 1) {
+				for (Integer i = 0; i < MC.dbHost.size(); i = i + 1) {
 					ComboPooledDataSource source = new ComboPooledDataSource();
-					if (MC.db_type.equals("mysql")) {
+					if (MC.dbType.equals("mysql")) {
 						source.setDriverClass("com.mysql.jdbc.Driver");
 					}
-					if (MC.db_type.equals("postgresql")) {
+					if (MC.dbType.equals("postgresql")) {
 						source.setDriverClass("org.postgresql.Driver");
 					}
 					source.setMaxPoolSize(C.MaxPoolSize);
@@ -55,14 +55,14 @@ public class MC {
 					source.setMaxIdleTime(C.MaxIdleTime);
 					source.setAcquireIncrement(C.AcquireIncrement);
 					String port = "";
-					if (MC.db_port.size() - 1 < i) {
+					if (MC.dbPort.size() - 1 < i) {
 						port = "3306";
 					} else {
-						port = MC.db_port.get(i);
+						port = MC.dbPort.get(i);
 					}
-					source.setJdbcUrl("jdbc:" + MC.db_type + "://" + MC.db_host.get(i) + ":" + port + "/" + MC.db_name.get(i) + "?zeroDateTimeBehavior=convertToNull");
-					source.setUser(MC.db_username.get(i));
-					source.setPassword(MC.db_password.get(i));
+					source.setJdbcUrl("jdbc:" + MC.dbType + "://" + MC.dbHost.get(i) + ":" + port + "/" + MC.dbName.get(i) + "?zeroDateTimeBehavior=convertToNull");
+					source.setUser(MC.dbUsername.get(i));
+					source.setPassword(MC.dbPassword.get(i));
 					MC.dataSource.add(source);
 				}
 
@@ -74,7 +74,7 @@ public class MC {
 		}
 	}
 
-	public static Connection get_connection() {
+	public static Connection getConnection() {
 		Connection connection = null;
 		if (MC.dataSource == null) {
 			System.out.println("数据源不存在");
@@ -89,7 +89,7 @@ public class MC {
 		return connection;
 	}
 
-	public static Connection get_connection(Integer dbIndex) {
+	public static Connection getConnection(Integer dbIndex) {
 		Connection connection = null;
 		if (MC.dataSource == null) {
 			System.out.println("数据源不存在");

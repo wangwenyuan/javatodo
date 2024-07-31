@@ -65,7 +65,7 @@ public class Controller {
 	public String CLASS_NAME = "";// 真正的控制器名
 	public String FUNCTION_NAME = "";// 真正的方法名
 	public boolean IS_AJAX = false;
-	public String templatePath = C.default_template_path;
+	public String templatePath = C.defaultTemplatePath;
 	public String ROOT = "";
 	public String PUBLIC = "";
 	private Map<String, Object> assignMap = new HashMap<>();
@@ -77,11 +77,11 @@ public class Controller {
 		this.setParam(request, response, servlet);
 		this.setRouter(request);
 		this.response.setHeader("X-Powered-By", "JavaToDo");
-		if (C.is_debug && C.log_file_path.equals("")) {
-			C.log_file_path = servlet.getServletContext().getRealPath("/") + "WEB-INF/Runtime/log/";
+		if (C.isDebug && C.logFilePath.equals("")) {
+			C.logFilePath = servlet.getServletContext().getRealPath("/") + "WEB-INF/Runtime/log/";
 		}
-		if (C.cache_path.equals("")) {
-			C.cache_path = servlet.getServletContext().getRealPath("/") + "WEB-INF/Runtime/cache/";
+		if (C.cachePath.equals("")) {
+			C.cachePath = servlet.getServletContext().getRealPath("/") + "WEB-INF/Runtime/cache/";
 		}
 	}
 
@@ -102,17 +102,17 @@ public class Controller {
 			}
 		}
 		this.ROOT = request.getContextPath();
-		this.PUBLIC = T.getRootUrl(request) + "/" + C.default_template_public;
+		this.PUBLIC = T.getRootUrl(request) + "/" + C.defaultTemplatePublic;
 		// 设置模版
-		if ("velocity".equals(C.template_engines)) {
+		if ("velocity".equals(C.templateEngines)) {
 			view = new VelocityView();
 			this.templateSuffix = ".html";
 		}
-		if ("jsp".equals(C.template_engines)) {
+		if ("jsp".equals(C.templateEngines)) {
 			view = new JspView(request);
 			this.templateSuffix = ".jsp";
 		}
-		if ("freemaker".equals(C.template_engines)) {
+		if ("freemaker".equals(C.templateEngines)) {
 			view = new FreeMakerView();
 			this.templateSuffix = ".html";
 		}
@@ -680,7 +680,7 @@ public class Controller {
 			this.response.setHeader("Pragma", "no-cache");
 			this.response.setHeader("Cache-Control", "no-cache");
 			this.response.setDateHeader("Expires", 0);
-			this.response.setContentType("application/json; charset=" + C.default_encoding);
+			this.response.setContentType("application/json; charset=" + C.defaultEncoding);
 			writer = response.getWriter();
 			writer.write(json);
 		} catch (IOException e) {
@@ -701,7 +701,7 @@ public class Controller {
 			this.response.setHeader("Pragma", "no-cache");
 			this.response.setHeader("Cache-Control", "no-cache");
 			this.response.setDateHeader("Expires", 0);
-			this.response.setContentType("application/json; charset=" + C.default_encoding);
+			this.response.setContentType("application/json; charset=" + C.defaultEncoding);
 			writer = response.getWriter();
 			writer.write(json);
 		} catch (IOException e) {
@@ -721,7 +721,7 @@ public class Controller {
 			this.response.setHeader("Pragma", "no-cache");
 			this.response.setHeader("Cache-Control", "no-cache");
 			this.response.setDateHeader("Expires", 0);
-			this.response.setContentType("text/html; charset=" + C.default_encoding);
+			this.response.setContentType("text/html; charset=" + C.defaultEncoding);
 			writer = response.getWriter();
 			writer.write(html);
 		} catch (IOException e) {

@@ -3,9 +3,9 @@
 <%@ page import="com.javatodo.config.C" %>
 <%
 JavaTodo javaTodo=new JavaTodo();
-request.setCharacterEncoding(C.default_encoding);
-response.setCharacterEncoding(C.default_encoding);
-response.setHeader("Content-type", "text/html;charset="+C.default_encoding);
+request.setCharacterEncoding(C.defaultEncoding);
+response.setCharacterEncoding(C.defaultEncoding);
+response.setHeader("Content-type", "text/html;charset="+C.defaultEncoding);
 javaTodo.setRequestAndResponse(request, response,this);
 out.clear();
 out = pageContext.pushBody();

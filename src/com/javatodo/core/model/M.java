@@ -33,32 +33,85 @@ public class M {
 	private String lastSql = "";
 	private Object sqlParams;
 	private boolean isTransaction = false;
+	private Integer dbIndex = 0;
 
 	/**
 	 * 实例化M对象，默认使用mysql驱动
 	 * 
 	 * @param connection Connection 数据库连接
 	 */
-	public M(Connection connection) {
-		if (connection == null) {
+	public M() {
+		this.dbIndex = 0;
+		this.connection = MC.getConnection(this.dbIndex);
+		if (this.connection == null) {
 			throw new Error("找不到数据源");
+		} else {
+			if ("mysql".equals(MC.dbType)) {
+				this.db = new MysqlDriver();
+			}
+			if ("postgresql".equals(MC.dbType)) {
+				this.db = new PgsqlDriver();
+			}
 		}
-		this.connection = connection;
-		this.db = new MysqlDriver();
 	}
 
 	/**
-	 * 实例化M对象，默认使用mysql驱动
-	 * 
-	 * @param connection Connection 数据库连接
-	 * @param tableName  String 表名
+	 * 实例化M对象
 	 */
-	public M(Connection connection, String tableName) {
-		if (connection == null) {
+	public M(Integer dbIndex) {
+		this.dbIndex = dbIndex;
+		this.connection = MC.getConnection(dbIndex);
+		if (this.connection == null) {
 			throw new Error("找不到数据源");
+		} else {
+			if ("mysql".equals(MC.dbType)) {
+				this.db = new MysqlDriver(dbIndex);
+			}
+			if ("postgresql".equals(MC.dbType)) {
+				this.db = new PgsqlDriver(dbIndex);
+			}
 		}
-		this.connection = connection;
-		this.db = new MysqlDriver(tableName);
+	}
+
+	/**
+	 * 实例化M对象
+	 * 
+	 * @param table_name String 表名
+	 * @throws Exception
+	 */
+	public M(String table_name) {
+		this.connection = MC.getConnection(this.dbIndex);
+		if (this.connection == null) {
+			throw new Error("找不到数据源");
+		} else {
+			if ("mysql".equals(MC.dbType)) {
+				this.db = new MysqlDriver(table_name);
+			}
+			if ("postgresql".equals(MC.dbType)) {
+				this.db = new PgsqlDriver(table_name);
+			}
+		}
+	}
+
+	/**
+	 * 实例化M对象
+	 * 
+	 * @param table_name String 表名
+	 * @throws Exception
+	 */
+	public M(String table_name, Integer dbIndex) {
+		this.dbIndex = dbIndex;
+		this.connection = MC.getConnection(dbIndex);
+		if (this.connection == null) {
+			throw new Error("找不到数据源");
+		} else {
+			if ("mysql".equals(MC.dbType)) {
+				this.db = new MysqlDriver(table_name, dbIndex);
+			}
+			if ("postgresql".equals(MC.dbType)) {
+				this.db = new PgsqlDriver(table_name, dbIndex);
+			}
+		}
 	}
 
 	/**

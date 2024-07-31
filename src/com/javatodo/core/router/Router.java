@@ -25,12 +25,12 @@ import com.javatodo.config.C;
 public class Router {
 	HttpServletRequest request = null;
 	public String APP_NAME = "";
-	public String MODULE_NAME = C.default_module;
-	public String CONTROLLER_NAME = C.default_controller;
-	public String ACTION_NAME = C.default_action;
+	public String MODULE_NAME = C.defaultModule;
+	public String CONTROLLER_NAME = C.defaultController;
+	public String ACTION_NAME = C.defaultAction;
 	public String PACKAGE_NAME = "";
-	public String CLASS_NAME = RC.getRC(C.default_module, C.default_controller) + "Controller";
-	public String FUNCTION_NAME = RC.getRC(C.default_module, C.default_controller, C.default_action) + "Page";
+	public String CLASS_NAME = RC.getRC(C.defaultModule, C.defaultController) + "Controller";
+	public String FUNCTION_NAME = RC.getRC(C.defaultModule, C.defaultController, C.defaultAction) + "Page";
 
 	public Map<String, String> map = new HashMap<>();
 
@@ -38,9 +38,9 @@ public class Router {
 		this.request = request;
 		this.APP_NAME = appName;
 		if (!"".equals(appName)) {
-			this.PACKAGE_NAME = appName + "." + RC.getRC(C.default_module);
+			this.PACKAGE_NAME = appName + "." + RC.getRC(C.defaultModule);
 		} else {
-			this.PACKAGE_NAME = RC.getRC(C.default_module);
+			this.PACKAGE_NAME = RC.getRC(C.defaultModule);
 		}
 		Map<String, String[]> queryMap = request.getParameterMap();
 		for (Map.Entry<String, String[]> entry : queryMap.entrySet()) {

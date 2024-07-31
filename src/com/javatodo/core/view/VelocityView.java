@@ -38,9 +38,9 @@ public class VelocityView extends View {
 
 	private static void init() {
 		properties.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, "");
-		properties.setProperty(Velocity.ENCODING_DEFAULT, C.default_encoding);
-		properties.setProperty(Velocity.INPUT_ENCODING, C.default_encoding);
-		properties.setProperty(Velocity.OUTPUT_ENCODING, C.default_encoding);
+		properties.setProperty(Velocity.ENCODING_DEFAULT, C.defaultEncoding);
+		properties.setProperty(Velocity.INPUT_ENCODING, C.defaultEncoding);
+		properties.setProperty(Velocity.OUTPUT_ENCODING, C.defaultEncoding);
 		VelocityView.is_init = true;
 	}
 
@@ -70,7 +70,7 @@ public class VelocityView extends View {
 	@Override
 	public String parseString(String view_path, String logName) throws IOException {
 		StringWriter stringWriter = new StringWriter();
-		String content = T.readFile(view_path, C.default_encoding);
+		String content = T.readFile(view_path, C.defaultEncoding);
 		Velocity.evaluate(context, stringWriter, logName, content);
 		return stringWriter.getBuffer().toString();
 	}
