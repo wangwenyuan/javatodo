@@ -44,7 +44,7 @@ public class MC {
 				for (Integer i = 0; i < MC.dbHost.size(); i = i + 1) {
 					ComboPooledDataSource source = new ComboPooledDataSource();
 					if (MC.dbType[i].equals("mysql")) {
-						source.setDriverClass("com.mysql.jdbc.Driver");
+						source.setDriverClass("com.mysql.cj.jdbc.Driver");
 					}
 					if (MC.dbType[i].equals("postgresql")) {
 						source.setDriverClass("org.postgresql.Driver");
@@ -60,8 +60,10 @@ public class MC {
 					} else {
 						port = MC.dbPort.get(i);
 					}
-					source.setJdbcUrl("jdbc:" + MC.dbType + "://" + MC.dbHost.get(i) + ":" + port + "/"
-							+ MC.dbName.get(i) + "?zeroDateTimeBehavior=convertToNull");
+					source.setJdbcUrl("jdbc:" + MC.dbType[i] + "://" + MC.dbHost.get(i) + ":" + port + "/"
+							+ MC.dbName.get(i)
+							+ "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&useAffectedRows=true&tinyInt1isBit=false&serverTimezone=GMT%2B8");
+
 					source.setUser(MC.dbUsername.get(i));
 					source.setPassword(MC.dbPassword.get(i));
 					MC.dataSource.add(source);
@@ -103,6 +105,7 @@ public class MC {
 					T.javatodo_sql_log(connection, "connect创建");
 				}
 			} catch (SQLException e) {
+				System.out.println(e.getMessage());
 				T.javatodo_error_log(e);
 			}
 		}

@@ -46,10 +46,10 @@ public class M {
 		if (this.connection == null) {
 			throw new Error("找不到数据源");
 		} else {
-			if ("mysql".equals(MC.dbType)) {
+			if ("mysql".equals(MC.dbType[this.dbIndex])) {
 				this.db = new MysqlDriver();
 			}
-			if ("postgresql".equals(MC.dbType)) {
+			if ("postgresql".equals(MC.dbType[this.dbIndex])) {
 				this.db = new PgsqlDriver();
 			}
 		}
@@ -64,10 +64,10 @@ public class M {
 		if (this.connection == null) {
 			throw new Error("找不到数据源");
 		} else {
-			if ("mysql".equals(MC.dbType)) {
+			if ("mysql".equals(MC.dbType[this.dbIndex])) {
 				this.db = new MysqlDriver(dbIndex);
 			}
-			if ("postgresql".equals(MC.dbType)) {
+			if ("postgresql".equals(MC.dbType[this.dbIndex])) {
 				this.db = new PgsqlDriver(dbIndex);
 			}
 		}
@@ -84,10 +84,10 @@ public class M {
 		if (this.connection == null) {
 			throw new Error("找不到数据源");
 		} else {
-			if ("mysql".equals(MC.dbType)) {
+			if ("mysql".equals(MC.dbType[this.dbIndex])) {
 				this.db = new MysqlDriver(table_name);
 			}
-			if ("postgresql".equals(MC.dbType)) {
+			if ("postgresql".equals(MC.dbType[this.dbIndex])) {
 				this.db = new PgsqlDriver(table_name);
 			}
 		}
@@ -105,10 +105,10 @@ public class M {
 		if (this.connection == null) {
 			throw new Error("找不到数据源");
 		} else {
-			if ("mysql".equals(MC.dbType)) {
+			if ("mysql".equals(MC.dbType[dbIndex])) {
 				this.db = new MysqlDriver(table_name, dbIndex);
 			}
-			if ("postgresql".equals(MC.dbType)) {
+			if ("postgresql".equals(MC.dbType[dbIndex])) {
 				this.db = new PgsqlDriver(table_name, dbIndex);
 			}
 		}
