@@ -72,7 +72,8 @@ public class Controller {
 	private String templateSuffix = ".html";
 	private String entrance = "";
 
-	public void setRequestAndResponse(HttpServletRequest request, HttpServletResponse response, HttpServlet servlet, String app) {
+	public void setRequestAndResponse(HttpServletRequest request, HttpServletResponse response, HttpServlet servlet,
+			String app) {
 		this.APP_NAME = app;
 		this.setParam(request, response, servlet);
 		this.setRouter(request);
@@ -165,8 +166,7 @@ public class Controller {
 	/**
 	 * 获取session的值
 	 * 
-	 * @param name
-	 *            String session的名称
+	 * @param name String session的名称
 	 * @return session中该名称对应的值
 	 */
 	public Object session(String name) {
@@ -189,10 +189,8 @@ public class Controller {
 	/**
 	 * 设置session的值
 	 * 
-	 * @param name
-	 *            String session的名称
-	 * @param value
-	 *            Object session的值
+	 * @param name  String session的名称
+	 * @param value Object session的值
 	 * @return 没有返回值
 	 */
 	public void session(String name, Object value) {
@@ -208,8 +206,7 @@ public class Controller {
 	/**
 	 * 获取cookie的值
 	 * 
-	 * @param name
-	 *            String cookie的名称
+	 * @param name String cookie的名称
 	 * @return
 	 */
 	public String cookie(String name) {
@@ -227,10 +224,8 @@ public class Controller {
 	/**
 	 * 设置cookie的值
 	 * 
-	 * @param name
-	 *            String cookie的名称
-	 * @param value
-	 *            String cookie的值
+	 * @param name  String cookie的名称
+	 * @param value String cookie的值
 	 */
 	public void cookie(String name, String value) {
 		if (value == null) {
@@ -247,12 +242,9 @@ public class Controller {
 	/**
 	 * 设置cookie的值
 	 * 
-	 * @param name
-	 *            String cookie的名称
-	 * @param value
-	 *            String cookie的值
-	 * @param expiry
-	 *            int cookie的存活时间，单位(秒)
+	 * @param name   String cookie的名称
+	 * @param value  String cookie的值
+	 * @param expiry int cookie的存活时间，单位(秒)
 	 */
 	public void cookie(String name, String value, int expiry) {
 		if (value == null) {
@@ -269,12 +261,9 @@ public class Controller {
 	/**
 	 * 设置cookie的值
 	 * 
-	 * @param name
-	 *            String cookie的名称
-	 * @param value
-	 *            String cookie的值
-	 * @param domain
-	 *            String cookie的作用域
+	 * @param name   String cookie的名称
+	 * @param value  String cookie的值
+	 * @param domain String cookie的作用域
 	 */
 	public void cookie(String name, String value, String domain) {
 		if (value == null) {
@@ -292,14 +281,10 @@ public class Controller {
 	/**
 	 * 设置cookie的值
 	 * 
-	 * @param name
-	 *            String cookie的名称
-	 * @param value
-	 *            String cookie的值
-	 * @param expiry
-	 *            int cookie的有效时间
-	 * @param domain
-	 *            String cookie的作用域
+	 * @param name   String cookie的名称
+	 * @param value  String cookie的值
+	 * @param expiry int cookie的有效时间
+	 * @param domain String cookie的作用域
 	 */
 	public void cookie(String name, String value, int expiry, String domain) {
 		if (value == null) {
@@ -324,7 +309,8 @@ public class Controller {
 		Map<String, String> map = this.routerMap;
 		Map<String, String> retMap = new HashMap<>();
 		for (Map.Entry<String, String> entry : map.entrySet()) {
-			if (entry.getKey().toString().equals("m") || entry.getKey().toString().equals("c") || entry.getKey().toString().equals("a")) {
+			if (entry.getKey().toString().equals("m") || entry.getKey().toString().equals("c")
+					|| entry.getKey().toString().equals("a")) {
 				continue;
 			} else {
 				retMap.put(entry.getKey().toString(), T.htmlspecialchars(entry.getValue().toString()));
@@ -336,8 +322,7 @@ public class Controller {
 	/**
 	 * 获取系统变量或用户提交的数据
 	 * 
-	 * @param name
-	 *            String 变量名
+	 * @param name String 变量名
 	 * @return String 变量值
 	 */
 	public String I(String name) {
@@ -354,8 +339,7 @@ public class Controller {
 	/**
 	 * 生成url地址
 	 * 
-	 * @param path
-	 *            [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param path [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
 	 * @return String 对应的url链接
 	 */
 	public String U(String path) {
@@ -378,8 +362,7 @@ public class Controller {
 	/**
 	 * 生成url地址
 	 * 
-	 * @param map
-	 *            Map<String 参数名,String 参数值> url中的参数（m：标识模块名；c：表示控制器名；a：表示操作名）
+	 * @param map Map<String 参数名,String 参数值> url中的参数（m：标识模块名；c：表示控制器名；a：表示操作名）
 	 * @return String 对应的url链接
 	 */
 	public String U(Map<String, String> map) {
@@ -403,10 +386,8 @@ public class Controller {
 	/**
 	 * 生成url地址
 	 * 
-	 * @param path
-	 *            String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
-	 * @param map
-	 *            Map<String 参数名,String 参数值> url中的参数
+	 * @param path String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param map  Map<String 参数名,String 参数值> url中的参数
 	 * @return String 对应的url链接
 	 */
 	public String U(String path, Map<String, Object> map) {
@@ -431,8 +412,7 @@ public class Controller {
 	/**
 	 * 页面重定向
 	 * 
-	 * @param url
-	 *            String 页面重定向的链接
+	 * @param url String 页面重定向的链接
 	 * @throws IOException
 	 */
 	public void redirect(String url) throws IOException {
@@ -458,8 +438,7 @@ public class Controller {
 	/**
 	 * 检测验证码是否正确
 	 * 
-	 * @param code
-	 *            用户输入的验证码的值
+	 * @param code 用户输入的验证码的值
 	 * @return boolean true:正确；false:错误
 	 */
 	public boolean check_verify(String code) {
@@ -479,10 +458,8 @@ public class Controller {
 	/**
 	 * 给模版赋值
 	 * 
-	 * @param name
-	 *            String 模版中变量的名称
-	 * @param value
-	 *            Object 模版中变量的值
+	 * @param name  String 模版中变量的名称
+	 * @param value Object 模版中变量的值
 	 */
 	public void assign(String name, Object value) {
 		this.assignMap.put(name, value);
@@ -562,7 +539,8 @@ public class Controller {
 		} else {
 			path = servlet.getServletContext().getRealPath("/") + this.templatePath;
 			path = path + "/" + PACKAGE_NAME + "/" + CLASS_NAME + "/" + FUNCTION_NAME + this.templateSuffix;
-			return this.view.parseString(path, routerMap.get("m").toString() + "." + routerMap.get("c").toString() + "." + routerMap.get("a").toString() + ".log");
+			return this.view.parseString(path, routerMap.get("m").toString() + "." + routerMap.get("c").toString() + "."
+					+ routerMap.get("a").toString() + ".log");
 		}
 	}
 
@@ -601,13 +579,15 @@ public class Controller {
 			map.put("a", RC.getRC(MODULE_NAME + "!--javatodo--!" + CONTROLLER_NAME + "!--javatodo--!" + paths[0]));
 		}
 
-		path = root_path + "/" + map.get("m").toString() + "/" + map.get("c").toString() + "/" + map.get("a").toString() + this.templateSuffix;
+		path = root_path + "/" + map.get("m").toString() + "/" + map.get("c").toString() + "/" + map.get("a").toString()
+				+ this.templateSuffix;
 		this.tempConstant();
 
 		if (this.templateSuffix.equals(".jsp")) {
 			return this.parseJsp(path);
 		} else {
-			return this.view.parseString(path, routerMap.get("m").toString() + "." + routerMap.get("c").toString() + "." + routerMap.get("a").toString() + ".log");
+			return this.view.parseString(path, routerMap.get("m").toString() + "." + routerMap.get("c").toString() + "."
+					+ routerMap.get("a").toString() + ".log");
 		}
 	}
 
@@ -633,8 +613,7 @@ public class Controller {
 	/**
 	 * 渲染模版
 	 * 
-	 * @param path
-	 *            String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
+	 * @param path String [模块名/控制器名/操作] 或 [控制器名/操作] 或 [操作]
 	 * @throws IOException
 	 * @throws ServletException
 	 * @throws TemplateException
@@ -667,7 +646,8 @@ public class Controller {
 			map.put("class_name", CLASS_NAME);
 			map.put("function_name", RC.getRC(MODULE_NAME, CONTROLLER_NAME, paths[0]) + "Page");
 		}
-		path = root_path + "/" + map.get("package_name").toString() + "/" + map.get("class_name").toString() + "/" + map.get("function_name").toString() + this.templateSuffix;
+		path = root_path + "/" + map.get("package_name").toString() + "/" + map.get("class_name").toString() + "/"
+				+ map.get("function_name").toString() + this.templateSuffix;
 		this.tempConstant();
 		this.view.flush(request, response, servlet, path);
 	}
@@ -737,34 +717,37 @@ public class Controller {
 	/**
 	 * 生成分页类
 	 * 
-	 * @param total
-	 *            int 内容总数
-	 * @param num
-	 *            int 每页条数
+	 * @param total int 内容总数
+	 * @param num   int 每页条数
 	 * @return Pagination 分页类
 	 */
 	public Page page(int total, int num) {
+		String pageSizeString = I("pageSize").trim();
+		if (!pageSizeString.equals("")) {
+			num = T.toInt(pageSizeString);
+		}
 		return new Page(total, num, this.entrance, this.routerMap, this.request);
 	}
 
 	/**
 	 * 生成分页类
 	 * 
-	 * @param total
-	 *            Long 内容总数
-	 * @param num
-	 *            int 每页条数
+	 * @param total Long 内容总数
+	 * @param num   int 每页条数
 	 * @return Pagination 分页类
 	 */
 	public Page page(Long total, int num) {
+		String pageSizeString = I("pageSize").trim();
+		if (!pageSizeString.equals("")) {
+			num = T.toInt(pageSizeString);
+		}
 		return new Page(total, num, this.entrance, this.routerMap, this.request);
 	}
 
 	/**
 	 * 带有错误信息的跳转页面，例如“操作错误”，并且自动跳转到另外一个目标页面
 	 * 
-	 * @param errMsg
-	 *            String 要提示给用户的错误信息
+	 * @param errMsg String 要提示给用户的错误信息
 	 * @throws IOException
 	 */
 	public void error(String errMsg) throws IOException {
@@ -790,10 +773,8 @@ public class Controller {
 	/**
 	 * 带有错误信息的跳转页面，例如“操作错误”，并且自动跳转到另外一个目标页面
 	 * 
-	 * @param errMsg
-	 *            String 要提示给用户的错误信息
-	 * @param url
-	 *            String 要跳转的目标链接
+	 * @param errMsg String 要提示给用户的错误信息
+	 * @param url    String 要跳转的目标链接
 	 * @throws IOException
 	 */
 	public void error(String errMsg, String url) throws IOException {
@@ -819,12 +800,9 @@ public class Controller {
 	/**
 	 * 带有错误信息的跳转页面，例如“操作错误”，并且自动跳转到另外一个目标页面
 	 * 
-	 * @param errMsg
-	 *            String 要提示给用户的错误信息
-	 * @param url
-	 *            String 要跳转的目标链接
-	 * @param seconds
-	 *            Integer 在提示信息页面的停留时间
+	 * @param errMsg  String 要提示给用户的错误信息
+	 * @param url     String 要跳转的目标链接
+	 * @param seconds Integer 在提示信息页面的停留时间
 	 * @throws IOException
 	 */
 	public void error(String errMsg, String url, Integer seconds) throws IOException {
@@ -850,8 +828,7 @@ public class Controller {
 	/**
 	 * 带有成功信息的跳转页面，例如“操作成功”，并且自动跳转到另外一个目标页面
 	 * 
-	 * @param sucMsg
-	 *            String 提示给用户的成功信息
+	 * @param sucMsg String 提示给用户的成功信息
 	 * @throws IOException
 	 */
 	public void success(String sucMsg) throws IOException {
@@ -877,10 +854,8 @@ public class Controller {
 	/**
 	 * 带有成功信息的跳转页面，例如“操作成功”，并且自动跳转到另外一个目标页面
 	 * 
-	 * @param sucMsg
-	 *            String 提示给用户的成功信息
-	 * @param url
-	 *            String 要跳转的目标链接
+	 * @param sucMsg String 提示给用户的成功信息
+	 * @param url    String 要跳转的目标链接
 	 * @throws IOException
 	 */
 	public void success(String sucMsg, String url) throws IOException {
@@ -906,12 +881,9 @@ public class Controller {
 	/**
 	 * 带有成功信息的跳转页面，例如“操作成功”，并且自动跳转到另外一个目标页面
 	 * 
-	 * @param sucMsg
-	 *            String 提示给用户的成功信息
-	 * @param url
-	 *            String 要跳转的目标链接
-	 * @param seconds
-	 *            Integer 在提示信息页面的停留时间
+	 * @param sucMsg  String 提示给用户的成功信息
+	 * @param url     String 要跳转的目标链接
+	 * @param seconds Integer 在提示信息页面的停留时间
 	 * @throws IOException
 	 */
 	public void success(String sucMsg, String url, Integer seconds) throws IOException {

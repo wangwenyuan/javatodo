@@ -15,7 +15,9 @@
  */
 package com.javatodo.core.tools;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -112,13 +114,17 @@ public class Page {
 	public String show() {
 		double zhi = (double) total / (double) listRows;
 		allPageNum = (int) Math.ceil(zhi);
+		if (allPageNum == 1 && this.current == 1) {
+			return "";
+		}
 		String page_str = "<span>共" + allPageNum + "页，每页" + listRows + "条，当前第" + this.current + "页</span>";
 		if (current == 1) {
 			map.put("p", (this.current + 1) + "");
 			if (request == null) {
 				page_str = page_str + "<span>首页</span><span>上一页</span><a href='" + T.U(map, entrance) + "' >下一页</a>";
 			} else {
-				page_str = page_str + "<span>首页</span><span>上一页</span><a href='" + T.U(map, entrance, request) + "' >下一页</a>";
+				page_str = page_str + "<span>首页</span><span>上一页</span><a href='" + T.U(map, entrance, request)
+						+ "' >下一页</a>";
 			}
 			map.put("p", allPageNum + "");
 			if (request == null) {
@@ -137,7 +143,8 @@ public class Page {
 			if (request == null) {
 				page_str = page_str + "<a href='" + T.U(map, entrance) + "' >上一页</a><span>下一页</span><span>尾页</span>";
 			} else {
-				page_str = page_str + "<a href='" + T.U(map, entrance, request) + "' >上一页</a><span>下一页</span><span>尾页</span>";
+				page_str = page_str + "<a href='" + T.U(map, entrance, request)
+						+ "' >上一页</a><span>下一页</span><span>尾页</span>";
 			}
 		} else if (current < 1) {
 			page_str = "";
@@ -180,13 +187,47 @@ public class Page {
 				selected = "";
 			}
 			if (request == null) {
-				gotopage = gotopage + "<option " + selected + " value=\"" + T.U(map, entrance) + "\">第 " + (i + 1) + " 页</option>";
+				gotopage = gotopage + "<option " + selected + " value=\"" + T.U(map, entrance) + "\">第 " + (i + 1)
+						+ " 页</option>";
 			} else {
-				gotopage = gotopage + "<option " + selected + " value=\"" + T.U(map, entrance, request) + "\">第 " + (i + 1) + " 页</option>";
+				gotopage = gotopage + "<option " + selected + " value=\"" + T.U(map, entrance, request) + "\">第 "
+						+ (i + 1) + " 页</option>";
 			}
 
 		}
 		gotopage = gotopage + "</select></span>";
+
+		gotopage = gotopage
+				+ "<span>每页： <select onchange=\"self.location.href=this.options[this.selectedIndex].value\">";
+
+		List<Integer> pageSizeList = new ArrayList();
+		pageSizeList.add(20);
+		pageSizeList.add(50);
+		pageSizeList.add(100);
+		pageSizeList.add(500);
+		pageSizeList.add(1000);
+		pageSizeList.add(5000);
+
+		for (Integer i = 0; i < pageSizeList.size(); i = i + 1) {
+			map.put("p", current + "");
+			map.put("pageSize", pageSizeList.get(i) + "");
+			String selected = "";
+			if ((this.listRows + "").equals(pageSizeList.get(i).toString())) {
+				selected = "selected=\"selected\"";
+			} else {
+				selected = "";
+			}
+			if (request == null) {
+				gotopage = gotopage + "<option " + selected + " value=\"" + T.U(map, entrance) + "\"> "
+						+ (pageSizeList.get(i)) + " </option>";
+			} else {
+				gotopage = gotopage + "<option " + selected + " value=\"" + T.U(map, entrance, request) + "\"> "
+						+ (pageSizeList.get(i)) + " </option>";
+			}
+
+		}
+		gotopage = gotopage + "</select> 条</span>";
+
 		if (zhi < 1) {
 			return "";
 		} else {

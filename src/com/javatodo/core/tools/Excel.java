@@ -1,10 +1,12 @@
 package com.javatodo.core.tools;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,6 +14,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -248,5 +252,63 @@ public class Excel {
 		default:
 			return cell.getStringCellValue();
 		}
+	}
+
+	public static void download(List<Map<String, Object>> list, String fileName, HttpServletResponse response)
+			throws IOException {
+		Workbook wb = new XSSFWorkbook();
+		CreationHelper createHelper = wb.getCreationHelper();
+		Sheet sheet = wb.createSheet("sheet0");
+		if (list.size() > 0) {
+			List<String> keyList = new ArrayList();
+			Map<String, Object> keyMap = list.get(0);
+			for (String key : keyMap.keySet()) {
+				keyList.add(key);
+			}
+			// 创建Rows
+			int rowIndex = 0; // 当前行索引
+			// 创建表头
+			Row headerRow = sheet.createRow(rowIndex);
+			for (Integer i = 0; i < keyList.size(); i = i + 1) {
+				headerRow.createCell(i).setCellValue(keyList.get(i));
+			}
+			// 写入数据
+			for (Integer i = 0; i < list.size(); i = i + 1) { // 遍历所有数据
+				rowIndex = rowIndex + 1;
+				Row row = sheet.createRow(rowIndex);
+				for (Integer n = 0; n < keyList.size(); n = n + 1) {
+					Map<String, Object> map = list.get(i);
+					String key = keyList.get(n);
+					if (getValueClass(map, key).contains("String")) {
+						row.createCell(n).setCellValue(getValue(createHelper, map, key));
+					}
+					if (getValueClass(map, key).contains("BigDecimal")) {
+						row.createCell(n).setCellValue(Double.valueOf(map.get(key).toString()));
+					}
+					if (getValueClass(map, key).contains("Integer")) {
+						row.createCell(n).setCellValue(Integer.valueOf(map.get(key).toString()));
+					}
+					if (getValueClass(map, key).contains("Timestamp")) {
+						String dateString = map.get(key).toString();
+						dateString = dateString.replace(" 00:00:00.0", "");
+						dateString = dateString.replace(".0", "");
+						row.createCell(n).setCellValue(dateString);
+					}
+				}
+			}
+		}
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		wb.write(outputStream);
+		// 设置响应头
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		response.setHeader("Content-Disposition",
+				"attachment; filename=\"" + URLEncoder.encode(fileName, "UTF-8") + ".xlsx\"");
+		// response.setFlushBuffer(true);
+		// 将Excel文件写入到响应的输出流中
+		outputStream.writeTo(response.getOutputStream());
+		// 关闭工作簿和输出流
+		outputStream.close();
+		response.getOutputStream().flush();
+		response.getOutputStream().close();
 	}
 }
